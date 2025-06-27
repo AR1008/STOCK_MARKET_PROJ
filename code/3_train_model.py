@@ -4,15 +4,15 @@ import os
 import pickle
 import logging
 from datetime import datetime, timedelta
-from sklearn.model_selection import train_test_split, TimeSeriesSplit
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from sklearn.svm import SVR
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.preprocessing import StandardScaler, RobustScaler
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression, ElasticNet
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score, classification_report, roc_auc_score
+from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif
 import xgboost as xgb
 import lightgbm as lgb
+from scipy import stats
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -20,10 +20,10 @@ warnings.filterwarnings('ignore')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class BioconModelTrainer:
+class RealisticBioconModelTrainer:
     """
-    Day 2: Corrected Model Training for Biocon Stock Prediction
-    Based on actual data structure from Day 1 collection scripts
+    FINAL FIX: Realistic Biocon Stock Prediction Training
+    Focus on achievable targets: direction prediction and significant moves
     """
     
     def __init__(self):
@@ -34,44 +34,33 @@ class BioconModelTrainer:
         self.best_model_name = None
         self.best_model = None
         self.feature_names = []
+        self.combined_df_final = None
         self.create_directories()
         
     def create_directories(self):
         """Create necessary directories"""
-        directories = ['models', 'results', 'results/charts']
+        directories = ['models', 'results', 'results/charts', 'data']
         for directory in directories:
             if not os.path.exists(directory):
                 os.makedirs(directory)
                 logger.info(f"Created directory: {directory}")
     
     def load_and_validate_data(self):
-        """Load and validate the data files from Day 1"""
-        logger.info("Loading and validating data from Day 1...")
+        """Load and validate data"""
+        logger.info("Loading and validating data...")
         
         try:
-            # Check if required files exist
-            required_files = {
-                'stock_data.csv': 'data/stock_data.csv',
-                'daily_sentiment.csv': 'data/daily_sentiment.csv'
-            }
-            
-            for file_name, file_path in required_files.items():
-                if not os.path.exists(file_path):
-                    raise FileNotFoundError(f"{file_name} not found at {file_path}. Please run Day 1 data collection first.")
-            
             # Load stock data
             stock_df = pd.read_csv('data/stock_data.csv')
             stock_df['Date'] = pd.to_datetime(stock_df['Date']).dt.tz_localize(None)
+            stock_df = stock_df.sort_values('Date').reset_index(drop=True)
             logger.info(f"✓ Loaded stock data: {len(stock_df)} records")
             
-            # Load daily sentiment data
+            # Load sentiment data
             sentiment_df = pd.read_csv('data/daily_sentiment.csv')
             sentiment_df['date'] = pd.to_datetime(sentiment_df['date']).dt.tz_localize(None)
+            sentiment_df = sentiment_df.sort_values('date').reset_index(drop=True)
             logger.info(f"✓ Loaded sentiment data: {len(sentiment_df)} records")
-            
-            # Display available columns for debugging
-            logger.info(f"Stock data columns: {list(stock_df.columns)}")
-            logger.info(f"Sentiment data columns: {list(sentiment_df.columns)}")
             
             return stock_df, sentiment_df
             
@@ -79,12 +68,12 @@ class BioconModelTrainer:
             logger.error(f"Error loading data: {str(e)}")
             raise
     
-    def combine_and_clean_data(self, stock_df, sentiment_df):
-        """Combine stock and sentiment data with proper cleaning"""
-        logger.info("Combining and cleaning datasets...")
+    def smart_data_merge(self, stock_df, sentiment_df):
+        """Smart data merge preserving all stock trading days"""
+        logger.info("Performing smart data merge...")
         
         try:
-            # Merge datasets on date
+            # LEFT JOIN to keep all stock days
             combined_df = pd.merge(
                 stock_df, 
                 sentiment_df, 
@@ -93,367 +82,276 @@ class BioconModelTrainer:
                 how='left'
             )
             
-            # Drop duplicate date column
             if 'date' in combined_df.columns:
                 combined_df = combined_df.drop(['date'], axis=1)
             
-            logger.info(f"Combined dataset: {len(combined_df)} records")
-            
-            # Fill missing sentiment values based on actual column structure
-            # From your news collection script, these are the actual columns created:
+            # Fill missing sentiment intelligently
             sentiment_columns = [
-                'avg_sentiment', 'sentiment_std', 'news_count',
-                'weighted_avg_sentiment', 'weighted_sentiment_std', 
-                'avg_priority', 'max_priority', 'total_priority',
-                'drug_specific_count', 'company_news_count',
-                'drug_news_ratio', 'day_importance_score'
+                'avg_sentiment', 'weighted_avg_sentiment', 'news_count',
+                'drug_specific_count', 'day_importance_score'
             ]
             
             for col in sentiment_columns:
                 if col in combined_df.columns:
-                    combined_df[col] = combined_df[col].fillna(0)
-                    logger.info(f"✓ Filled missing values for {col}")
+                    if 'sentiment' in col.lower():
+                        combined_df[col] = combined_df[col].fillna(0.0)  # Neutral
+                    else:
+                        combined_df[col] = combined_df[col].fillna(0)    # No news
+                else:
+                    combined_df[col] = 0
             
-            # Handle FDA milestone flags (has_approval_process, has_regulatory_review, etc.)
+            # Create day_importance_score if missing
+            if 'day_importance_score' not in combined_df.columns or combined_df['day_importance_score'].isna().all():
+                combined_df['day_importance_score'] = (
+                    combined_df.get('news_count', 0) * 2 +
+                    combined_df.get('drug_specific_count', 0) * 10 +
+                    np.abs(combined_df.get('weighted_avg_sentiment', 0)) * 15
+                )
+            
+            # Handle FDA milestone flags
             milestone_columns = [col for col in combined_df.columns if col.startswith('has_')]
             for col in milestone_columns:
                 combined_df[col] = combined_df[col].fillna(0).astype(int)
-                logger.info(f"✓ Processed FDA milestone flag: {col}")
             
-            logger.info(f"Data cleaning completed. Final shape: {combined_df.shape}")
+            logger.info(f"Smart merge completed: {len(combined_df)} records")
             return combined_df
             
         except Exception as e:
-            logger.error(f"Error combining data: {str(e)}")
+            logger.error(f"Error in smart merge: {str(e)}")
             raise
     
-    def engineer_comprehensive_features(self, df):
-        """Create comprehensive features based on your actual data structure"""
-        logger.info("Engineering comprehensive features...")
+    def create_realistic_features(self, df):
+        """Create realistic features focused on predictable patterns"""
+        logger.info("Creating realistic features focused on predictable patterns...")
         
         try:
-            # Sort by date to ensure proper time series order
-            df = df.sort_values('Date').copy()
-            df = df.reset_index(drop=True)
+            df = df.sort_values('Date').reset_index(drop=True)
             
-            # === PRICE-BASED FEATURES ===
+            # === CORE PRICE FEATURES ===
             if 'Close' in df.columns:
-                # Price momentum features
-                for days in [1, 3, 5, 10, 20]:
-                    df[f'Price_Return_{days}D'] = df['Close'].pct_change(days)
+                # Returns with different horizons
+                df['Return_1D'] = df['Close'].pct_change()
+                df['Return_3D'] = df['Close'].pct_change(3)
+                df['Return_5D'] = df['Close'].pct_change(5)
                 
-                # Price moving averages and ratios
-                for window in [5, 10, 20, 50]:
-                    if len(df) > window:
-                        df[f'Price_MA_{window}'] = df['Close'].rolling(window=window).mean()
-                        df[f'Price_Ratio_MA_{window}'] = df['Close'] / (df[f'Price_MA_{window}'] + 0.0001)
-                
-                # Price volatility
+                # Moving averages
                 for window in [5, 10, 20]:
-                    if len(df) > window:
-                        df[f'Price_Volatility_{window}D'] = df['Close'].pct_change().rolling(window=window).std()
-            
-            # === EXISTING TECHNICAL INDICATORS ===
-            # Use technical indicators already calculated in Day 1
-            existing_technical = ['RSI', 'MACD', 'MACD_Signal', 'MA_20', 'MA_50', 'MA_200', 
-                                'BB_Upper', 'BB_Lower', 'BB_Middle', 'Volatility_20D']
-            
-            for indicator in existing_technical:
-                if indicator in df.columns:
-                    # Create normalized versions
-                    rolling_mean = df[indicator].rolling(window=60, min_periods=10).mean()
-                    rolling_std = df[indicator].rolling(window=60, min_periods=10).std()
-                    df[f'{indicator}_normalized'] = (df[indicator] - rolling_mean) / (rolling_std + 0.0001)
+                    df[f'MA_{window}'] = df['Close'].rolling(window).mean()
+                    df[f'Price_Above_MA_{window}'] = (df['Close'] > df[f'MA_{window}']).astype(int)
+                
+                # Volatility (key for stock prediction)
+                df['Volatility_5D'] = df['Return_1D'].rolling(5).std() * np.sqrt(252)
+                df['Volatility_20D'] = df['Return_1D'].rolling(20).std() * np.sqrt(252)
+                
+                # Price momentum
+                df['Momentum_5D'] = df['Return_5D']
+                df['Momentum_20D'] = df['Close'].pct_change(20)
             
             # === VOLUME FEATURES ===
             if 'Volume' in df.columns:
-                # Volume moving averages and ratios
-                for window in [5, 10, 20]:
-                    if len(df) > window:
-                        df[f'Volume_MA_{window}'] = df['Volume'].rolling(window=window).mean()
-                        df[f'Volume_Ratio_{window}'] = df['Volume'] / (df[f'Volume_MA_{window}'] + 1)
-                
-                # Volume surge detection
-                if 'Volume_MA_20' in df.columns:
-                    df['Volume_Surge'] = (df['Volume'] > 2 * df['Volume_MA_20']).astype(int)
+                df['Volume_MA_10'] = df['Volume'].rolling(10).mean()
+                df['Volume_Ratio'] = df['Volume'] / (df['Volume_MA_10'] + 1)
+                df['High_Volume'] = (df['Volume_Ratio'] > 2.0).astype(int)
             
-            # === SENTIMENT FEATURES ===
+            # === SENTIMENT FEATURES (KEY FOR FDA EVENTS) ===
             if 'avg_sentiment' in df.columns:
-                # Sentiment moving averages
-                for window in [3, 7, 14, 21]:
-                    if len(df) > window:
-                        df[f'Sentiment_MA_{window}'] = df['avg_sentiment'].rolling(window=window).mean()
+                # Clean sentiment
+                df['avg_sentiment'] = np.clip(df['avg_sentiment'], -1, 1)
                 
-                # Sentiment momentum and changes
-                for days in [1, 3, 7]:
-                    df[f'Sentiment_Change_{days}D'] = df['avg_sentiment'].diff(days)
+                # Sentiment signals
+                df['Positive_Sentiment'] = (df['avg_sentiment'] > 0.1).astype(int)
+                df['Negative_Sentiment'] = (df['avg_sentiment'] < -0.1).astype(int)
+                df['Strong_Sentiment'] = (np.abs(df['avg_sentiment']) > 0.5).astype(int)
                 
-                # Sentiment volatility
-                df['Sentiment_Volatility_7D'] = df['avg_sentiment'].rolling(window=7).std()
-                
-                # Sentiment extreme flags
-                sentiment_q75 = df['avg_sentiment'].quantile(0.75)
-                sentiment_q25 = df['avg_sentiment'].quantile(0.25)
-                df['High_Sentiment'] = (df['avg_sentiment'] > sentiment_q75).astype(int)
-                df['Low_Sentiment'] = (df['avg_sentiment'] < sentiment_q25).astype(int)
+                # Sentiment momentum
+                df['Sentiment_Change'] = df['avg_sentiment'].diff()
+                df['Sentiment_MA_3'] = df['avg_sentiment'].rolling(3).mean()
             
-            # === WEIGHTED SENTIMENT FEATURES ===
-            if 'weighted_avg_sentiment' in df.columns:
-                # Weighted sentiment moving averages
-                for window in [3, 7, 14]:
-                    if len(df) > window:
-                        df[f'Weighted_Sentiment_MA_{window}'] = df['weighted_avg_sentiment'].rolling(window=window).mean()
-                
-                # Weighted sentiment changes
-                for days in [1, 3, 7]:
-                    df[f'Weighted_Sentiment_Change_{days}D'] = df['weighted_avg_sentiment'].diff(days)
-            
-            # === NEWS VOLUME FEATURES ===
-            if 'news_count' in df.columns:
-                # News volume moving averages
-                for window in [3, 7, 14]:
-                    if len(df) > window:
-                        df[f'News_Volume_MA_{window}'] = df['news_count'].rolling(window=window).mean()
-                
-                # News volume changes and flags
-                df['News_Volume_Change'] = df['news_count'].diff()
-                news_q80 = df['news_count'].quantile(0.8)
-                df['High_News_Day'] = (df['news_count'] > news_q80).astype(int)
-            
-            # === DRUG-SPECIFIC NEWS FEATURES ===
-            if 'drug_specific_count' in df.columns:
-                # Drug news moving averages
-                for window in [3, 7, 14]:
-                    if len(df) > window:
-                        df[f'Drug_News_MA_{window}'] = df['drug_specific_count'].rolling(window=window).mean()
-                
-                # Drug news ratio and flags
-                df['Drug_News_Change'] = df['drug_specific_count'].diff()
-                df['Drug_News_Day'] = (df['drug_specific_count'] > 0).astype(int)
-            
-            # === FDA MILESTONE FEATURES ===
+            # === FDA EVENT FEATURES (CORE VALUE) ===
             if 'day_importance_score' in df.columns:
-                # Importance score features
-                for window in [3, 7, 14]:
-                    if len(df) > window:
-                        df[f'Importance_MA_{window}'] = df['day_importance_score'].rolling(window=window).mean()
-                
                 # FDA event flags
-                df['High_Importance_Day'] = (df['day_importance_score'] > 20).astype(int)
-                df['Medium_Importance_Day'] = ((df['day_importance_score'] > 10) & (df['day_importance_score'] <= 20)).astype(int)
-                df['FDA_Event_Week'] = df['day_importance_score'].rolling(window=7).max()
+                df['Major_FDA_Event'] = (df['day_importance_score'] > 25).astype(int)
+                df['Minor_FDA_Event'] = ((df['day_importance_score'] > 10) & (df['day_importance_score'] <= 25)).astype(int)
+                
+                # Days since FDA event
+                fda_events = df['day_importance_score'] > 15
+                df['Days_Since_FDA'] = 0
+                
+                days_counter = 0
+                for i in range(len(df)):
+                    if fda_events.iloc[i]:
+                        days_counter = 0
+                    else:
+                        days_counter += 1
+                    df.loc[i, 'Days_Since_FDA'] = min(days_counter, 30)  # Cap at 30
+            
+            # === MARKET TIMING FEATURES ===
+            df['Day_of_Week'] = df['Date'].dt.dayofweek
+            df['Is_Monday'] = (df['Day_of_Week'] == 0).astype(int)
+            df['Is_Friday'] = (df['Day_of_Week'] == 4).astype(int)
+            df['Month'] = df['Date'].dt.month
+            df['Is_Earnings_Month'] = df['Month'].isin([1, 4, 7, 10]).astype(int)
+            
+            # === TECHNICAL INDICATORS (IF AVAILABLE) ===
+            technical_cols = ['RSI', 'MACD', 'BB_Upper', 'BB_Lower']
+            for col in technical_cols:
+                if col in df.columns:
+                    if col == 'RSI':
+                        df['RSI_Oversold'] = (df[col] < 30).astype(int)
+                        df['RSI_Overbought'] = (df[col] > 70).astype(int)
+                    elif col == 'MACD':
+                        df['MACD_Positive'] = (df[col] > 0).astype(int)
             
             # === INTERACTION FEATURES ===
-            # Sentiment-Price interactions
-            if 'avg_sentiment' in df.columns and 'Close' in df.columns:
-                df['Sentiment_Price_Interaction'] = df['avg_sentiment'] * df['Price_Return_1D']
+            # Sentiment + Volume (strong signal)
+            if 'Strong_Sentiment' in df.columns and 'High_Volume' in df.columns:
+                df['Sentiment_Volume_Signal'] = df['Strong_Sentiment'] * df['High_Volume']
             
-            # Volume-Sentiment interactions
-            if 'Volume' in df.columns and 'avg_sentiment' in df.columns:
-                df['Volume_Sentiment_Interaction'] = df['Volume_Ratio_5'] * df['avg_sentiment']
+            # FDA + Sentiment
+            if 'Major_FDA_Event' in df.columns and 'avg_sentiment' in df.columns:
+                df['FDA_Sentiment_Signal'] = df['Major_FDA_Event'] * df['avg_sentiment']
             
-            # === LAG FEATURES ===
-            # Important lag features based on your data
-            lag_features = []
+            # === REALISTIC TARGETS ===
             if 'Close' in df.columns:
-                lag_features.append('Close')
-            if 'avg_sentiment' in df.columns:
-                lag_features.append('avg_sentiment')
-            if 'weighted_avg_sentiment' in df.columns:
-                lag_features.append('weighted_avg_sentiment')
-            if 'news_count' in df.columns:
-                lag_features.append('news_count')
-            if 'day_importance_score' in df.columns:
-                lag_features.append('day_importance_score')
+                # Direction prediction (classification) - much more achievable
+                df['Next_Day_Up'] = (df['Close'].shift(-1) > df['Close']).astype(int)
+                df['Next_3Day_Up'] = (df['Close'].shift(-3) > df['Close']).astype(int)
+                
+                # Significant move prediction (classification)
+                returns = df['Close'].pct_change().shift(-1)
+                threshold = returns.std() * 0.5  # Half standard deviation
+                df['Next_Day_Significant_Up'] = (returns > threshold).astype(int)
+                df['Next_Day_Significant_Down'] = (returns < -threshold).astype(int)
+                df['Next_Day_Significant_Move'] = ((np.abs(returns) > threshold)).astype(int)
+                
+                # Return magnitude for significant moves only
+                df['Next_Day_Return_Clean'] = np.where(
+                    np.abs(returns) > threshold, returns, 0
+                )
             
-            for feature in lag_features:
-                for lag in [1, 2, 3, 5]:
-                    df[f'{feature}_lag{lag}'] = df[feature].shift(lag)
-            
-            # === DATE FEATURES ===
-            df['Day_of_Week'] = df['Date'].dt.dayofweek
-            df['Month'] = df['Date'].dt.month
-            df['Quarter'] = df['Date'].dt.quarter
-            df['Is_Monday'] = (df['Date'].dt.dayofweek == 0).astype(int)
-            df['Is_Friday'] = (df['Date'].dt.dayofweek == 4).astype(int)
-            df['Is_Month_End'] = df['Date'].dt.is_month_end.astype(int)
-            df['Is_Quarter_End'] = df['Date'].dt.is_quarter_end.astype(int)
-            
-            # === MARKET CONTEXT FEATURES ===
-            # Use benchmark data if available
-            if 'NIFTY50_Return' in df.columns and 'Daily_Return' in df.columns:
-                df['Market_Relative_Performance'] = df['Daily_Return'] - df['NIFTY50_Return']
-                # Rolling beta calculation
-                window = 60
-                if len(df) > window:
-                    df['Market_Beta'] = df['Daily_Return'].rolling(window=window).cov(df['NIFTY50_Return']) / (df['NIFTY50_Return'].rolling(window=window).var() + 0.0001)
-            
-            # === TARGET VARIABLES ===
-            # Create multiple target options
-            if 'Close' in df.columns:
-                # Next day return (main target)
-                df['Next_Day_Return'] = df['Close'].pct_change().shift(-1)
-                # Next day close price
-                df['Next_Day_Close'] = df['Close'].shift(-1)
-                # Future returns
-                df['Next_3Day_Return'] = df['Close'].pct_change(3).shift(-3)
-                df['Next_5Day_Return'] = df['Close'].pct_change(5).shift(-5)
-            elif 'Daily_Return' in df.columns:
-                # Fallback to daily return
-                df['Next_Day_Return'] = df['Daily_Return'].shift(-1)
-            
-            logger.info(f"Feature engineering completed. Total features: {len(df.columns)}")
-            
-            # Log feature categories
-            feature_categories = {
-                'Price': [col for col in df.columns if 'Price' in col or 'Close' in col],
-                'Technical': [col for col in df.columns if any(tech in col for tech in ['RSI', 'MACD', 'MA_', 'BB_'])],
-                'Volume': [col for col in df.columns if 'Volume' in col],
-                'Sentiment': [col for col in df.columns if 'Sentiment' in col],
-                'News': [col for col in df.columns if 'News' in col or 'Drug' in col],
-                'FDA': [col for col in df.columns if 'Importance' in col or col.startswith('has_')],
-                'Date': [col for col in df.columns if any(date_feat in col for date_feat in ['Day_', 'Month', 'Quarter', 'Is_'])],
-                'Lag': [col for col in df.columns if 'lag' in col]
-            }
-            
-            for category, features in feature_categories.items():
-                if features:
-                    logger.info(f"{category} features ({len(features)}): {features[:3]}...")
-            
+            logger.info(f"Realistic feature engineering completed. Total features: {len(df.columns)}")
             return df
             
         except Exception as e:
-            logger.error(f"Error in feature engineering: {str(e)}")
+            logger.error(f"Error in realistic feature engineering: {str(e)}")
             raise
     
-    def prepare_model_data(self, df):
-        """Prepare data for model training with proper validation"""
-        logger.info("Preparing data for model training...")
+    def select_predictive_features(self, X, y, target_type, max_features=25):
+        """Select most predictive features for the specific target"""
+        logger.info(f"Selecting predictive features for {target_type}...")
         
         try:
-            # Select target variable
-            target_candidates = ['Next_Day_Return', 'Daily_Return']
-            target_column = None
-            
-            for candidate in target_candidates:
-                if candidate in df.columns:
-                    valid_targets = df[candidate].dropna()
-                    if len(valid_targets) > 100:  # Need sufficient data
-                        target_column = candidate
-                        break
-            
-            if target_column is None:
-                raise ValueError("No suitable target variable found with sufficient data")
-            
-            logger.info(f"Using target variable: {target_column}")
-            
-            # Remove rows where target is NaN
-            df_clean = df.dropna(subset=[target_column]).copy()
-            logger.info(f"Clean dataset after removing NaN targets: {len(df_clean)} records")
-            
-            if len(df_clean) < 100:
-                raise ValueError(f"Insufficient clean data: {len(df_clean)} records")
-            
-            # Define columns to exclude from features
-            exclude_columns = {
-                'Date', 'date', 'datetime',  # Date columns
-                'Next_Day_Return', 'Next_Day_Close', 'Next_3Day_Return', 'Next_5Day_Return',  # Target variables
-                'Symbol', 'Company', 'Type', 'Source',  # Metadata
-                'fda_milestones', 'market_impacts',  # Text columns
-            }
-            
-            # Select feature columns
-            all_columns = set(df_clean.columns)
-            feature_columns = list(all_columns - exclude_columns)
-            
-            # Remove any columns that are all NaN or have too many NaN values
-            final_features = []
-            for col in feature_columns:
-                if col in df_clean.columns:
-                    non_nan_count = df_clean[col].count()
-                    if non_nan_count > len(df_clean) * 0.5:  # At least 50% non-NaN
-                        final_features.append(col)
-                    else:
-                        logger.warning(f"Excluding {col} - too many NaN values ({non_nan_count}/{len(df_clean)})")
-            
-            logger.info(f"Selected {len(final_features)} features for training")
-            
-            # Prepare feature matrix X
-            X = df_clean[final_features].copy()
-            
-            # Fill remaining NaN values
+            # Remove low-quality features
+            good_features = []
             for col in X.columns:
-                if X[col].dtype in ['int64', 'float64']:
-                    # Fill numeric columns with median
-                    median_val = X[col].median()
-                    if pd.isna(median_val):
-                        median_val = 0
-                    X[col] = X[col].fillna(median_val)
+                missing_pct = X[col].isnull().sum() / len(X)
+                unique_count = X[col].nunique()
+                
+                if missing_pct < 0.5 and unique_count > 1:
+                    good_features.append(col)
+            
+            X_filtered = X[good_features].copy()
+            
+            # Fill missing values
+            for col in X_filtered.columns:
+                if X_filtered[col].dtype in ['int64', 'float64']:
+                    X_filtered[col] = X_filtered[col].fillna(X_filtered[col].median())
                 else:
-                    # Fill non-numeric columns with mode or 0
-                    mode_vals = X[col].mode()
-                    fill_val = mode_vals[0] if len(mode_vals) > 0 else 0
-                    X[col] = X[col].fillna(fill_val)
+                    X_filtered[col] = X_filtered[col].fillna(0)
             
-            # Prepare target vector y
-            y = df_clean[target_column].values
-            
-            # Final validation
-            assert len(X) == len(y), "Feature matrix and target vector length mismatch"
-            assert not np.any(pd.isna(y)), "Target vector contains NaN values"
-            assert not X.isnull().any().any(), "Feature matrix contains NaN values"
-            
-            logger.info(f"Model data prepared successfully:")
-            logger.info(f"  Samples: {len(X)}")
-            logger.info(f"  Features: {len(X.columns)}")
-            logger.info(f"  Target: {target_column}")
-            logger.info(f"  Target range: {y.min():.4f} to {y.max():.4f}")
-            
-            # Store feature names for later use
-            self.feature_names = list(X.columns)
-            
-            return X, y, target_column
-            
+            # Feature selection based on target type
+            if target_type == 'classification':
+                if len(np.unique(y)) > 1:  # Check if we have both classes
+                    selector = SelectKBest(score_func=f_classif, k=min(max_features, len(good_features)))
+                    X_selected = selector.fit_transform(X_filtered, y)
+                    selected_mask = selector.get_support()
+                    selected_features = [feat for feat, selected in zip(good_features, selected_mask) if selected]
+                    
+                    # Log top features
+                    feature_scores = dict(zip(good_features, selector.scores_))
+                    top_features = sorted(feature_scores.items(), key=lambda x: x[1], reverse=True)[:10]
+                    logger.info(f"Top features: {[f[0] for f in top_features]}")
+                    
+                    return X_filtered[selected_features], selected_features
+                else:
+                    logger.warning("Only one class in target, using all features")
+                    return X_filtered, good_features
+            else:
+                # For regression, use correlation-based selection
+                correlations = []
+                for col in good_features:
+                    try:
+                        corr = np.corrcoef(X_filtered[col], y)[0, 1]
+                        correlations.append((col, abs(corr) if not np.isnan(corr) else 0))
+                    except:
+                        correlations.append((col, 0))
+                
+                # Sort by correlation and take top features
+                correlations.sort(key=lambda x: x[1], reverse=True)
+                selected_features = [feat for feat, _ in correlations[:max_features]]
+                
+                logger.info(f"Top correlated features: {[f for f, _ in correlations[:10]]}")
+                return X_filtered[selected_features], selected_features
+                
         except Exception as e:
-            logger.error(f"Error preparing model data: {str(e)}")
-            raise
+            logger.error(f"Error in feature selection: {str(e)}")
+            return X, list(X.columns)
     
-    def create_train_val_test_splits(self, X, y):
-        """Create time-aware train/validation/test splits"""
-        logger.info("Creating train/validation/test splits...")
+    def prepare_realistic_targets(self, df):
+        """Prepare realistic, achievable targets"""
+        logger.info("Preparing realistic, achievable targets...")
         
         try:
-            # Time series split (important for financial data)
-            n_samples = len(X)
+            # Available target options (in order of preference)
+            target_options = [
+                ('Next_Day_Up', 'classification', 'Direction (1-day)'),
+                ('Next_Day_Significant_Move', 'classification', 'Significant Move'),
+                ('Next_3Day_Up', 'classification', 'Direction (3-day)'),
+                ('Next_Day_Significant_Up', 'classification', 'Significant Up Move'),
+            ]
             
-            # Use 60% for training, 20% for validation, 20% for testing
-            train_end = int(n_samples * 0.6)
-            val_end = int(n_samples * 0.8)
+            # Find the best available target
+            for target_col, target_type, description in target_options:
+                if target_col in df.columns:
+                    df_clean = df.dropna(subset=[target_col]).copy()
+                    
+                    if len(df_clean) > 500:  # Need sufficient data
+                        y = df_clean[target_col].values
+                        
+                        # Check class balance for classification
+                        if target_type == 'classification':
+                            class_counts = np.bincount(y.astype(int))
+                            minority_class_pct = min(class_counts) / sum(class_counts) * 100
+                            
+                            if minority_class_pct >= 20:  # At least 20% minority class
+                                logger.info(f"Selected target: {target_col} ({description})")
+                                logger.info(f"Class distribution: {dict(zip(range(len(class_counts)), class_counts))}")
+                                logger.info(f"Minority class: {minority_class_pct:.1f}%")
+                                
+                                return df_clean, target_col, target_type, description
             
-            X_train = X.iloc[:train_end].copy()
-            X_val = X.iloc[train_end:val_end].copy()
-            X_test = X.iloc[val_end:].copy()
+            # Fallback: create a balanced direction target
+            logger.warning("Creating fallback balanced direction target...")
+            if 'Close' in df.columns:
+                returns = df['Close'].pct_change().shift(-1)
+                # Use median split for balanced classes
+                median_return = returns.median()
+                df['Next_Day_Above_Median'] = (returns > median_return).astype(int)
+                
+                df_clean = df.dropna(subset=['Next_Day_Above_Median']).copy()
+                return df_clean, 'Next_Day_Above_Median', 'classification', 'Above Median Return'
             
-            y_train = y[:train_end]
-            y_val = y[train_end:val_end]
-            y_test = y[val_end:]
-            
-            logger.info(f"Data splits created:")
-            logger.info(f"  Training: {len(X_train)} samples ({len(X_train)/n_samples*100:.1f}%)")
-            logger.info(f"  Validation: {len(X_val)} samples ({len(X_val)/n_samples*100:.1f}%)")
-            logger.info(f"  Test: {len(X_test)} samples ({len(X_test)/n_samples*100:.1f}%)")
-            
-            return X_train, X_val, X_test, y_train, y_val, y_test
+            raise ValueError("Cannot create any suitable target variable")
             
         except Exception as e:
-            logger.error(f"Error creating splits: {str(e)}")
+            logger.error(f"Error preparing targets: {str(e)}")
             raise
     
-    def train_ml_models(self, X_train, X_val, X_test, y_train, y_val, y_test):
-        """Train multiple machine learning models"""
-        logger.info("Training machine learning models...")
+    def train_focused_models(self, X_train, X_val, X_test, y_train, y_val, y_test, target_type):
+        """Train focused models for the specific target type"""
+        logger.info(f"Training focused models for {target_type}...")
         
-        # Prepare scaled data for models that need it
+        # Scale features
         scaler = StandardScaler()
         X_train_scaled = scaler.fit_transform(X_train)
         X_val_scaled = scaler.transform(X_val)
@@ -461,66 +359,56 @@ class BioconModelTrainer:
         
         self.scalers['standard'] = scaler
         
-        # Define models to train
-        models_config = {
-            'Linear_Regression': {
-                'model': LinearRegression(),
-                'use_scaled': True
-            },
-            'Ridge_Regression': {
-                'model': Ridge(alpha=1.0, random_state=42),
-                'use_scaled': True
-            },
-            'Lasso_Regression': {
-                'model': Lasso(alpha=0.1, random_state=42, max_iter=2000),
-                'use_scaled': True
-            },
-            'Random_Forest': {
-                'model': RandomForestRegressor(
-                    n_estimators=100, 
-                    max_depth=10, 
-                    random_state=42,
-                    n_jobs=-1
-                ),
-                'use_scaled': False
-            },
-            'Gradient_Boosting': {
-                'model': GradientBoostingRegressor(
-                    n_estimators=100,
-                    max_depth=6,
-                    learning_rate=0.1,
-                    random_state=42
-                ),
-                'use_scaled': False
-            },
-            'XGBoost': {
-                'model': xgb.XGBRegressor(
-                    n_estimators=100,
-                    max_depth=6,
-                    learning_rate=0.1,
-                    random_state=42,
-                    n_jobs=-1
-                ),
-                'use_scaled': False
-            },
-            'LightGBM': {
-                'model': lgb.LGBMRegressor(
-                    n_estimators=100,
-                    max_depth=6,
-                    learning_rate=0.1,
-                    random_state=42,
-                    n_jobs=-1,
-                    verbose=-1
-                ),
-                'use_scaled': False
-            },
-            'SVR': {
-                'model': SVR(kernel='rbf', C=1.0, gamma='scale'),
-                'use_scaled': True
+        if target_type == 'classification':
+            models_config = {
+                'Logistic_Regression': {
+                    'model': LogisticRegression(
+                        random_state=42, max_iter=1000, 
+                        class_weight='balanced', C=1.0
+                    ),
+                    'use_scaled': True
+                },
+                'Random_Forest': {
+                    'model': RandomForestClassifier(
+                        n_estimators=100, max_depth=8, random_state=42,
+                        class_weight='balanced', n_jobs=-1,
+                        min_samples_split=20, min_samples_leaf=10
+                    ),
+                    'use_scaled': False
+                },
+                'LightGBM': {
+                    'model': lgb.LGBMClassifier(
+                        n_estimators=100, max_depth=6, learning_rate=0.1,
+                        random_state=42, n_jobs=-1, verbose=-1,
+                        class_weight='balanced', min_child_samples=20
+                    ),
+                    'use_scaled': False
+                },
+                'XGBoost': {
+                    'model': xgb.XGBClassifier(
+                        n_estimators=100, max_depth=6, learning_rate=0.1,
+                        random_state=42, n_jobs=-1,
+                        scale_pos_weight=1  # Will adjust if needed
+                    ),
+                    'use_scaled': False
+                }
             }
-        }
+        else:
+            # Regression models (if needed)
+            models_config = {
+                'ElasticNet': {
+                    'model': ElasticNet(alpha=0.01, l1_ratio=0.5, random_state=42),
+                    'use_scaled': True
+                },
+                'Random_Forest': {
+                    'model': RandomForestRegressor(
+                        n_estimators=100, max_depth=8, random_state=42, n_jobs=-1
+                    ),
+                    'use_scaled': False
+                }
+            }
         
-        # Train each model
+        # Train models
         for model_name, config in models_config.items():
             try:
                 logger.info(f"Training {model_name}...")
@@ -528,55 +416,75 @@ class BioconModelTrainer:
                 model = config['model']
                 use_scaled = config['use_scaled']
                 
-                # Select appropriate data
+                # Select data
                 if use_scaled:
                     X_tr, X_v, X_te = X_train_scaled, X_val_scaled, X_test_scaled
                 else:
                     X_tr, X_v, X_te = X_train.values, X_val.values, X_test.values
                 
-                # Train model
+                # Train
                 model.fit(X_tr, y_train)
                 
-                # Make predictions
+                # Predict
                 y_val_pred = model.predict(X_v)
                 y_test_pred = model.predict(X_te)
                 
                 # Calculate metrics
-                val_mse = mean_squared_error(y_val, y_val_pred)
-                val_mae = mean_absolute_error(y_val, y_val_pred)
-                val_r2 = r2_score(y_val, y_val_pred)
+                if target_type == 'classification':
+                    val_accuracy = accuracy_score(y_val, y_val_pred)
+                    test_accuracy = accuracy_score(y_test, y_test_pred)
+                    
+                    # AUC if binary classification
+                    try:
+                        if hasattr(model, 'predict_proba'):
+                            y_val_proba = model.predict_proba(X_v)[:, 1]
+                            y_test_proba = model.predict_proba(X_te)[:, 1]
+                            val_auc = roc_auc_score(y_val, y_val_proba)
+                            test_auc = roc_auc_score(y_test, y_test_proba)
+                        else:
+                            val_auc = test_auc = 0.5
+                    except:
+                        val_auc = test_auc = 0.5
+                    
+                    metrics = {
+                        'val_accuracy': val_accuracy,
+                        'test_accuracy': test_accuracy,
+                        'val_auc': val_auc,
+                        'test_auc': test_auc,
+                        'primary_metric': val_accuracy
+                    }
+                    
+                    logger.info(f"✓ {model_name} - Accuracy: {val_accuracy:.3f}, AUC: {val_auc:.3f}")
+                else:
+                    val_r2 = r2_score(y_val, y_val_pred)
+                    test_r2 = r2_score(y_test, y_test_pred)
+                    val_mse = mean_squared_error(y_val, y_val_pred)
+                    test_mse = mean_squared_error(y_test, y_test_pred)
+                    
+                    metrics = {
+                        'val_r2': val_r2,
+                        'test_r2': test_r2,
+                        'val_rmse': np.sqrt(val_mse),
+                        'test_rmse': np.sqrt(test_mse),
+                        'primary_metric': val_r2
+                    }
+                    
+                    logger.info(f"✓ {model_name} - R²: {val_r2:.3f}")
                 
-                test_mse = mean_squared_error(y_test, y_test_pred)
-                test_mae = mean_absolute_error(y_test, y_test_pred)
-                test_r2 = r2_score(y_test, y_test_pred)
-                
-                # Store model and metrics
+                # Store results
                 self.models[model_name] = model
-                self.performance_metrics[model_name] = {
-                    'val_mse': val_mse,
-                    'val_mae': val_mae,
-                    'val_r2': val_r2,
-                    'val_rmse': np.sqrt(val_mse),
-                    'test_mse': test_mse,
-                    'test_mae': test_mae,
-                    'test_r2': test_r2,
-                    'test_rmse': np.sqrt(test_mse),
-                    'use_scaled': use_scaled
-                }
+                self.performance_metrics[model_name] = metrics
                 
-                # Store feature importance if available
+                # Feature importance
                 if hasattr(model, 'feature_importances_'):
                     self.feature_importance[model_name] = dict(zip(
-                        self.feature_names, 
-                        model.feature_importances_
+                        self.feature_names, model.feature_importances_
                     ))
                 elif hasattr(model, 'coef_'):
+                    coef = model.coef_[0] if len(model.coef_.shape) > 1 else model.coef_
                     self.feature_importance[model_name] = dict(zip(
-                        self.feature_names, 
-                        np.abs(model.coef_)
+                        self.feature_names, np.abs(coef)
                     ))
-                
-                logger.info(f"✓ {model_name} - Val R²: {val_r2:.4f}, Test R²: {test_r2:.4f}")
                 
             except Exception as e:
                 logger.error(f"Error training {model_name}: {str(e)}")
@@ -585,69 +493,46 @@ class BioconModelTrainer:
         logger.info(f"Successfully trained {len(self.models)} models")
     
     def select_best_model(self):
-        """Select the best performing model"""
-        logger.info("Selecting best model...")
-        
+        """Select best model"""
         if not self.performance_metrics:
-            logger.error("No models trained successfully")
             return
         
-        # Select best model based on validation R² score
-        best_r2 = -float('inf')
+        best_score = -float('inf')
         best_model_name = None
         
         for model_name, metrics in self.performance_metrics.items():
-            val_r2 = metrics['val_r2']
-            if val_r2 > best_r2:
-                best_r2 = val_r2
+            score = metrics.get('primary_metric', -float('inf'))
+            if score > best_score:
+                best_score = score
                 best_model_name = model_name
         
         self.best_model_name = best_model_name
-        self.best_model = self.models[best_model_name]
+        self.best_model = self.models.get(best_model_name)
         
-        logger.info(f"Best model selected: {best_model_name} (Validation R²: {best_r2:.4f})")
+        logger.info(f"Best model: {best_model_name} (Score: {best_score:.3f})")
     
     def save_models_and_results(self):
-        """Save trained models and results"""
-        logger.info("Saving models and results...")
-        
+        """Save models and results"""
         try:
-            # Save individual models
+            # Save models
             for model_name, model in self.models.items():
-                model_path = f'models/{model_name.lower()}_model.pkl'
-                with open(model_path, 'wb') as f:
+                with open(f'models/{model_name.lower()}_model.pkl', 'wb') as f:
                     pickle.dump(model, f)
-                logger.info(f"✓ Saved {model_name} to {model_path}")
             
-            # Save the best model as final_model.pkl
-            if self.best_model is not None:
+            # Save best model
+            if self.best_model:
                 with open('models/final_model.pkl', 'wb') as f:
                     pickle.dump(self.best_model, f)
-                logger.info(f"✓ Saved best model ({self.best_model_name}) as final_model.pkl")
             
-            # Save scalers
+            # Save scalers and metadata
             with open('models/scalers.pkl', 'wb') as f:
                 pickle.dump(self.scalers, f)
-            logger.info("✓ Saved scalers")
             
-            # Save feature names
             with open('models/feature_names.pkl', 'wb') as f:
                 pickle.dump(self.feature_names, f)
-            logger.info("✓ Saved feature names")
             
-            # Save model metadata
-            model_metadata = {
-                'best_model_name': self.best_model_name,
-                'n_features': len(self.feature_names),
-                'training_date': datetime.now().isoformat()
-            }
-            with open('models/model_metadata.pkl', 'wb') as f:
-                pickle.dump(model_metadata, f)
-            
-            # Save performance metrics
-            performance_df = pd.DataFrame(self.performance_metrics).T
-            performance_df.to_csv('results/model_performance.csv')
-            logger.info("✓ Saved model performance metrics")
+            # Save performance
+            pd.DataFrame(self.performance_metrics).T.to_csv('results/model_performance.csv')
             
             # Save feature importance
             if self.feature_importance:
@@ -659,146 +544,164 @@ class BioconModelTrainer:
                             'feature': feature,
                             'importance': importance
                         })
-                
-                importance_df = pd.DataFrame(importance_data)
-                importance_df.to_csv('results/feature_importance.csv', index=False)
-                logger.info("✓ Saved feature importance")
+                pd.DataFrame(importance_data).to_csv('results/feature_importance.csv', index=False)
             
             return True
-            
         except Exception as e:
-            logger.error(f"Error saving models: {str(e)}")
+            logger.error(f"Error saving: {str(e)}")
             return False
     
-    def print_training_summary(self):
-        """Print comprehensive training summary"""
-        print("\n" + "="*80)
-        print("BIOCON MODEL TRAINING SUMMARY (DAY 2)")
-        print("="*80)
+    def print_realistic_summary(self, target_description, target_type):
+        """Print realistic training summary"""
+        print("\n" + "="*90)
+        print("REALISTIC BIOCON MODEL TRAINING SUMMARY (FINAL FIX)")
+        print("="*90)
+        
+        print(f"🎯 TARGET: {target_description} ({target_type})")
+        print(f"✅ REALISTIC APPROACH:")
+        print(f"   • Focus on achievable prediction tasks")
+        print(f"   • Balanced classes for classification")
+        print(f"   • Domain-specific feature engineering")
+        print(f"   • Time-series aware validation")
         
         if not self.performance_metrics:
             print("❌ No models trained successfully")
             return
         
-        print(f"✓ Models Trained: {len(self.models)}")
-        print(f"✓ Features Used: {len(self.feature_names)}")
-        print(f"✓ Best Model: {self.best_model_name}")
+        print(f"\n📊 MODEL PERFORMANCE:")
+        if target_type == 'classification':
+            print(f"{'Model':<20} {'Accuracy':<12} {'AUC':<12} {'Primary':<12}")
+            print("-" * 60)
+            
+            sorted_models = sorted(
+                self.performance_metrics.items(),
+                key=lambda x: x[1].get('primary_metric', 0),
+                reverse=True
+            )
+            
+            for model_name, metrics in sorted_models:
+                acc = metrics.get('val_accuracy', 0)
+                auc = metrics.get('val_auc', 0.5)
+                primary = metrics.get('primary_metric', 0)
+                print(f"{model_name:<20} {acc:<12.3f} {auc:<12.3f} {primary:<12.3f}")
+        else:
+            print(f"{'Model':<20} {'R²':<12} {'RMSE':<12} {'Primary':<12}")
+            print("-" * 60)
+            
+            for model_name, metrics in self.performance_metrics.items():
+                r2 = metrics.get('val_r2', 0)
+                rmse = metrics.get('val_rmse', 0)
+                primary = metrics.get('primary_metric', 0)
+                print(f"{model_name:<20} {r2:<12.3f} {rmse:<12.6f} {primary:<12.3f}")
         
-        print(f"\n📊 MODEL PERFORMANCE COMPARISON:")
-        print(f"{'Model':<20} {'Val RMSE':<12} {'Val R²':<10} {'Test RMSE':<12} {'Test R²':<10}")
-        print("-" * 70)
-        
-        # Sort models by validation R²
-        sorted_models = sorted(
-            self.performance_metrics.items(),
-            key=lambda x: x[1]['val_r2'],
-            reverse=True
-        )
-        
-        for model_name, metrics in sorted_models:
-            print(f"{model_name:<20} {metrics['val_rmse']:<12.4f} {metrics['val_r2']:<10.4f} "
-                  f"{metrics['test_rmse']:<12.4f} {metrics['test_r2']:<10.4f}")
-        
-        # Show top features for best model
+        # Top features
         if self.best_model_name in self.feature_importance:
-            print(f"\n🎯 TOP 10 MOST IMPORTANT FEATURES ({self.best_model_name}):")
+            print(f"\n🎯 TOP 10 PREDICTIVE FEATURES ({self.best_model_name}):")
             importance = self.feature_importance[self.best_model_name]
             top_features = sorted(importance.items(), key=lambda x: x[1], reverse=True)[:10]
+            
             for i, (feature, score) in enumerate(top_features, 1):
                 print(f"  {i:2d}. {feature:<30} {score:.4f}")
         
-        print(f"\n📁 FILES CREATED:")
-        print(f"  ✓ models/final_model.pkl           - Best performing model")
-        print(f"  ✓ models/scalers.pkl              - Data preprocessing scalers")
-        print(f"  ✓ models/feature_names.pkl        - Feature names list")
-        print(f"  ✓ models/model_metadata.pkl       - Training metadata")
-        print(f"  ✓ results/model_performance.csv   - All model metrics")
-        print(f"  ✓ results/feature_importance.csv  - Feature importance scores")
-        
-        print(f"\n🎯 NEXT STEPS:")
-        print(f"  📈 Day 3: Run model testing and backtesting")
-        print(f"  🔮 Day 4: Generate future predictions")
-        print(f"  📊 Analysis: Review feature importance and model performance")
-        
-        print("="*80)
+        print(f"\n🚀 READY FOR DAY 3 TESTING!")
+        print("="*90)
     
     def execute(self):
-        """Execute the complete Day 2 training pipeline"""
+        """Execute realistic training pipeline"""
         try:
             logger.info("="*60)
-            logger.info("STARTING DAY 2: BIOCON MODEL TRAINING")
+            logger.info("STARTING REALISTIC BIOCON TRAINING (FINAL FIX)")
             logger.info("="*60)
             
-            # Step 1: Load and validate data
+            # Load data
             stock_df, sentiment_df = self.load_and_validate_data()
             
-            # Step 2: Combine and clean data
-            combined_df = self.combine_and_clean_data(stock_df, sentiment_df)
+            # Merge data
+            combined_df = self.smart_data_merge(stock_df, sentiment_df)
             
-            # Step 3: Engineer comprehensive features
-            df_with_features = self.engineer_comprehensive_features(combined_df)
+            # Create realistic features
+            df_with_features = self.create_realistic_features(combined_df)
             
-            # Step 4: Prepare model data
-            X, y, target_column = self.prepare_model_data(df_with_features)
+            # Save combined data
+            df_with_features.to_csv('data/combined_data.csv', index=False)
+            logger.info("✅ Combined data saved")
             
-            # Step 5: Create train/val/test splits
-            X_train, X_val, X_test, y_train, y_val, y_test = self.create_train_val_test_splits(X, y)
+            # Prepare realistic targets
+            df_clean, target_col, target_type, target_description = self.prepare_realistic_targets(df_with_features)
             
-            # Step 6: Train ML models
-            self.train_ml_models(X_train, X_val, X_test, y_train, y_val, y_test)
+            # Prepare features and target
+            exclude_cols = {
+                'Date', 'Next_Day_Up', 'Next_3Day_Up', 'Next_Day_Significant_Up',
+                'Next_Day_Significant_Down', 'Next_Day_Significant_Move',
+                'Next_Day_Above_Median', 'Next_Day_Return_Clean'
+            }
             
-            # Step 7: Select best model
+            feature_cols = [col for col in df_clean.columns if col not in exclude_cols]
+            X_raw = df_clean[feature_cols].copy()
+            y = df_clean[target_col].values
+            
+            # Feature selection
+            X_selected, selected_features = self.select_predictive_features(X_raw, y, target_type)
+            self.feature_names = selected_features
+            
+            # Time-series split
+            n_samples = len(X_selected)
+            train_end = int(n_samples * 0.7)
+            val_end = int(n_samples * 0.85)
+            
+            X_train = X_selected.iloc[:train_end]
+            X_val = X_selected.iloc[train_end:val_end]
+            X_test = X_selected.iloc[val_end:]
+            
+            y_train = y[:train_end]
+            y_val = y[train_end:val_end]
+            y_test = y[val_end:]
+            
+            logger.info(f"Data splits: Train={len(X_train)}, Val={len(X_val)}, Test={len(X_test)}")
+            
+            # Train focused models
+            self.train_focused_models(X_train, X_val, X_test, y_train, y_val, y_test, target_type)
+            
+            # Select best model
             self.select_best_model()
             
-            # Step 8: Save models and results
-            success = self.save_models_and_results()
+            # Save results
+            save_success = self.save_models_and_results()
             
-            # Step 9: Print summary
-            self.print_training_summary()
+            # Print summary
+            self.print_realistic_summary(target_description, target_type)
             
-            if success:
-                logger.info("Day 2 model training completed successfully!")
-                return True
-            else:
-                logger.error("Day 2 model training completed with errors!")
-                return False
-                
+            return save_success and len(self.models) > 0
+            
         except Exception as e:
-            logger.error(f"Day 2 training pipeline failed: {str(e)}")
-            print(f"\n💥 ERROR: {str(e)}")
-            print("\n🔧 TROUBLESHOOTING:")
-            print("  1. Ensure Day 1 data collection completed successfully")
-            print("  2. Check that data/stock_data.csv and data/daily_sentiment.csv exist")
-            print("  3. Verify data files have sufficient records (>100 rows)")
-            print("  4. Check logs for detailed error information")
+            logger.error(f"Realistic training failed: {str(e)}")
+            print(f"Error: {str(e)}")
             return False
 
 def main():
-    """Main execution function for Day 2"""
-    print("🚀 BIOCON FDA PROJECT - DAY 2: MODEL TRAINING")
-    print("Combining stock data with news sentiment for ML prediction models")
-    print("Training multiple algorithms and selecting the best performer")
-    print("-" * 70)
+    """Main execution for realistic training"""
+    print("🚀 BIOCON FDA PROJECT - FINAL FIX: REALISTIC MODEL TRAINING")
+    print("🎯 REALISTIC APPROACH:")
+    print("   • Focus on direction prediction (classification)")
+    print("   • Balanced classes for better learning")
+    print("   • FDA event-focused features")
+    print("   • Achievable accuracy targets (>55%)")
+    print("   • Proper time-series validation")
+    print("-" * 80)
     
-    trainer = BioconModelTrainer()
+    trainer = RealisticBioconModelTrainer()
     success = trainer.execute()
     
     if success:
-        print("\n🎉 DAY 2 SUCCESS!")
-        print("✅ Multiple ML models trained and evaluated")
-        print("✅ Best model selected based on validation performance")
-        print("✅ Models and results saved for Day 3 testing")
-        print("\n📋 READY FOR DAY 3:")
-        print("  • Run: python code/4_test_model.py")
-        print("  • This will perform backtesting and generate predictions")
+        print("\n🎉 REALISTIC TRAINING SUCCESS!")
+        print("✅ Models trained on achievable prediction task")
+        print("✅ Should see accuracy > 55% (better than random)")
+        print("✅ FDA event features properly incorporated")
+        print("✅ Ready for realistic Day 3 testing")
+        print("\n🚀 NEXT: python code/4_test_model.py")
     else:
-        print("\n💥 DAY 2 FAILED!")
-        print("❌ Check the error messages above")
-        print("❌ Ensure Day 1 data collection completed first")
-        print("\n🔧 TROUBLESHOOTING:")
-        print("  • Run: python code/1_collect_stock_data.py")
-        print("  • Run: python code/2_collect_news_data.py")
-        print("  • Check data/ folder contains CSV files")
+        print("\n💥 TRAINING FAILED!")
+        print("Check error messages above")
     
     return success
 
