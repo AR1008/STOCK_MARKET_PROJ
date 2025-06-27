@@ -1,18 +1,19 @@
 """
-Configuration file for Biocon FDA Project
-Contains all settings, API keys, and parameters
+Advanced Configuration for Biocon FDA Project
+Comprehensive settings for ML pipeline with FDA milestone analysis
 """
 
 import os
 from datetime import datetime, timedelta
+from pathlib import Path
 
 # =============================================================================
 # PROJECT CONFIGURATION
 # =============================================================================
 
 PROJECT_NAME = "Biocon FDA Drug Journey Analysis"
-PROJECT_VERSION = "1.0"
-PROJECT_DESCRIPTION = "Stock price prediction using FDA milestones and news sentiment"
+PROJECT_VERSION = "2.0"
+PROJECT_DESCRIPTION = "Advanced ML pipeline for stock prediction using FDA milestones and financial NLP"
 
 # =============================================================================
 # DATA COLLECTION CONFIGURATION
@@ -20,7 +21,7 @@ PROJECT_DESCRIPTION = "Stock price prediction using FDA milestones and news sent
 
 # Date ranges
 DATA_START_DATE = "2015-01-01"
-DATA_END_DATE = "2025-06-26"  # Current date
+DATA_END_DATE = "2025-06-28"  # Current date
 FDA_FOCUS_START = "2017-01-01"  # When FDA application started
 
 # Company and Drug Information
@@ -30,7 +31,9 @@ COMPANY_INFO = {
     'sector': 'Pharmaceutical',
     'subsidiary_names': ['Biocon Biologics', 'Biocon Pharma'],
     'market_cap_category': 'Large Cap',
-    'exchange': 'NSE'
+    'exchange': 'NSE',
+    'bloomberg_ticker': 'BIOS:IN',
+    'reuters_ric': 'BIOS.NS'
 }
 
 DRUG_INFO = {
@@ -42,181 +45,160 @@ DRUG_INFO = {
     'application_year': 2017,
     'approval_year': 2021,
     'launch_year': 2021,
-    'therapeutic_area': 'Endocrinology'
+    'therapeutic_area': 'Endocrinology',
+    'competitor_drug': 'Lantus',
+    'nda_number': 'BLA125159',
+    'fda_orange_book_id': 'N021536'
 }
 
-# Stock data configuration
-STOCK_CONFIG = {
-    'symbols': {
-        'BIOCON': {
-            'primary': 'BIOCON.NS',
-            'alternatives': ['BIOCON.BO', '532523.BO'],
-            'name': 'Biocon Limited',
-            'type': 'stock'
+# =============================================================================
+# ADVANCED ML MODEL CONFIGURATION
+# =============================================================================
+
+# 1. News Sentiment Analysis Configuration
+SENTIMENT_CONFIG = {
+    'models': {
+        'finbert': {
+            'model_name': 'ProsusAI/finbert',
+            'task': 'financial-sentiment-analysis',
+            'max_length': 512,
+            'batch_size': 16
         },
-        'NIFTY50': {
-            'primary': '^NSEI',
-            'alternatives': ['NIFTY50.NS'],
-            'name': 'Nifty 50',
-            'type': 'index'
+        'distilbert': {
+            'model_name': 'distilbert-base-uncased-finetuned-sst-2-english',
+            'task': 'sentiment-analysis',
+            'max_length': 512,
+            'batch_size': 32
         },
-        'NIFTY_PHARMA': {
-            'primary': '^CNXPHARMA',
-            'alternatives': ['CNXPHARMA.NS', 'NIFTYPHARMA.NS'],
-            'name': 'Nifty Pharma',
-            'type': 'index'
+        'vader': {
+            'compound_threshold': {'positive': 0.05, 'negative': -0.05}
+        },
+        'textblob': {
+            'polarity_threshold': {'positive': 0.1, 'negative': -0.1}
         }
     },
-    'technical_indicators': {
-        'moving_averages': [20, 50, 200],
-        'rsi_period': 14,
-        'macd_fast': 12,
-        'macd_slow': 26,
-        'macd_signal': 9,
-        'bollinger_period': 20,
-        'bollinger_std': 2
+    'ensemble_weights': {
+        'finbert': 0.4,
+        'distilbert': 0.3,
+        'vader': 0.2,
+        'textblob': 0.1
     }
 }
 
-# News data configuration
-NEWS_CONFIG = {
-    'min_articles_threshold': 10,
-    'sentiment_sources': ['TextBlob', 'NLTK_VADER'],
-    'news_sources': [
-        'Google News',
-        'Yahoo Finance',
-        'Financial RSS Feeds'
-    ],
-    'search_delay': 1.5,  # seconds between searches
-    'max_articles_per_query': 100
-}
-
-# =============================================================================
-# API KEYS AND CREDENTIALS (Set as environment variables)
-# =============================================================================
-
-# Yahoo Finance (usually no API key needed)
-YAHOO_FINANCE_API_KEY = os.getenv('YAHOO_FINANCE_API_KEY', '')
-
-# News API (if using News API service)
-NEWS_API_KEY = os.getenv('NEWS_API_KEY', '')
-
-# Alpha Vantage (alternative stock data source)
-ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY', '')
-
-# Quandl (alternative financial data source)
-QUANDL_API_KEY = os.getenv('QUANDL_API_KEY', '')
-
-# =============================================================================
-# MODEL TRAINING CONFIGURATION
-# =============================================================================
-
-MODEL_CONFIG = {
-    'target_variable': 'Next_Day_Return',
-    'feature_selection': {
-        'method': 'SelectKBest',
-        'k': 50,  # Number of top features to select
-        'score_func': 'f_regression'
-    },
-    'train_validation_test_split': [0.6, 0.2, 0.2],  # 60% train, 20% val, 20% test
-    'cross_validation': {
-        'method': 'TimeSeriesSplit',
-        'n_splits': 5
-    },
-    'random_state': 42
-}
-
-# Traditional ML Models Configuration
-TRADITIONAL_MODELS = {
-    'Linear_Regression': {
-        'params': {}
-    },
-    'Ridge_Regression': {
-        'params': {
-            'alpha': [0.1, 1.0, 10.0],
-            'solver': ['auto', 'svd', 'cholesky']
-        }
-    },
-    'Lasso_Regression': {
-        'params': {
-            'alpha': [0.001, 0.01, 0.1, 1.0],
-            'max_iter': [1000, 2000]
-        }
-    },
-    'Random_Forest': {
-        'params': {
-            'n_estimators': [50, 100, 200],
-            'max_depth': [5, 10, 15, None],
-            'min_samples_split': [2, 5, 10],
-            'min_samples_leaf': [1, 2, 4]
-        }
-    },
-    'Gradient_Boosting': {
-        'params': {
-            'n_estimators': [50, 100, 200],
-            'max_depth': [3, 5, 7],
-            'learning_rate': [0.01, 0.1, 0.2],
-            'subsample': [0.8, 0.9, 1.0]
-        }
-    },
-    'XGBoost': {
-        'params': {
-            'n_estimators': [50, 100, 200],
-            'max_depth': [3, 5, 7],
-            'learning_rate': [0.01, 0.1, 0.2],
-            'subsample': [0.8, 0.9, 1.0],
-            'colsample_bytree': [0.8, 0.9, 1.0]
-        }
-    },
-    'LightGBM': {
-        'params': {
-            'n_estimators': [50, 100, 200],
-            'max_depth': [3, 5, 7],
-            'learning_rate': [0.01, 0.1, 0.2],
-            'num_leaves': [20, 31, 50],
-            'subsample': [0.8, 0.9, 1.0]
-        }
-    },
-    'SVR': {
-        'params': {
-            'C': [0.1, 1.0, 10.0],
-            'gamma': ['scale', 'auto', 0.001, 0.01],
-            'kernel': ['rbf', 'poly']
-        }
-    }
-}
-
-# LSTM Model Configuration
+# 2. Time-Series Price Prediction Configuration
 LSTM_CONFIG = {
-    'sequence_length': 30,  # Number of days to look back
-    'layers': [
-        {'type': 'LSTM', 'units': 50, 'return_sequences': True, 'dropout': 0.2},
-        {'type': 'LSTM', 'units': 50, 'return_sequences': True, 'dropout': 0.2},
-        {'type': 'LSTM', 'units': 50, 'dropout': 0.2},
-        {'type': 'Dense', 'units': 25},
-        {'type': 'Dense', 'units': 1}
-    ],
-    'optimizer': {
-        'type': 'Adam',
-        'learning_rate': 0.001
+    'sequence_length': 60,  # Look back window
+    'features': ['Open', 'High', 'Low', 'Close', 'Volume', 'RSI', 'MACD', 'BB_position'],
+    'architecture': {
+        'layers': [
+            {'type': 'LSTM', 'units': 128, 'return_sequences': True, 'dropout': 0.2},
+            {'type': 'LSTM', 'units': 64, 'return_sequences': True, 'dropout': 0.2},
+            {'type': 'LSTM', 'units': 32, 'dropout': 0.2},
+            {'type': 'Dense', 'units': 16, 'activation': 'relu'},
+            {'type': 'Dense', 'units': 1, 'activation': 'linear'}
+        ]
     },
+    'optimizer': 'Adam',
+    'learning_rate': 0.001,
     'loss': 'mse',
-    'metrics': ['mae'],
-    'epochs': 100,
+    'epochs': 200,
     'batch_size': 32,
-    'validation_split': 0.2,
-    'callbacks': {
-        'early_stopping': {
-            'monitor': 'val_loss',
-            'patience': 10,
-            'restore_best_weights': True
+    'validation_split': 0.2
+}
+
+# 3. Classification Model Configuration
+CLASSIFICATION_CONFIG = {
+    'target': 'price_direction',  # Up/Down prediction
+    'models': {
+        'random_forest': {
+            'n_estimators': 200,
+            'max_depth': 15,
+            'min_samples_split': 5,
+            'min_samples_leaf': 2,
+            'max_features': 'sqrt',
+            'random_state': 42
         },
-        'reduce_lr': {
-            'monitor': 'val_loss',
-            'factor': 0.2,
-            'patience': 5,
-            'min_lr': 0.0001
+        'xgboost': {
+            'n_estimators': 300,
+            'max_depth': 8,
+            'learning_rate': 0.1,
+            'subsample': 0.8,
+            'colsample_bytree': 0.8,
+            'random_state': 42
+        },
+        'svm': {
+            'C': 1.0,
+            'kernel': 'rbf',
+            'gamma': 'scale',
+            'probability': True
         }
+    }
+}
+
+# 4. Multimodal Fusion Configuration
+FUSION_CONFIG = {
+    'architecture': 'late_fusion',  # early_fusion, late_fusion, attention_fusion
+    'lstm_features_dim': 32,
+    'sentiment_features_dim': 16,
+    'fusion_layer': {
+        'type': 'Dense',
+        'units': 64,
+        'activation': 'relu',
+        'dropout': 0.3
+    },
+    'output_layer': {
+        'units': 1,
+        'activation': 'sigmoid'  # for binary classification
+    }
+}
+
+# 5. Event Impact Modeling Configuration
+CAUSAL_CONFIG = {
+    'methods': {
+        'difference_in_differences': {
+            'treatment_window': 5,  # days before/after event
+            'control_group': 'NIFTY_PHARMA'
+        },
+        'propensity_score_matching': {
+            'caliper': 0.1,
+            'matching_method': 'nearest'
+        },
+        'synthetic_control': {
+            'donor_pool': ['DRREDDY.NS', 'CIPLA.NS', 'SUNPHARMA.NS']
+        }
+    }
+}
+
+# 6. Anomaly Detection Configuration
+ANOMALY_CONFIG = {
+    'methods': {
+        'isolation_forest': {
+            'contamination': 0.1,
+            'n_estimators': 100,
+            'random_state': 42
+        },
+        'autoencoder': {
+            'encoding_dim': 32,
+            'epochs': 100,
+            'batch_size': 32,
+            'threshold_percentile': 95
+        },
+        'statistical': {
+            'zscore_threshold': 3,
+            'bollinger_std': 2
+        }
+    }
+}
+
+# 7. Baseline Models Configuration
+BASELINE_CONFIG = {
+    'arima': {
+        'order': (1, 1, 1),
+        'seasonal_order': (1, 1, 1, 5),  # Weekly seasonality
+        'auto_arima': True
+    },
+    'sarima': {
+        'seasonal_periods': [5, 21, 252]  # Weekly, Monthly, Yearly
     }
 }
 
@@ -225,35 +207,26 @@ LSTM_CONFIG = {
 # =============================================================================
 
 FEATURE_CONFIG = {
-    'price_features': {
-        'moving_averages': [5, 10, 20, 50, 200],
-        'momentum_periods': [5, 10, 20],
-        'volatility_periods': [5, 10, 20],
-        'lag_features': [1, 2, 3, 5]
+    'technical_indicators': {
+        'trend': ['SMA_5', 'SMA_10', 'SMA_20', 'SMA_50', 'SMA_200', 'EMA_12', 'EMA_26'],
+        'momentum': ['RSI_14', 'MACD', 'MACD_Signal', 'MACD_Histogram', 'ROC_10'],
+        'volatility': ['BB_Upper', 'BB_Lower', 'BB_Width', 'ATR_14', 'Volatility_20'],
+        'volume': ['Volume_SMA_20', 'Volume_Ratio', 'OBV', 'VWAP']
     },
     'sentiment_features': {
-        'moving_averages': [3, 7, 14],
-        'momentum_periods': [3, 7],
-        'lag_features': [1, 2, 3]
+        'aggregation_windows': [1, 3, 7, 14, 30],
+        'sentiment_metrics': ['mean', 'std', 'min', 'max', 'skew'],
+        'event_flags': ['FDA_approval', 'Clinical_trial', 'Earnings', 'Partnership']
     },
-    'volume_features': {
-        'moving_averages': [5, 10, 20],
-        'ratios': True
+    'lag_features': {
+        'price_lags': [1, 2, 3, 5, 10],
+        'return_lags': [1, 2, 3, 5, 10],
+        'sentiment_lags': [1, 2, 3, 5]
     },
-    'technical_indicators': {
-        'rsi': True,
-        'macd': True,
-        'bollinger_bands': True,
-        'stochastic': False,
-        'williams_r': False
-    },
-    'date_features': {
-        'day_of_week': True,
-        'month': True,
-        'quarter': True,
-        'is_month_end': True,
-        'is_quarter_end': True,
-        'is_year_end': False
+    'interaction_features': {
+        'sentiment_volume': True,
+        'sentiment_volatility': True,
+        'event_volume': True
     }
 }
 
@@ -265,55 +238,100 @@ FDA_MILESTONES = {
     'application_phase': {
         'keywords': [
             'IND application', 'investigational new drug', 'pre-clinical',
-            'FDA submission', 'regulatory filing', 'drug application', 'BLA submission'
+            'FDA submission', 'regulatory filing', 'drug application', 'BLA submission',
+            'pre-IND meeting', 'FDA guidance', 'regulatory pathway'
         ],
         'weight': 1.6,
-        'importance': 8
+        'importance': 8,
+        'category': 'regulatory'
     },
     'clinical_trials': {
         'keywords': [
             'phase I trial', 'phase II trial', 'phase III trial', 'clinical trial',
             'study results', 'trial data', 'clinical endpoint', 'patient enrollment',
-            'bioequivalence study', 'clinical data'
+            'bioequivalence study', 'clinical data', 'primary endpoint', 'interim analysis'
         ],
         'weight': 1.5,
-        'importance': 7
+        'importance': 7,
+        'category': 'clinical'
     },
     'regulatory_review': {
         'keywords': [
             'FDA review', 'regulatory review', 'FDA meeting', 'advisory committee',
             'FDA inspection', 'manufacturing inspection', 'facility inspection',
-            'PDUFA date', 'FDA letter'
+            'PDUFA date', 'FDA letter', 'complete response letter', 'CRL'
         ],
         'weight': 1.8,
-        'importance': 9
+        'importance': 9,
+        'category': 'regulatory'
     },
     'approval_process': {
         'keywords': [
             'FDA approval', 'drug approval', 'marketing authorization', 'BLA approval',
             'NDA approval', 'biosimilar approval', 'interchangeable designation',
-            'regulatory approval', 'FDA clearance'
+            'regulatory approval', 'FDA clearance', 'approval letter'
         ],
         'weight': 2.0,
-        'importance': 10
+        'importance': 10,
+        'category': 'approval'
     },
     'post_approval': {
         'keywords': [
             'product launch', 'commercial launch', 'market launch', 'hospital adoption',
             'prescription volume', 'market penetration', 'real-world evidence',
-            'post-market surveillance'
+            'post-market surveillance', 'market access', 'formulary inclusion'
         ],
         'weight': 1.3,
-        'importance': 6
+        'importance': 6,
+        'category': 'commercial'
     },
     'regulatory_issues': {
         'keywords': [
             'FDA warning letter', 'recall', 'safety concern', 'adverse event',
             'manufacturing issue', 'quality issue', 'FDA inspection deficiency',
-            'regulatory action', 'compliance issue'
+            'regulatory action', 'compliance issue', 'import alert'
         ],
         'weight': 1.7,
-        'importance': 8
+        'importance': 8,
+        'category': 'risk'
+    }
+}
+
+# =============================================================================
+# DATA SOURCES CONFIGURATION
+# =============================================================================
+
+DATA_SOURCES = {
+    'stock_data': {
+        'primary': 'yfinance',
+        'backup': ['alpha_vantage', 'quandl'],
+        'symbols': {
+            'BIOCON': ['BIOCON.NS', 'BIOCON.BO', '532523.BO'],
+            'NIFTY50': ['^NSEI', 'NIFTY50.NS'],
+            'NIFTY_PHARMA': ['^CNXPHARMA', 'CNXPHARMA.NS']
+        }
+    },
+    'news_data': {
+        'sources': [
+            'google_news',
+            'yahoo_finance_news',
+            'reuters_api',
+            'bloomberg_api',
+            'financial_rss_feeds'
+        ],
+        'rss_feeds': [
+            'https://economictimes.indiatimes.com/markets/stocks/rssfeeds/2146842.cms',
+            'https://www.business-standard.com/rss/markets-106.rss',
+            'https://www.livemint.com/rss/companies'
+        ]
+    },
+    'fda_data': {
+        'sources': [
+            'fda.gov',
+            'drugs@fda',
+            'orange_book',
+            'purple_book'
+        ]
     }
 }
 
@@ -322,40 +340,47 @@ FDA_MILESTONES = {
 # =============================================================================
 
 EVALUATION_CONFIG = {
-    'metrics': [
-        'mse', 'rmse', 'mae', 'r2_score', 'mean_absolute_percentage_error'
-    ],
-    'prediction_horizons': [1, 5, 10, 20],  # days ahead to predict
+    'metrics': {
+        'regression': ['mse', 'rmse', 'mae', 'r2', 'mape'],
+        'classification': ['accuracy', 'precision', 'recall', 'f1', 'auc_roc'],
+        'financial': ['sharpe_ratio', 'max_drawdown', 'calmar_ratio', 'information_ratio']
+    },
+    'cross_validation': {
+        'method': 'TimeSeriesSplit',
+        'n_splits': 5,
+        'test_size': 0.2
+    },
     'backtesting': {
         'method': 'walk_forward',
-        'window_size': 252,  # trading days (1 year)
-        'step_size': 21  # trading days (1 month)
-    },
-    'significance_tests': {
-        'alpha': 0.05,
-        'tests': ['shapiro', 'jarque_bera', 'durbin_watson']
+        'window_size': 252,  # 1 year
+        'step_size': 21,    # 1 month
+        'min_train_size': 500
     }
 }
 
 # =============================================================================
-# VISUALIZATION CONFIGURATION
+# HYPERPARAMETER OPTIMIZATION
 # =============================================================================
 
-VISUALIZATION_CONFIG = {
-    'style': 'seaborn-v0_8',
-    'figure_size': (12, 8),
-    'dpi': 300,
-    'color_palette': ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'],
-    'save_format': 'png',
-    'charts_to_generate': [
-        'stock_price_timeline',
-        'sentiment_timeline',
-        'correlation_heatmap',
-        'feature_importance',
-        'model_performance_comparison',
-        'prediction_vs_actual',
-        'residual_analysis'
-    ]
+HPO_CONFIG = {
+    'framework': 'optuna',  # optuna, hyperopt, scikit-optimize
+    'n_trials': 100,
+    'optimization_metric': 'val_r2',
+    'direction': 'maximize',
+    'pruning': True,
+    'parallel_jobs': 4
+}
+
+# =============================================================================
+# DEPLOYMENT CONFIGURATION
+# =============================================================================
+
+DEPLOYMENT_CONFIG = {
+    'model_registry': 'mlflow',
+    'monitoring': 'wandb',
+    'api_framework': 'fastapi',
+    'containerization': 'docker',
+    'cloud_platform': 'aws'
 }
 
 # =============================================================================
@@ -363,13 +388,14 @@ VISUALIZATION_CONFIG = {
 # =============================================================================
 
 PATHS = {
-    'data': 'data/',
-    'models': 'models/',
-    'results': 'results/',
-    'charts': 'results/charts/',
-    'notebooks': 'notebooks/',
-    'logs': 'logs/',
-    'temp': 'temp/'
+    'data': Path('data'),
+    'models': Path('models'),
+    'results': Path('results'),
+    'charts': Path('results/charts'),
+    'notebooks': Path('notebooks'),
+    'logs': Path('logs'),
+    'temp': Path('temp'),
+    'config': Path('config')
 }
 
 # Data file names
@@ -378,149 +404,113 @@ DATA_FILES = {
     'news_data': 'news_data.csv',
     'daily_sentiment': 'daily_sentiment.csv',
     'combined_data': 'combined_data.csv',
-    'processed_features': 'processed_features.csv'
+    'processed_features': 'processed_features.csv',
+    'fda_events': 'fda_events.csv',
+    'technical_indicators': 'technical_indicators.csv'
 }
 
 # Model file names
 MODEL_FILES = {
-    'final_model': 'final_model.pkl',
-    'lstm_model': 'lstm_model.h5',
-    'sentiment_model': 'sentiment_model.pkl',
-    'scalers': 'scalers.pkl',
-    'feature_names': 'feature_names.pkl'
-}
-
-# Results file names
-RESULTS_FILES = {
-    'model_performance': 'model_performance.csv',
-    'predictions': 'predictions.csv',
-    'correlation_analysis': 'correlation_analysis.csv',
-    'feature_importance': 'feature_importance.csv',
-    'backtesting_results': 'backtesting_results.csv'
-}
-
-# =============================================================================
-# LOGGING CONFIGURATION
-# =============================================================================
-
-LOGGING_CONFIG = {
-    'level': 'INFO',
-    'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    'handlers': {
-        'file': {
-            'filename': 'logs/biocon_analysis.log',
-            'max_bytes': 10485760,  # 10MB
-            'backup_count': 5
-        },
-        'console': {
-            'stream': 'ext://sys.stdout'
-        }
-    }
+    'finbert_model': 'finbert_sentiment.pkl',
+    'lstm_model': 'lstm_price_prediction.h5',
+    'classification_model': 'direction_classifier.pkl',
+    'fusion_model': 'multimodal_fusion.h5',
+    'causal_model': 'causal_inference.pkl',
+    'anomaly_model': 'anomaly_detector.pkl',
+    'scalers': 'feature_scalers.pkl',
+    'encoders': 'categorical_encoders.pkl'
 }
 
 # =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
 
-def get_data_path(filename):
-    """Get full path for data file"""
-    return os.path.join(PATHS['data'], filename)
-
-def get_model_path(filename):
-    """Get full path for model file"""
-    return os.path.join(PATHS['models'], filename)
-
-def get_results_path(filename):
-    """Get full path for results file"""
-    return os.path.join(PATHS['results'], filename)
-
-def get_charts_path(filename):
-    """Get full path for charts file"""
-    return os.path.join(PATHS['charts'], filename)
-
 def create_directories():
     """Create all necessary directories"""
     for path in PATHS.values():
-        os.makedirs(path, exist_ok=True)
+        path.mkdir(parents=True, exist_ok=True)
 
-def validate_environment():
-    """Validate that all required environment variables are set"""
-    required_vars = []  # Add any required environment variables
-    missing_vars = []
-    
-    for var in required_vars:
-        if not os.getenv(var):
-            missing_vars.append(var)
-    
-    if missing_vars:
-        raise EnvironmentError(f"Missing required environment variables: {missing_vars}")
+def get_data_path(filename):
+    """Get full path for data file"""
+    return PATHS['data'] / filename
+
+def get_model_path(filename):
+    """Get full path for model file"""
+    return PATHS['models'] / filename
+
+def get_results_path(filename):
+    """Get full path for results file"""
+    return PATHS['results'] / filename
+
+def validate_config():
+    """Validate configuration settings"""
+    required_paths = ['data', 'models', 'results']
+    for path_name in required_paths:
+        if not PATHS[path_name].exists():
+            PATHS[path_name].mkdir(parents=True, exist_ok=True)
     
     return True
 
 # =============================================================================
-# MARKET CALENDAR CONFIGURATION
+# LOGGING CONFIGURATION
 # =============================================================================
 
-MARKET_CONFIG = {
-    'trading_hours': {
-        'nse': {
-            'open': '09:15',
-            'close': '15:30',
-            'timezone': 'Asia/Kolkata'
+LOGGING_CONFIG = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'detailed': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s - %(message)s'
         }
     },
-    'holidays': {
-        # Indian stock market holidays (add as needed)
-        'nse': [
-            '2024-01-26',  # Republic Day
-            '2024-03-08',  # Holi
-            '2024-03-29',  # Good Friday
-            '2024-04-11',  # Ram Navami
-            '2024-05-01',  # Labour Day
-            '2024-08-15',  # Independence Day
-            '2024-10-02',  # Gandhi Jayanti
-            '2024-11-01',  # Diwali
-            '2024-11-15',  # Guru Nanak Jayanti
-        ]
-    }
-}
-
-# =============================================================================
-# ALERT AND NOTIFICATION CONFIGURATION
-# =============================================================================
-
-ALERTS_CONFIG = {
-    'thresholds': {
-        'high_sentiment_change': 0.5,
-        'high_price_change': 0.05,  # 5%
-        'high_volume_change': 2.0,  # 2x average
-        'fda_milestone_detected': True
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'INFO',
+            'formatter': 'simple'
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/biocon_analysis.log',
+            'level': 'DEBUG',
+            'formatter': 'detailed'
+        }
     },
-    'notification_methods': {
-        'email': False,
-        'slack': False,
-        'console': True,
-        'log_file': True
+    'loggers': {
+        'biocon_analysis': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'file'],
+            'propagate': False
+        }
     }
 }
 
 if __name__ == "__main__":
     """Test configuration"""
-    print(f"Project: {PROJECT_NAME}")
-    print(f"Version: {PROJECT_VERSION}")
-    print(f"Company: {COMPANY_INFO['name']} ({COMPANY_INFO['ticker']})")
-    print(f"Drug: {DRUG_INFO['full_name']}")
-    print(f"Data Period: {DATA_START_DATE} to {DATA_END_DATE}")
+    print(f"🚀 {PROJECT_NAME} v{PROJECT_VERSION}")
+    print(f"📊 Company: {COMPANY_INFO['name']} ({COMPANY_INFO['ticker']})")
+    print(f"💊 Drug: {DRUG_INFO['full_name']}")
+    print(f"📅 Analysis Period: {DATA_START_DATE} to {DATA_END_DATE}")
+    print(f"🔬 FDA Journey: {DRUG_INFO['application_year']} - {DRUG_INFO['launch_year']}")
     
     # Create directories
     create_directories()
-    print("✓ Directories created")
+    print("✅ Directories created")
     
-    # Validate environment (if needed)
-    try:
-        validate_environment()
-        print("✓ Environment validated")
-    except EnvironmentError as e:
-        print(f"⚠️  Environment warning: {e}")
+    # Validate configuration
+    validate_config()
+    print("✅ Configuration validated")
     
-    print("Configuration loaded successfully!")
+    print("\n🤖 Advanced ML Pipeline Configured:")
+    print(f"  📰 Sentiment: FinBERT + DistilBERT + VADER + TextBlob")
+    print(f"  📈 Time Series: LSTM with {LSTM_CONFIG['sequence_length']} day lookback")
+    print(f"  🎯 Classification: Random Forest + XGBoost + SVM")
+    print(f"  🔗 Fusion: Multimodal architecture")
+    print(f"  📊 Causal: Difference-in-Differences + PSM")
+    print(f"  🚨 Anomaly: Isolation Forest + Autoencoder")
+    print(f"  📐 Baseline: ARIMA + SARIMA")
+    
+    print("\n✅ Configuration loaded successfully!")

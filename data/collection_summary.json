@@ -1,0 +1,49 @@
+{
+  "collection_metadata": {
+    "collection_date": "2025-06-27T05:43:05.367113",
+    "total_articles": 240,
+    "date_range": {
+      "start": "2015-12-17",
+      "end": "2025-06-24"
+    },
+    "sources": {
+      "Google News": 240
+    },
+    "query_groups": {
+      "regulatory": 75,
+      "drug_fda": 69,
+      "financial": 46,
+      "strategic": 29,
+      "competitive": 18,
+      "sentiment": 3
+    }
+  },
+  "quality_metrics": {
+    "avg_relevance": 0.16447916666666665,
+    "avg_priority": 7.478562687691888,
+    "high_relevance_articles": "0",
+    "drug_specific_articles": "3",
+    "fda_milestone_articles": "68"
+  },
+  "sentiment_distribution": {
+    "positive_articles": "125",
+    "negative_articles": "24",
+    "neutral_articles": "91",
+    "avg_sentiment": 0.177028308311946,
+    "sentiment_std": 0.3159567844965249
+  },
+  "fda_milestone_breakdown": {
+    "pre_clinical": "0",
+    "ind_application": "0",
+    "phase_1_trials": "0",
+    "phase_2_trials": "0",
+    "phase_3_trials": "0",
+    "bla_submission": "0",
+    "fda_review": "0",
+    "fda_inspection": "1",
+    "fda_approval": "64",
+    "product_launch": "0",
+    "market_penetration": "2",
+    "regulatory_issues": "1"
+  }
+}
