@@ -181,3 +181,365 @@
 2025-06-29 04:01:56,980 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
 2025-06-29 04:01:57,215 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
 2025-06-29 04:01:57,215 - INFO - 🌳 Training tree-based models...
+2025-06-29 04:05:50,124 - INFO - ✅ Random Forest trained (best params: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 100})
+2025-06-29 04:07:22,829 - INFO - ✅ Gradient Boosting trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:08:01,012 - INFO - ✅ LightGBM trained (best params: {'learning_rate': 0.01, 'min_child_samples': 10, 'min_split_gain': 0.0, 'n_estimators': 100, 'num_leaves': 31})
+2025-06-29 04:08:10,457 - INFO - ✅ XGBoost trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:08:10,458 - INFO - 🧠 Training SVR model...
+2025-06-29 04:08:12,763 - INFO - ✅ SVR trained (best params: {'C': 0.1, 'epsilon': 0.1, 'kernel': 'rbf'})
+2025-06-29 04:08:12,764 - INFO - 🧠 Training LSTM model...
+2025-06-29 04:08:17,305 - INFO - ✅ LSTM model trained
+2025-06-29 04:08:17,305 - INFO - 🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv
+2025-06-29 04:08:17,305 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:08:17,649 - INFO - ✅ Ensemble model created
+2025-06-29 04:08:17,649 - INFO - 📈 Evaluating model performance...
+2025-06-29 04:08:18,057 - INFO - ✅ Model evaluation completed
+2025-06-29 04:08:18,057 - INFO - 💾 Saving models and metadata...
+2025-06-29 04:08:18,090 - INFO - ✅ Models and metadata saved successfully
+2025-06-29 04:08:18,091 - INFO - 🎉 Model training completed successfully!
+2025-06-29 04:15:10,194 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:15:10,195 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:15:10,195 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:15:10,196 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:15:10,196 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:15:10,272 - WARNING - Nifty 50 data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_50.csv, using stock_data.csv columns
+2025-06-29 04:15:10,272 - WARNING - Nifty Pharma data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_pharma.csv, using stock_data.csv columns
+2025-06-29 04:15:10,273 - ERROR - ❌ Error preparing data: You are trying to merge on datetime64[ns, UTC+05:30] and datetime64[ns] columns for key 'Date'. If you wish to proceed you should use pd.concat
+2025-06-29 04:15:10,273 - ERROR - ❌ Model training failed: You are trying to merge on datetime64[ns, UTC+05:30] and datetime64[ns] columns for key 'Date'. If you wish to proceed you should use pd.concat
+2025-06-29 04:17:51,809 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:17:51,809 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:17:51,809 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:17:51,809 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:17:51,809 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:17:51,868 - ERROR - ❌ Error preparing data: You are trying to merge on datetime64[ns, UTC+05:30] and datetime64[ns] columns for key 'Date'. If you wish to proceed you should use pd.concat
+2025-06-29 04:17:51,868 - ERROR - ❌ Model training failed: You are trying to merge on datetime64[ns, UTC+05:30] and datetime64[ns] columns for key 'Date'. If you wish to proceed you should use pd.concat
+2025-06-29 04:19:25,069 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:19:25,069 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:19:25,069 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:19:25,069 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:19:25,069 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:19:25,131 - WARNING - Nifty 50 data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_50.csv, using zeros
+2025-06-29 04:19:25,132 - WARNING - Nifty Pharma data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_pharma.csv, using zeros
+2025-06-29 04:19:25,151 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:19:25,306 - INFO - Dropped 95 highly correlated features: ['High', 'Low', 'Close', 'Daily_Return_Percent', 'Log_Return', 'SMA_5', 'SMA_10', 'SMA_20', 'SMA_50', 'SMA_100', 'SMA_200', 'EMA_12', 'EMA_26', 'EMA_50', 'BB_Upper', 'BB_Middle', 'BB_Lower', 'SAR', 'RSI_14', 'RSI_21', 'MACD', 'MACD_Signal', 'STOCH_K', 'STOCH_D', 'WILLIAMS_R', 'ROC_10', 'ROC_20', 'CCI', 'ATR_14', 'ATR_21', 'PLUS_DI', 'MINUS_DI', 'Volatility_30', 'OBV', 'Volume_SMA_20', 'Volume_SMA_50', 'Volume_Ratio_20', 'VWAP', 'Support', 'Resistance', 'Nifty_Close', 'Market_Relative_Return', 'Alpha_60D', 'Pharma_Close', 'Sector_Relative_Return', 'Sector_Alpha_60D', 'Price_Momentum_10', 'Price_Momentum_20', 'Price_Position_20', 'Price_Position_50', 'Quarter', 'Close_Lag_1', 'Close_Lag_2', 'Close_Lag_3', 'Close_Lag_5', 'RSI_14_Lag_1', 'RSI_14_Lag_2', 'RSI_14_Lag_3', 'RSI_14_Lag_5', 'MACD_Lag_1', 'MACD_Lag_2', 'MACD_Lag_3', 'MACD_Lag_5', 'Max_Drawdown_20D', 'Nifty50_Close_x', 'Nifty50_Return', 'NiftyPharma_Close_x', 'NiftyPharma_Return', 'finbert_avg', 'finbert_std', 'max_importance', 'total_importance', 'company_specific_count', 'importance_score_x', 'sentiment_3d_roll_mean', 'sentiment_volatility_interaction', 'insider_signal', 'day_of_week', 'month', 'quarter', 'is_month_end', 'is_quarter_end', 'fda_milestones_clinical_trials', 'fda_milestones_none', 'fda_milestones_other', 'fda_milestones_post_approval|other', 'fda_milestones_regulatory_issues', 'fda_milestones_regulatory_review', 'fda_milestone_type_approval_process', 'fda_milestone_type_clinical_trials', 'fda_milestone_type_none', 'fda_milestone_type_post_approval', 'fda_milestone_type_post_approval|approval_process', 'fda_milestone_type_regulatory_issues', 'fda_milestone_type_regulatory_review']
+2025-06-29 04:20:56,076 - INFO - Selected Features: ['VPT', 'Correlation_60D', 'Sector_Beta_60D', 'Volume_SMA_10', 'Volatility_20', 'Month', 'Open', 'Volatility_10', 'ADX', 'Volume_Lag_3', 'Volume_Lag_1', 'Daily_Return_Lag_1', 'BB_Position', 'BB_Width', 'Beta_60D', 'Resistance_Distance', 'Downside_Capture', 'MACD_Histogram', 'avg_sentiment_smoothed', 'Gap_Size', 'sentiment_lag_5', 'Daily_Return_Lag_5', 'Nifty_Return', 'Support_Distance', 'Beta_252D', 'avg_confidence', 'Volume_Lag_2', 'Volatility_Regime_Medium', 'Price_Momentum_5', 'Daily_Return_Lag_3']
+2025-06-29 04:20:56,084 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples
+2025-06-29 04:20:56,084 - INFO - 📈 Features selected: 30
+2025-06-29 04:20:56,085 - INFO - 🧠 Training linear models...
+2025-06-29 04:20:56,088 - INFO - ✅ Linear Regression trained
+2025-06-29 04:20:56,106 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 04:20:56,135 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 04:20:56,135 - INFO - 🌳 Training tree-based models...
+2025-06-29 04:22:58,856 - INFO - ✅ Random Forest trained (best params: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 100})
+2025-06-29 04:23:46,337 - INFO - ✅ Gradient Boosting trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:24:29,631 - INFO - ✅ LightGBM trained (best params: {'learning_rate': 0.01, 'min_child_samples': 10, 'min_split_gain': 0.0, 'n_estimators': 100, 'num_leaves': 31})
+2025-06-29 04:24:38,117 - INFO - ✅ XGBoost trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:24:38,117 - INFO - 🧠 Training SVR model...
+2025-06-29 04:24:40,294 - INFO - ✅ SVR trained (best params: {'C': 0.1, 'epsilon': 0.01, 'kernel': 'rbf'})
+2025-06-29 04:24:40,294 - INFO - 🧠 Training LSTM model...
+2025-06-29 04:24:42,466 - INFO - ✅ LSTM model trained
+2025-06-29 04:24:42,466 - INFO - 🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv
+2025-06-29 04:24:42,466 - INFO - 🤝 Creating stacking ensemble model...
+2025-06-29 04:24:46,978 - ERROR - ❌ Error creating ensemble model: cross_val_predict only works for partitions
+2025-06-29 04:24:46,978 - ERROR - ❌ Model training failed: cross_val_predict only works for partitions
+2025-06-29 04:25:12,604 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:25:12,605 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:25:12,605 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:25:12,605 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:25:12,605 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:25:12,726 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:25:12,732 - INFO - ✅ Advanced features added. Total columns: 195
+2025-06-29 04:25:12,748 - INFO - ✅ Data loaded and prepared: 2610 rows, 195 columns
+2025-06-29 04:25:12,749 - INFO - 🚀 Training models...
+2025-06-29 04:25:12,749 - INFO - 🔧 Preparing model data...
+2025-06-29 04:25:22,872 - INFO - ✅ Model data prepared: 2610 samples, 50 features
+2025-06-29 04:25:22,873 - INFO - Training fold 1/5...
+2025-06-29 04:25:25,642 - INFO - Training fold 2/5...
+2025-06-29 04:25:29,940 - INFO - Training fold 3/5...
+2025-06-29 04:25:35,668 - INFO - Training fold 4/5...
+2025-06-29 04:25:43,506 - INFO - Training fold 5/5...
+2025-06-29 04:25:53,771 - INFO - ✅ Models trained successfully
+2025-06-29 04:25:53,771 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:25:53,896 - ERROR - ❌ Error creating ensemble model: Exception encountered when calling Sequential.call().
+
+[1mCannot take the length of shape with unknown rank.[0m
+
+Arguments received by Sequential.call():
+  • inputs=tf.Tensor(shape=<unknown>, dtype=float32)
+  • training=False
+  • mask=None
+2025-06-29 04:25:53,896 - ERROR - ❌ Model training failed: Exception encountered when calling Sequential.call().
+
+[1mCannot take the length of shape with unknown rank.[0m
+
+Arguments received by Sequential.call():
+  • inputs=tf.Tensor(shape=<unknown>, dtype=float32)
+  • training=False
+  • mask=None
+2025-06-29 04:27:01,541 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:27:01,541 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:27:01,541 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:27:01,541 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:27:01,541 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:27:01,542 - INFO - ✅ Loaded saved features and scalers for consistency
+2025-06-29 04:27:01,607 - WARNING - Nifty 50 data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_50.csv, using zeros
+2025-06-29 04:27:01,607 - WARNING - Nifty Pharma data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_pharma.csv, using zeros
+2025-06-29 04:27:01,624 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:27:01,666 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples, 493 validation samples
+2025-06-29 04:27:01,666 - INFO - 📈 Features selected: 30
+2025-06-29 04:27:01,667 - INFO - 🧠 Training linear models...
+2025-06-29 04:27:01,669 - INFO - ✅ Linear Regression trained
+2025-06-29 04:27:01,802 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 04:27:01,879 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 04:27:01,880 - INFO - 🌳 Training tree-based models...
+2025-06-29 04:28:16,486 - INFO - ✅ Random Forest trained (best params: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 100})
+2025-06-29 04:28:16,498 - INFO - Random Forest Feature Importance:
+            feature  importance
+2   Sector_Beta_60D    0.097259
+4     Volatility_20    0.080476
+6              Open    0.080029
+0               VPT    0.066388
+24        Beta_252D    0.060211
+3     Volume_SMA_10    0.056212
+8               ADX    0.048714
+17   MACD_Histogram    0.043903
+13         BB_Width    0.042982
+1   Correlation_60D    0.042933
+2025-06-29 04:28:47,515 - INFO - ✅ Gradient Boosting trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:29:13,435 - INFO - ✅ LightGBM trained (best params: {'learning_rate': 0.01, 'min_child_samples': 10, 'min_split_gain': 0.0, 'n_estimators': 100, 'num_leaves': 31})
+2025-06-29 04:29:18,793 - INFO - ✅ XGBoost trained (best params: {'learning_rate': 0.01, 'max_depth': 5, 'n_estimators': 100})
+2025-06-29 04:29:18,794 - INFO - 🧠 Training SVR model...
+2025-06-29 04:29:20,301 - INFO - ✅ SVR trained (best params: {'C': 0.1, 'epsilon': 0.1, 'kernel': 'rbf'})
+2025-06-29 04:29:20,301 - INFO - 🧠 Training LSTM model...
+2025-06-29 04:29:22,706 - INFO - ✅ LSTM model trained
+2025-06-29 04:29:22,706 - INFO - 🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv
+2025-06-29 04:29:22,706 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:29:27,364 - WARNING - ⚠️ Stacking ensemble failed: cross_val_predict only works for partitions, falling back to weighted average
+2025-06-29 04:29:27,876 - INFO - ✅ Fallback weighted ensemble created
+2025-06-29 04:29:27,877 - INFO - 📈 Evaluating model performance...
+2025-06-29 04:29:28,328 - ERROR - ❌ Error evaluating models: Found input variables with inconsistent numbers of samples: [368, 2221]
+2025-06-29 04:29:28,329 - ERROR - ❌ Model training failed: Found input variables with inconsistent numbers of samples: [368, 2221]
+2025-06-29 04:30:11,126 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:30:11,127 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:30:11,127 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:30:11,127 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:30:11,127 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:30:11,127 - INFO - ✅ Loaded saved features and scalers for consistency
+2025-06-29 04:30:11,183 - WARNING - Nifty 50 data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_50.csv, using zeros
+2025-06-29 04:30:11,183 - WARNING - Nifty Pharma data file not found: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/nifty_pharma.csv, using zeros
+2025-06-29 04:30:11,194 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:30:11,233 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples, 493 validation samples
+2025-06-29 04:30:11,233 - INFO - 📈 Features selected: 30
+2025-06-29 04:30:11,234 - INFO - 🧠 Training linear models...
+2025-06-29 04:30:11,236 - INFO - ✅ Linear Regression trained
+2025-06-29 04:30:11,259 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 04:30:11,301 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 04:30:11,301 - INFO - 🌳 Training tree-based models...
+2025-06-29 04:31:26,454 - INFO - ✅ Random Forest trained (best params: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 100})
+2025-06-29 04:31:26,460 - INFO - Random Forest Feature Importance:
+            feature  importance
+2   Sector_Beta_60D    0.097259
+4     Volatility_20    0.080476
+6              Open    0.080029
+0               VPT    0.066388
+24        Beta_252D    0.060211
+3     Volume_SMA_10    0.056212
+8               ADX    0.048714
+17   MACD_Histogram    0.043903
+13         BB_Width    0.042982
+1   Correlation_60D    0.042933
+2025-06-29 04:31:55,615 - INFO - ✅ Gradient Boosting trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:32:21,833 - INFO - ✅ LightGBM trained (best params: {'learning_rate': 0.01, 'min_child_samples': 10, 'min_split_gain': 0.0, 'n_estimators': 100, 'num_leaves': 31})
+2025-06-29 04:32:27,152 - INFO - ✅ XGBoost trained (best params: {'learning_rate': 0.01, 'max_depth': 5, 'n_estimators': 100})
+2025-06-29 04:32:27,152 - INFO - 🧠 Training SVR model...
+2025-06-29 04:32:28,534 - INFO - ✅ SVR trained (best params: {'C': 0.1, 'epsilon': 0.1, 'kernel': 'rbf'})
+2025-06-29 04:32:28,534 - INFO - 🧠 Training LSTM model...
+2025-06-29 04:32:30,620 - INFO - ✅ LSTM model trained
+2025-06-29 04:32:30,620 - INFO - 🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv
+2025-06-29 04:32:30,620 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:32:35,161 - WARNING - ⚠️ Stacking ensemble failed: cross_val_predict only works for partitions, falling back to weighted average
+2025-06-29 04:32:35,622 - INFO - ✅ Fallback weighted ensemble created
+2025-06-29 04:32:35,623 - INFO - 📈 Evaluating model performance...
+2025-06-29 04:32:35,970 - ERROR - ❌ Error evaluating models: Found input variables with inconsistent numbers of samples: [368, 2221]
+2025-06-29 04:32:35,970 - ERROR - ❌ Model training failed: Found input variables with inconsistent numbers of samples: [368, 2221]
+2025-06-29 04:35:33,820 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:35:33,820 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:35:33,820 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:35:33,820 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:35:33,820 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:35:33,911 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:35:33,921 - INFO - ✅ Advanced features added. Total columns: 195
+2025-06-29 04:35:33,937 - INFO - ✅ Data loaded and prepared: 2610 rows, 195 columns
+2025-06-29 04:35:33,937 - INFO - 🚀 Training models...
+2025-06-29 04:35:33,937 - INFO - 🔧 Preparing model data...
+2025-06-29 04:35:43,573 - INFO - ✅ Model data prepared: 2610 samples, 50 features
+2025-06-29 04:35:43,573 - INFO - Training fold 1/5...
+2025-06-29 04:35:46,675 - INFO - Training fold 2/5...
+2025-06-29 04:35:51,294 - INFO - Training fold 3/5...
+2025-06-29 04:35:57,038 - INFO - Training fold 4/5...
+2025-06-29 04:36:04,666 - INFO - Training fold 5/5...
+2025-06-29 04:36:13,828 - INFO - ✅ Models trained successfully
+2025-06-29 04:36:13,828 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:36:13,961 - INFO - ✅ Ensemble model created with 8 models
+2025-06-29 04:36:13,961 - INFO - Model weights: {'LinearRegression': 0.06493506493506493, 'Ridge': 0.12987012987012986, 'Lasso': 0.12987012987012986, 'RandomForest': 0.12987012987012986, 'GradientBoosting': 0.12987012987012986, 'LightGBM': 0.12987012987012986, 'SVR': 0.12987012987012986, 'LSTM': 0.15584415584415584}
+2025-06-29 04:36:13,961 - INFO - 📈 Evaluating model performance...
+2025-06-29 04:36:14,826 - INFO - ✅ Model evaluation completed for 9 models
+2025-06-29 04:36:14,826 - INFO - 💾 Saving model results...
+2025-06-29 04:36:14,863 - INFO - ✅ Results saved successfully
+2025-06-29 04:37:16,467 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:37:16,467 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:37:16,467 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:37:16,467 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:37:16,467 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:37:16,468 - INFO - ✅ Loaded saved features and scalers for consistency
+2025-06-29 04:37:16,539 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:37:16,578 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples, 493 validation samples
+2025-06-29 04:37:16,578 - INFO - 📈 Features selected: 50
+2025-06-29 04:37:16,580 - INFO - 🧠 Training linear models...
+2025-06-29 04:37:16,584 - INFO - ✅ Linear Regression trained
+2025-06-29 04:37:16,691 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 04:37:16,757 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 04:37:16,757 - INFO - 🌳 Training tree-based models...
+2025-06-29 04:39:39,580 - INFO - ✅ Random Forest trained (best params: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 200})
+2025-06-29 04:39:39,587 - INFO - Random Forest Feature Importance:
+            feature  importance
+0   Sector_Beta_60D    0.046018
+1     Volatility_20    0.045194
+12          SMA_200    0.037351
+17             VWAP    0.036271
+22           EMA_50    0.034680
+3     Volume_SMA_50    0.033828
+2               VPT    0.032738
+9         Beta_252D    0.031587
+14              OBV    0.031352
+4     Volume_SMA_10    0.029744
+2025-06-29 04:40:34,370 - INFO - ✅ Gradient Boosting trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:40:58,332 - INFO - ✅ LightGBM trained (best params: {'learning_rate': 0.01, 'min_child_samples': 10, 'min_split_gain': 0.0, 'n_estimators': 100, 'num_leaves': 31})
+2025-06-29 04:41:04,092 - INFO - ✅ XGBoost trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:41:04,092 - INFO - 🧠 Training SVR model...
+2025-06-29 04:41:05,712 - INFO - ✅ SVR trained (best params: {'C': 0.1, 'epsilon': 0.1, 'kernel': 'rbf'})
+2025-06-29 04:41:05,712 - INFO - 🧠 Training LSTM model...
+2025-06-29 04:41:07,820 - INFO - ✅ LSTM model trained
+2025-06-29 04:41:07,820 - INFO - 🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv
+2025-06-29 04:41:07,820 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:41:19,415 - WARNING - ⚠️ Stacking ensemble failed: cross_val_predict only works for partitions, falling back to weighted average
+2025-06-29 04:41:19,984 - INFO - ✅ Fallback weighted ensemble created
+2025-06-29 04:41:19,985 - INFO - 📈 Evaluating model performance...
+2025-06-29 04:41:20,763 - INFO - ✅ Model evaluation completed
+2025-06-29 04:41:20,763 - INFO - 💾 Saving models and metadata...
+2025-06-29 04:41:20,797 - INFO - ✅ Models and metadata saved successfully
+2025-06-29 04:41:20,797 - INFO - 🎉 Model training completed successfully!
+2025-06-29 04:46:52,837 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:46:52,838 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:46:52,838 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:46:52,838 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:46:52,838 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:46:52,838 - INFO - ✅ Loaded saved features and scalers for consistency
+2025-06-29 04:46:52,902 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:46:52,935 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples, 493 validation samples
+2025-06-29 04:46:52,935 - INFO - 📈 Features selected: 50
+2025-06-29 04:46:52,935 - INFO - 🧠 Training linear models...
+2025-06-29 04:46:52,939 - INFO - ✅ Linear Regression trained
+2025-06-29 04:46:52,958 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 04:46:52,991 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 04:46:52,991 - INFO - 🌳 Training tree-based models...
+2025-06-29 04:49:16,185 - INFO - ✅ Random Forest trained (best params: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 200})
+2025-06-29 04:49:16,193 - INFO - Random Forest Feature Importance:
+            feature  importance
+0   Sector_Beta_60D    0.046018
+1     Volatility_20    0.045194
+12          SMA_200    0.037351
+17             VWAP    0.036271
+22           EMA_50    0.034680
+3     Volume_SMA_50    0.033828
+2               VPT    0.032738
+9         Beta_252D    0.031587
+14              OBV    0.031352
+4     Volume_SMA_10    0.029744
+2025-06-29 04:50:12,021 - INFO - ✅ Gradient Boosting trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:50:35,341 - INFO - ✅ LightGBM trained (best params: {'learning_rate': 0.01, 'min_child_samples': 10, 'min_split_gain': 0.0, 'n_estimators': 100, 'num_leaves': 31})
+2025-06-29 04:50:41,135 - INFO - ✅ XGBoost trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:50:41,137 - INFO - 🧠 Training SVR model...
+2025-06-29 04:50:42,809 - INFO - ✅ SVR trained (best params: {'C': 0.1, 'epsilon': 0.1, 'kernel': 'rbf'})
+2025-06-29 04:50:42,809 - INFO - 🧠 Training LSTM model...
+2025-06-29 04:50:45,022 - INFO - ✅ LSTM model trained
+2025-06-29 04:50:45,022 - INFO - 🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv
+2025-06-29 04:50:45,023 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:50:56,998 - WARNING - ⚠️ Stacking ensemble failed: cross_val_predict only works for partitions, falling back to weighted average
+2025-06-29 04:50:57,571 - INFO - ✅ Fallback weighted ensemble created
+2025-06-29 04:50:57,572 - INFO - 📈 Evaluating model performance...
+2025-06-29 04:50:58,383 - INFO - ✅ Model evaluation completed
+2025-06-29 04:50:58,384 - INFO - 💾 Saving models and metadata...
+2025-06-29 04:50:58,421 - INFO - ✅ Models and metadata saved successfully
+2025-06-29 04:50:58,422 - INFO - 🎉 Model training completed successfully!
+2025-06-29 04:53:32,788 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 04:53:32,789 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 04:53:32,789 - INFO - 🏢 Target Company: Biocon
+2025-06-29 04:53:32,789 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 04:53:32,789 - INFO - 📊 Loading and preparing data...
+2025-06-29 04:53:32,790 - INFO - ✅ Loaded saved features and scalers for consistency
+2025-06-29 04:53:32,854 - INFO - 🧠 Adding advanced features...
+2025-06-29 04:53:32,890 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples, 493 validation samples
+2025-06-29 04:53:32,890 - INFO - 📈 Features selected: 50
+2025-06-29 04:53:32,890 - INFO - 🧠 Training linear models...
+2025-06-29 04:53:32,893 - INFO - ✅ Linear Regression trained
+2025-06-29 04:53:32,931 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 04:53:32,966 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 04:53:32,966 - INFO - 🌳 Training tree-based models...
+2025-06-29 04:55:56,341 - INFO - ✅ Random Forest trained (best params: {'max_depth': 10, 'min_samples_split': 2, 'n_estimators': 200})
+2025-06-29 04:55:56,348 - INFO - Random Forest Feature Importance:
+            feature  importance
+0   Sector_Beta_60D    0.046018
+1     Volatility_20    0.045194
+12          SMA_200    0.037351
+17             VWAP    0.036271
+22           EMA_50    0.034680
+3     Volume_SMA_50    0.033828
+2               VPT    0.032738
+9         Beta_252D    0.031587
+14              OBV    0.031352
+4     Volume_SMA_10    0.029744
+2025-06-29 04:56:52,138 - INFO - ✅ Gradient Boosting trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:57:16,136 - INFO - ✅ LightGBM trained (best params: {'learning_rate': 0.01, 'min_child_samples': 10, 'min_split_gain': 0.0, 'n_estimators': 100, 'num_leaves': 31})
+2025-06-29 04:57:21,952 - INFO - ✅ XGBoost trained (best params: {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 100})
+2025-06-29 04:57:21,953 - INFO - 🧠 Training SVR model...
+2025-06-29 04:57:23,631 - INFO - ✅ SVR trained (best params: {'C': 0.1, 'epsilon': 0.1, 'kernel': 'rbf'})
+2025-06-29 04:57:23,632 - INFO - 🧠 Training LSTM model...
+2025-06-29 04:57:25,972 - INFO - ✅ LSTM model trained
+2025-06-29 04:57:25,972 - INFO - 🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv
+2025-06-29 04:57:25,972 - INFO - 🤝 Creating ensemble model...
+2025-06-29 04:57:37,718 - WARNING - ⚠️ Stacking ensemble failed: cross_val_predict only works for partitions, falling back to weighted average
+2025-06-29 04:57:38,329 - INFO - ✅ Fallback weighted ensemble created
+2025-06-29 04:57:38,330 - INFO - 📈 Evaluating model performance...
+2025-06-29 04:57:39,214 - INFO - ✅ Model evaluation completed
+2025-06-29 04:57:39,214 - INFO - 💾 Saving models and metadata...
+2025-06-29 04:57:39,247 - INFO - ✅ Models and metadata saved successfully
+2025-06-29 04:57:39,248 - INFO - 🎉 Model training completed successfully!
+2025-06-29 05:01:17,894 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 05:01:17,895 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 05:01:17,895 - INFO - 🏢 Target Company: Biocon
+2025-06-29 05:01:17,895 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 05:01:17,895 - INFO - 📊 Loading and preparing data...
+2025-06-29 05:01:17,896 - INFO - ✅ Loaded saved features and scalers for consistency
+2025-06-29 05:01:17,956 - INFO - 🧠 Adding advanced features...
+2025-06-29 05:01:17,990 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples, 493 validation samples
+2025-06-29 05:01:17,991 - INFO - 📈 Features selected: 50
+2025-06-29 05:01:17,991 - INFO - 🧠 Training linear models...
+2025-06-29 05:01:17,994 - INFO - ✅ Linear Regression trained
+2025-06-29 05:01:18,034 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 05:01:18,060 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 05:01:18,060 - INFO - 🌳 Training tree-based models...
+2025-06-29 05:04:04,719 - INFO - 🚀 Advanced Model Trainer Initialized
+2025-06-29 05:04:04,719 - INFO - 📅 Date Range: 2015-01-01 to 2025-06-28
+2025-06-29 05:04:04,719 - INFO - 🏢 Target Company: Biocon
+2025-06-29 05:04:04,719 - INFO - 🚀 Starting Advanced Model Training Pipeline...
+2025-06-29 05:04:04,719 - INFO - 📊 Loading and preparing data...
+2025-06-29 05:04:04,720 - INFO - ✅ Loaded saved features and scalers for consistency
+2025-06-29 05:04:04,779 - INFO - 🧠 Adding advanced features...
+2025-06-29 05:04:04,818 - INFO - ✅ Data prepared: 2221 training samples, 368 test samples, 493 validation samples
+2025-06-29 05:04:04,818 - INFO - 📈 Features selected: 50
+2025-06-29 05:04:04,818 - INFO - 🧠 Training linear models...
+2025-06-29 05:04:04,821 - INFO - ✅ Linear Regression trained
+2025-06-29 05:04:04,853 - INFO - ✅ Ridge Regression trained (best alpha: 100.0)
+2025-06-29 05:04:04,888 - INFO - ✅ Lasso Regression trained (best alpha: 0.1)
+2025-06-29 05:04:04,888 - INFO - 🌳 Training tree-based models...
