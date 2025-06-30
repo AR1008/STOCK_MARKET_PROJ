@@ -1,17 +1,3 @@
-"""
-Advanced News Data Collection for Biocon FDA Project
-Day 1 - Step 2: Comprehensive news collection with FinBERT sentiment analysis
-
-Enhanced Features:
-- FinBERT financial sentiment analysis with robust error handling
-- DistilBERT general sentiment analysis with fallback to lighter model
-- VADER and TextBlob for comparison
-- FDA milestone detection with fuzzy matching and expanded keywords
-- Event impact scoring with semantic similarity
-- Multi-source news aggregation with improved source diversity
-- Complete daily aggregation aligned with stock data
-"""
-
 import requests
 import pandas as pd
 import numpy as np
@@ -19,295 +5,281 @@ from datetime import datetime, timedelta
 import time
 import os
 import json
-import logging
 import feedparser
-from bs4 import BeautifulSoup
-import yfinance as yf
-import warnings
-from pathlib import Path
-
-# Advanced NLP imports with fallbacks
-try:
-    import torch
-    from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
-    TORCH_AVAILABLE = True
-except ImportError:
-    TORCH_AVAILABLE = False
-    print("⚠️ PyTorch/Transformers not available - using fallback sentiment methods")
-
 from textblob import TextBlob
-
-try:
-    import nltk
-    from nltk.sentiment import SentimentIntensityAnalyzer
-    NLTK_AVAILABLE = True
-except ImportError:
-    NLTK_AVAILABLE = False
-    print("⚠️ NLTK not available - using TextBlob only")
-
-try:
-    from sentence_transformers import SentenceTransformer
-    from sklearn.metrics.pairwise import cosine_similarity
-    SENTENCE_TRANSFORMERS_AVAILABLE = True
-except ImportError:
-    SENTENCE_TRANSFORMERS_AVAILABLE = False
-    print("⚠️ Sentence Transformers not available - skipping semantic analysis")
-
-try:
-    from fuzzywuzzy import fuzz
-    FUZZY_AVAILABLE = True
-except ImportError:
-    FUZZY_AVAILABLE = False
-    print("⚠️ fuzzywuzzy not available - using exact keyword matching")
-
-# Import configuration with fallback
-try:
-    from config import (
-        COMPANY_INFO, DRUG_INFO, DATA_START_DATE, DATA_END_DATE,
-        SENTIMENT_CONFIG, FDA_MILESTONES, DATA_SOURCES, PATHS, DATA_FILES,
-        create_directories, validate_config
-    )
-    CONFIG_AVAILABLE = True
-except ImportError:
-    CONFIG_AVAILABLE = False
-    # Fallback configuration
-    COMPANY_INFO = {'name': 'Biocon', 'ticker': 'BIOCON.NS'}
-    DRUG_INFO = {'name': 'Semglee', 'scientific_name': 'insulin glargine-yfgn', 'full_name': 'Semglee (insulin glargine-yfgn)'}
-    DATA_START_DATE = '2015-01-01'
-    DATA_END_DATE = '2025-06-28'
-    PATHS = {'data': Path('data')}
-    DATA_FILES = {'news_data': 'news_data.csv', 'daily_sentiment': 'daily_sentiment.csv', 'fda_events': 'fda_events.csv'}
-    
-    # Create directories
-    Path('data').mkdir(exist_ok=True)
-    Path('logs').mkdir(exist_ok=True)
-    
-    FDA_MILESTONES = {
-        'application_phase': {
-            'keywords': ['IND application', 'FDA submission', 'BLA submission', 'regulatory filing', 'drug application', 'biosimilar application', 'NDA submission'],
-            'weight': 1.6, 'importance': 8, 'category': 'regulatory'
-        },
-        'clinical_trials': {
-            'keywords': ['phase I trial', 'phase II trial', 'phase III trial', 'clinical trial', 'study results', 'trial data', 'biosimilarity study', 'clinical data', 'trial completion'],
-            'weight': 1.5, 'importance': 7, 'category': 'clinical'
-        },
-        'regulatory_review': {
-            'keywords': ['FDA review', 'regulatory review', 'FDA inspection', 'PDUFA date', 'FDA meeting', 'pre-approval inspection', 'advisory committee'],
-            'weight': 1.8, 'importance': 9, 'category': 'regulatory'
-        },
-        'approval_process': {
-            'keywords': ['FDA approval', 'drug approval', 'biosimilar approval', 'interchangeable designation', 'marketing authorization', 'regulatory approval', 'FDA clearance'],
-            'weight': 2.0, 'importance': 10, 'category': 'approval'
-        },
-        'post_approval': {
-            'keywords': ['product launch', 'commercial launch', 'market launch', 'hospital adoption', 'prescription volume', 'market expansion', 'formulary inclusion', 'sales growth'],
-            'weight': 1.3, 'importance': 6, 'category': 'commercial'
-        },
-        'regulatory_issues': {
-            'keywords': ['FDA warning letter', 'recall', 'safety concern', 'regulatory action', 'adverse event', 'manufacturing issue', 'compliance issue'],
-            'weight': 1.7, 'importance': 8, 'category': 'risk'
-        }
-    }
-
+import yfinance as yf
+from bs4 import BeautifulSoup
+import warnings
 warnings.filterwarnings('ignore')
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('logs/news_collection.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+# =============================================================================
+# CONFIGURATION SECTION - MODIFY FOR DIFFERENT DRUGS/COMPANIES
+# =============================================================================
 
-class AdvancedNewsCollector:
-    """
-    Advanced news collector with enhanced FinBERT sentiment analysis,
-    FDA milestone detection, multi-modal sentiment fusion, and improved coverage
-    """
+# Primary drug configuration
+PRIMARY_DRUG = {
+    'name': 'Semglee',
+    'scientific_name': 'insulin glargine-yfgn',
+    'full_name': 'Semglee (insulin glargine-yfgn)',
+    'drug_type': 'insulin biosimilar',
+    'indication': 'diabetes',
+    'application_year': 2017,  # When FDA application started
+    'approval_year': 2021,     # When FDA approved
+    'launch_year': 2021        # When market launch began
+}
+
+# Company configuration
+COMPANY = {
+    'name': 'Biocon',
+    'ticker': 'BIOCON.NS',
+    'sector': 'Pharmaceutical',
+    'subsidiary_names': ['Biocon Biologics', 'Biocon Pharma']
+}
+
+# Data collection configuration
+DATA_CONFIG = {
+    'start_date': '2015-01-01',  # Overall data collection start
+    'end_date': '2025-06-26',    # Current date
+    'drug_focus_start': '2017-01-01',  # When to focus on drug-specific news
+    'min_articles_threshold': 10
+}
+
+# FDA milestone tracking configuration
+FDA_MILESTONES = {
+    'application_phase': [
+        'IND application', 'investigational new drug', 'pre-clinical',
+        'FDA submission', 'regulatory filing', 'drug application'
+    ],
+    'clinical_trials': [
+        'phase I trial', 'phase II trial', 'phase III trial', 'clinical trial',
+        'study results', 'trial data', 'clinical endpoint', 'patient enrollment'
+    ],
+    'regulatory_review': [
+        'FDA review', 'regulatory review', 'FDA meeting', 'advisory committee',
+        'FDA inspection', 'manufacturing inspection', 'facility inspection'
+    ],
+    'approval_process': [
+        'FDA approval', 'drug approval', 'marketing authorization', 'BLA approval',
+        'NDA approval', 'biosimilar approval', 'interchangeable designation'
+    ],
+    'post_approval': [
+        'product launch', 'commercial launch', 'market launch', 'hospital adoption',
+        'prescription volume', 'market penetration', 'real-world evidence'
+    ],
+    'regulatory_issues': [
+        'FDA warning letter', 'recall', 'safety concern', 'adverse event',
+        'manufacturing issue', 'quality issue', 'FDA inspection deficiency'
+    ]
+}
+
+# Market impact tracking
+MARKET_IMPACT_KEYWORDS = {
+    'hospital_adoption': [
+        'hospital formulary', 'hospital adoption', 'pharmacy adoption',
+        'prescription growth', 'market share', 'hospital contract'
+    ],
+    'competitive_impact': [
+        'market competition', 'competitor response', 'pricing pressure',
+        'market access', 'payer coverage', 'insurance coverage'
+    ],
+    'financial_impact': [
+        'revenue impact', 'sales growth', 'market opportunity',
+        'earnings impact', 'financial guidance', 'revenue guidance'
+    ]
+}
+
+# Comprehensive company news tracking
+COMPANY_NEWS_CATEGORIES = {
+    'financial_results': [
+        'quarterly results', 'earnings', 'revenue', 'profit', 'loss',
+        'financial results', 'q1 results', 'q2 results', 'q3 results', 'q4 results',
+        'annual results', 'financial performance', 'earnings call', 'investor call'
+    ],
+    'insider_trading': [
+        'insider trading', 'insider buying', 'insider selling', 'promoter stake',
+        'shareholding pattern', 'board meeting', 'director appointment',
+        'management change', 'ceo change', 'executive appointment'
+    ],
+    'corporate_actions': [
+        'dividend', 'bonus shares', 'stock split', 'rights issue', 'buyback',
+        'merger', 'acquisition', 'spin-off', 'demerger', 'restructuring'
+    ],
+    'partnerships_deals': [
+        'partnership', 'collaboration', 'joint venture', 'licensing deal',
+        'agreement', 'contract', 'strategic alliance', 'tie-up', 'acquisition deal'
+    ],
+    'regulatory_compliance': [
+        'sebi', 'compliance', 'regulatory filing', 'stock exchange notice',
+        'disclosure', 'penalty', 'investigation', 'audit', 'legal issue'
+    ],
+    'business_expansion': [
+        'new facility', 'plant expansion', 'capacity increase', 'new market',
+        'international expansion', 'manufacturing expansion', 'facility upgrade'
+    ],
+    'research_development': [
+        'r&d investment', 'research collaboration', 'innovation', 'new product',
+        'patent filing', 'intellectual property', 'technology transfer'
+    ],
+    'market_rumors': [
+        'market speculation', 'analyst report', 'rating upgrade', 'rating downgrade',
+        'target price', 'recommendation', 'analyst coverage', 'brokerage report'
+    ]
+}
+
+# =============================================================================
+# MAIN COLLECTION FUNCTIONS
+# =============================================================================
+
+def clear_old_news_data():
+    """Remove old news data files"""
+    print("=== CLEARING OLD NEWS DATA ===")
     
-    def __init__(self):
-        self.company = COMPANY_INFO
-        self.drug = DRUG_INFO
-        self.start_date = DATA_START_DATE
-        self.end_date = DATA_END_DATE
-        
-        # Initialize models
-        self.finbert_analyzer = None
-        self.distilbert_analyzer = None
-        self.vader_analyzer = None
-        self.sentence_transformer = None
-        
-        # Data storage
-        self.collected_articles = []
-        self.processed_articles = []
-        self.daily_aggregation = None
-        
-        logger.info("🚀 Advanced News Collector Initialized")
-        logger.info(f"🏢 Target Company: {self.company['name']}")
-        logger.info(f"💊 Target Drug: {self.drug['name']}")
+    data_path = 'data'
+    news_files = ['news_data.csv', 'daily_sentiment.csv', 'biocon_news_data.csv']
     
-    def initialize_sentiment_models(self):
-        """
-        Initialize all sentiment analysis models with robust fallbacks
-        """
-        logger.info("🧠 Initializing advanced sentiment models...")
-        
-        # 1. FinBERT Analysis
-        if TORCH_AVAILABLE:
+    cleared_files = []
+    for filename in news_files:
+        file_path = os.path.join(data_path, filename)
+        if os.path.exists(file_path):
             try:
-                logger.info("  Loading FinBERT model...")
-                self.finbert_analyzer = pipeline(
-                    "sentiment-analysis",
-                    model="ProsusAI/finbert",
-                    device=torch.cuda.current_device() if torch.cuda.is_available() else -1
-                )
-                logger.info("  ✅ FinBERT loaded successfully")
+                os.remove(file_path)
+                cleared_files.append(filename)
+                print(f"✓ Removed old file: {filename}")
             except Exception as e:
-                logger.error(f"  ❌ FinBERT failed to load: {str(e)}")
-                self.finbert_analyzer = None
-        
-        # 2. DistilBERT Analysis with fallback
-        if TORCH_AVAILABLE and self.finbert_analyzer is None:
-            try:
-                logger.info("  Loading DistilBERT model...")
-                self.distilbert_analyzer = pipeline(
-                    "sentiment-analysis",
-                    model="distilbert-base-uncased-finetuned-sst-2-english",
-                    device=torch.cuda.current_device() if torch.cuda.is_available() else -1
-                )
-                logger.info("  ✅ DistilBERT loaded successfully")
-            except Exception as e:
-                logger.error(f"  ❌ DistilBERT failed: {str(e)}")
-                try:
-                    logger.info("  🔄 Falling back to lighter BERT model...")
-                    self.distilbert_analyzer = pipeline(
-                        "sentiment-analysis",
-                        model="nlptown/bert-base-multilingual-uncased-sentiment",
-                        device=torch.cuda.current_device() if torch.cuda.is_available() else -1
-                    )
-                    logger.info("  ✅ Fallback BERT loaded successfully")
-                except Exception as e2:
-                    logger.error(f"  ❌ Fallback BERT failed: {str(e2)}")
-                    self.distilbert_analyzer = None
-        else:
-            self.distilbert_analyzer = None
-        
-        # 3. VADER Analysis
-        if NLTK_AVAILABLE:
-            try:
-                logger.info("  Setting up VADER analyzer...")
-                nltk.download('vader_lexicon', quiet=True)
-                nltk.download('punkt', quiet=True)
-                self.vader_analyzer = SentimentIntensityAnalyzer()
-                logger.info("  ✅ VADER loaded successfully")
-            except Exception as e:
-                logger.error(f"  ❌ VADER failed to load: {str(e)}")
-                self.vader_analyzer = None
-        
-        # 4. Sentence Transformer
-        if SENTENCE_TRANSFORMERS_AVAILABLE:
-            try:
-                logger.info("  Loading Sentence Transformer...")
-                self.sentence_transformer = SentenceTransformer('all-MiniLM-L6-v2')
-                logger.info("  ✅ Sentence Transformer loaded successfully")
-            except Exception as e:
-                logger.error(f"  ❌ Sentence Transformer failed to load: {str(e)}")
-                self.sentence_transformer = None
-        
-        logger.info("🎯 Sentiment models initialization complete!")
+                print(f"⚠️  Could not remove {filename}: {str(e)}")
     
-    def generate_comprehensive_search_queries(self):
-        """
-        Generate expanded search queries for all types of news
-        """
-        company_name = self.company['name']
-        drug_name = self.drug['name']
-        scientific_name = self.drug['scientific_name']
-        
-        # Expanded FDA milestone queries
-        fda_queries = [
-            f"{company_name} {drug_name} FDA approval",
-            f"{company_name} {drug_name} FDA submission",
-            f"{company_name} {drug_name} clinical trial",
-            f"{company_name} {scientific_name} FDA",
-            f"{company_name} insulin biosimilar FDA",
-            f"{drug_name} FDA approval 2021",
-            f"{company_name} BLA submission",
-            f"{company_name} FDA inspection",
-            f"{drug_name} interchangeable designation",
-            f"{company_name} regulatory approval",
-            f"{company_name} Semglee trial",
-            f"{company_name} insulin biosimilar",
-            f"Kiran Mazumdar-Shaw FDA",
-            f"{company_name} biosimilarity study",
-            f"{drug_name} PDUFA",
-            f"{company_name} regulatory filing"
-        ]
-        
-        # Expanded market and commercial queries
-        market_queries = [
-            f"{company_name} {drug_name} launch",
-            f"{company_name} {drug_name} sales",
-            f"{drug_name} market share",
-            f"{drug_name} hospital adoption",
-            f"{company_name} {drug_name} revenue",
-            f"{drug_name} prescription volume",
-            f"{company_name} commercial success",
-            f"{drug_name} market penetration",
-            f"{drug_name} formulary inclusion",
-            f"{drug_name} insurance coverage",
-            f"{company_name} market expansion"
-        ]
-        
-        # Expanded financial and earnings queries
-        financial_queries = [
-            f"{company_name} quarterly earnings",
-            f"{company_name} financial results",
-            f"{company_name} revenue growth",
-            f"{company_name} profit",
-            f"{company_name} guidance",
-            f"{company_name} investor call",
-            f"{company_name} annual results",
-            f"{company_name} stock price",
-            f"{company_name} Q1 earnings",
-            f"{company_name} Q2 earnings",
-            f"{company_name} Q3 earnings",
-            f"{company_name} Q4 earnings"
-        ]
-        
-        # Expanded corporate and partnership queries
-        corporate_queries = [
-            f"{company_name} partnership",
-            f"{company_name} collaboration",
-            f"{company_name} acquisition",
-            f"{company_name} merger",
-            f"{company_name} licensing deal",
-            f"{company_name} joint venture",
-            f"{company_name} expansion",
-            f"{company_name} investment",
-            f"{company_name} Viatris partnership",
-            f"Kiran Mazumdar-Shaw deal",
-            f"{company_name} strategic alliance"
-        ]
-        
-        return {
-            'fda_queries': fda_queries,
-            'market_queries': market_queries,
-            'financial_queries': financial_queries,
-            'corporate_queries': corporate_queries
-        }
+    print(f"✓ Cleared {len(cleared_files)} old files, ready for fresh collection")
+
+def check_data_folder():
+    """Check data folder exists"""
+    if not os.path.exists('data'):
+        os.makedirs('data')
+        print("✓ Created data folder")
+    else:
+        print("✓ Data folder exists")
+    return 'data'
+
+def setup_sentiment_analysis():
+    """Setup sentiment analysis tools"""
+    print("\n=== SETTING UP SENTIMENT ANALYSIS ===")
+    try:
+        import nltk
+        nltk.download('vader_lexicon', quiet=True)
+        nltk.download('punkt', quiet=True)
+        from nltk.sentiment import SentimentIntensityAnalyzer
+        print("✓ NLTK VADER sentiment analyzer ready")
+        return SentimentIntensityAnalyzer()
+    except Exception as e:
+        print(f"⚠️  NLTK not available, using TextBlob only: {str(e)}")
+        return None
+
+def generate_comprehensive_search_queries():
+    """Generate comprehensive search queries for FDA journey tracking and ALL company news"""
+    drug = PRIMARY_DRUG
+    company = COMPANY
     
-    def fetch_google_news(self, query, date_range=None):
-        """
-        Fetch news from Google News RSS with relaxed date filtering
-        """
-        articles = []
-        
+    # Drug-specific FDA journey queries
+    drug_fda_queries = [
+        f"{drug['name']} FDA application",
+        f"{drug['name']} FDA approval",
+        f"{drug['name']} clinical trial",
+        f"{drug['name']} FDA submission",
+        f"{drug['name']} regulatory approval",
+        f"{drug['scientific_name']} FDA",
+        f"{company['name']} {drug['name']} FDA",
+        f"{drug['name']} biosimilar approval",
+        f"{drug['name']} interchangeable",
+        f"insulin glargine-yfgn approval"
+    ]
+    
+    # Market implementation queries
+    market_queries = [
+        f"{drug['name']} hospital adoption",
+        f"{drug['name']} market launch",
+        f"{drug['name']} prescription volume",
+        f"{drug['name']} market share",
+        f"{drug['name']} hospital formulary",
+        f"{drug['name']} pharmacy",
+        f"{drug['name']} real world evidence",
+        f"{drug['name']} commercial success"
+    ]
+    
+    # Company-FDA general queries
+    company_fda_queries = [
+        f"{company['name']} FDA approval",
+        f"{company['name']} FDA warning letter",
+        f"{company['name']} FDA inspection",
+        f"{company['name']} regulatory",
+        f"{company['name']} clinical trial",
+        f"{company['name']} drug approval",
+        f"{company['name']} biosimilar",
+        f"Biocon Biologics FDA"
+    ]
+    
+    # Financial and earnings queries
+    financial_queries = [
+        f"{company['name']} quarterly results",
+        f"{company['name']} earnings",
+        f"{company['name']} revenue",
+        f"{company['name']} profit",
+        f"{company['name']} financial results",
+        f"{company['name']} investor call",
+        f"{company['name']} guidance",
+        f"{company['name']} stock price"
+    ]
+    
+    # Corporate and business queries
+    corporate_queries = [
+        f"{company['name']} merger",
+        f"{company['name']} acquisition",
+        f"{company['name']} partnership",
+        f"{company['name']} collaboration",
+        f"{company['name']} joint venture",
+        f"{company['name']} licensing deal",
+        f"{company['name']} expansion",
+        f"{company['name']} new facility"
+    ]
+    
+    # Insider and regulatory queries
+    insider_queries = [
+        f"{company['name']} insider trading",
+        f"{company['name']} promoter stake",
+        f"{company['name']} board meeting",
+        f"{company['name']} management change",
+        f"{company['name']} sebi",
+        f"{company['name']} compliance",
+        f"{company['name']} investigation",
+        f"Kiran Mazumdar Shaw"
+    ]
+    
+    # Market and analyst queries
+    market_queries_general = [
+        f"{company['name']} analyst report",
+        f"{company['name']} rating upgrade",
+        f"{company['name']} rating downgrade",
+        f"{company['name']} target price",
+        f"{company['name']} brokerage report",
+        f"{company['name']} market speculation",
+        f"{company['name']} dividend",
+        f"{company['name']} bonus shares"
+    ]
+    
+    return drug_fda_queries, market_queries, company_fda_queries, financial_queries, corporate_queries, insider_queries, market_queries_general
+
+def fetch_news_by_date_range(queries, date_start, date_end, query_type):
+    """Fetch news for specific date range and query type"""
+    print(f"\n--- Fetching {query_type} news from {date_start} to {date_end} ---")
+    
+    all_articles = []
+    
+    for query in queries:
         try:
+            print(f"Searching: {query}")
+            
+            # Google News RSS search
             query_encoded = query.replace(' ', '%20')
+            
+            # Add date restrictions if possible
             url = f"https://news.google.com/rss/search?q={query_encoded}&hl=en-US&gl=US&ceid=US:en"
             
             feed = feedparser.parse(url)
@@ -320,1029 +292,847 @@ class AdvancedNewsCollector:
                     else:
                         pub_date = datetime.now()
                     
-                    # Relaxed date range filtering
-                    if date_range:
-                        start_date = datetime.strptime(date_range[0], '%Y-%m-%d')
-                        end_date = datetime.strptime(date_range[1], '%Y-%m-%d')
-                        # Allow articles within 30 days outside range
-                        if not (start_date - timedelta(days=30) <= pub_date <= end_date + timedelta(days=30)):
-                            continue
+                    # Filter by date range
+                    start_date = datetime.strptime(date_start, '%Y-%m-%d')
+                    end_date = datetime.strptime(date_end, '%Y-%m-%d')
+                    
+                    if start_date <= pub_date <= end_date:
+                        article = {
+                            'date': pub_date.strftime('%Y-%m-%d'),
+                            'datetime': pub_date.strftime('%Y-%m-%d %H:%M:%S'),
+                            'title': getattr(entry, 'title', ''),
+                            'summary': getattr(entry, 'summary', ''),
+                            'url': getattr(entry, 'link', ''),
+                            'source': f'Google News - {query_type}',
+                            'search_query': query,
+                            'query_type': query_type,
+                            'date_range': f'{date_start}_to_{date_end}'
+                        }
+                        all_articles.append(article)
+                
+                except Exception as e:
+                    continue
+            
+            # Be respectful with requests
+            time.sleep(1.5)
+            
+        except Exception as e:
+            print(f"⚠️  Error searching '{query}': {str(e)}")
+            continue
+    
+    print(f"✓ Collected {len(all_articles)} {query_type} articles")
+    return all_articles
+
+def fetch_comprehensive_news_data():
+    """Fetch comprehensive news data across all time periods and ALL company news types"""
+    print("=== COMPREHENSIVE NEWS DATA COLLECTION ===")
+    print("Collecting: FDA journey + Financial + Corporate + Insider + Market news")
+    
+    # Generate all query types
+    drug_fda_queries, market_queries, company_fda_queries, financial_queries, corporate_queries, insider_queries, market_queries_general = generate_comprehensive_search_queries()
+    
+    all_articles = []
+    
+    # Period 1: 2015-2017 (Pre-drug application, comprehensive company news)
+    print("\n📅 PERIOD 1: 2015-2017 (Pre-application comprehensive company news)")
+    period1_articles = fetch_news_by_date_range(
+        company_fda_queries + financial_queries + corporate_queries + insider_queries + market_queries_general,
+        '2015-01-01', '2016-12-31',
+        'Comprehensive Company News'
+    )
+    all_articles.extend(period1_articles)
+    
+    # Period 2: 2017-2021 (FDA journey + ALL company news)
+    print("\n📅 PERIOD 2: 2017-2021 (FDA Journey + All Company News)")
+    period2_articles = fetch_news_by_date_range(
+        drug_fda_queries + company_fda_queries + financial_queries + corporate_queries + insider_queries,
+        '2017-01-01', '2021-12-31',
+        'FDA Journey + Company News'
+    )
+    all_articles.extend(period2_articles)
+    
+    # Period 3: 2021-2025 (Post-approval + market + ALL company news)
+    print("\n📅 PERIOD 3: 2021-2025 (Market Implementation + All Company News)")
+    period3_articles = fetch_news_by_date_range(
+        drug_fda_queries + market_queries + financial_queries + corporate_queries + insider_queries + market_queries_general,
+        '2021-01-01', '2025-06-26',
+        'Market + Complete Company News'
+    )
+    all_articles.extend(period3_articles)
+    
+    # Yahoo Finance company news (all periods) - gets ALL company news
+    print("\n📅 YAHOO FINANCE: Complete company news (all periods)")
+    yahoo_articles = fetch_yahoo_finance_news()
+    all_articles.extend(yahoo_articles)
+    
+    # Additional comprehensive news sources
+    print("\n📅 ADDITIONAL SOURCES: Financial news and insider information")
+    additional_articles = fetch_additional_comprehensive_sources()
+    all_articles.extend(additional_articles)
+    
+    return all_articles
+
+def fetch_additional_comprehensive_sources():
+    """Fetch additional comprehensive company news from specialized sources"""
+    print("Fetching additional comprehensive company news...")
+    
+    additional_articles = []
+    
+    # Financial news RSS feeds
+    financial_rss_feeds = [
+        'https://economictimes.indiatimes.com/markets/stocks/rssfeeds/2146842.cms',  # ET Markets
+        'https://www.business-standard.com/rss/markets-106.rss',  # Business Standard Markets
+        'https://www.livemint.com/rss/companies',  # Mint Companies
+    ]
+    
+    # Business news RSS feeds
+    business_rss_feeds = [
+        'https://www.moneycontrol.com/rss/business.xml',
+        'https://feeds.feedburner.com/ndtvprofit-latest',
+    ]
+    
+    all_feeds = financial_rss_feeds + business_rss_feeds
+    
+    for feed_url in all_feeds:
+        try:
+            print(f"Fetching from: {feed_url}")
+            
+            feed = feedparser.parse(feed_url)
+            
+            for entry in feed.entries:
+                try:
+                    # Parse publication date
+                    if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                        pub_date = datetime(*entry.published_parsed[:6])
+                    else:
+                        pub_date = datetime.now()
+                    
+                    # Focus on recent news (last 3 years) and check for company relevance
+                    if pub_date >= datetime(2022, 1, 1):
+                        title = getattr(entry, 'title', '').lower()
+                        summary = getattr(entry, 'summary', '').lower()
+                        
+                        # Check if article mentions company or related terms
+                        company_terms = ['biocon', 'kiran mazumdar', 'biocon biologics']
+                        if any(term in title or term in summary for term in company_terms):
+                            article = {
+                                'date': pub_date.strftime('%Y-%m-%d'),
+                                'datetime': pub_date.strftime('%Y-%m-%d %H:%M:%S'),
+                                'title': getattr(entry, 'title', ''),
+                                'summary': getattr(entry, 'summary', ''),
+                                'url': getattr(entry, 'link', ''),
+                                'source': 'Financial RSS Feed',
+                                'search_query': 'Company Financial News',
+                                'query_type': 'Financial News Feed'
+                            }
+                            additional_articles.append(article)
+                
+                except Exception as e:
+                    continue
+            
+            # Be respectful with requests
+            time.sleep(2)
+            
+        except Exception as e:
+            print(f"⚠️  Error fetching RSS feed {feed_url}: {str(e)}")
+            continue
+    
+    print(f"✓ Collected {len(additional_articles)} additional comprehensive articles")
+    return additional_articles
+
+def fetch_yahoo_finance_news():
+    """Fetch company news from Yahoo Finance"""
+    try:
+        print(f"Fetching Yahoo Finance {COMPANY['name']} news...")
+        ticker = yf.Ticker(COMPANY['ticker'])
+        news_data = ticker.news
+        
+        articles = []
+        if news_data:
+            for item in news_data:
+                try:
+                    if 'providerPublishTime' in item:
+                        pub_date = datetime.fromtimestamp(item['providerPublishTime'])
+                    else:
+                        pub_date = datetime.now()
                     
                     article = {
                         'date': pub_date.strftime('%Y-%m-%d'),
-                        'datetime': pub_date,
-                        'title': entry.get('title', ''),
-                        'summary': entry.get('summary', ''),
-                        'url': entry.get('link', ''),
-                        'source': 'Google News',
-                        'search_query': query,
-                        'raw_content': entry.get('title', '') + ' ' + entry.get('summary', '')
+                        'datetime': pub_date.strftime('%Y-%m-%d %H:%M:%S'),
+                        'title': item.get('title', ''),
+                        'summary': item.get('summary', ''),
+                        'url': item.get('link', ''),
+                        'source': 'Yahoo Finance',
+                        'search_query': f'{COMPANY["name"]} Company News',
+                        'query_type': 'Company Financial News'
                     }
                     articles.append(article)
-                    
+                
                 except Exception as e:
                     continue
-                    
-        except Exception as e:
-            logger.error(f"Error fetching Google News for query '{query}': {str(e)}")
-            
+        
+        print(f"✓ Collected {len(articles)} Yahoo Finance articles")
         return articles
-    
-    def fetch_yahoo_news(self, query):
-        """
-        Fetch news from Yahoo Finance with broader relevance check
-        """
+        
+    except Exception as e:
+        print(f"⚠️  Error fetching Yahoo Finance: {str(e)}")
+        return []
+    """Fetch company news from Yahoo Finance"""
+    try:
+        print(f"Fetching Yahoo Finance {COMPANY['name']} news...")
+        ticker = yf.Ticker(COMPANY['ticker'])
+        news_data = ticker.news
+        
         articles = []
-        
-        try:
-            ticker = yf.Ticker(self.company['ticker'])
-            news_data = ticker.news
-            
-            if news_data:
-                for item in news_data:
-                    try:
-                        title = item.get('title', '').lower()
-                        summary = item.get('summary', '').lower()
-                        query_lower = query.lower()
-                        
-                        # Broader relevance check
-                        if query_lower in title or query_lower in summary or any(word in title or word in summary for word in ['biocon', 'semglee', 'insulin']):
-                            if 'providerPublishTime' in item:
-                                pub_date = datetime.fromtimestamp(item['providerPublishTime'])
-                            else:
-                                pub_date = datetime.now()
-                            
-                            article = {
-                                'date': pub_date.strftime('%Y-%m-%d'),
-                                'datetime': pub_date,
-                                'title': item.get('title', ''),
-                                'summary': item.get('summary', ''),
-                                'url': item.get('link', ''),
-                                'source': 'Yahoo Finance',
-                                'search_query': query,
-                                'raw_content': item.get('title', '') + ' ' + item.get('summary', '')
-                            }
-                            articles.append(article)
-                    
-                    except Exception as e:
-                        continue
-                        
-        except Exception as e:
-            logger.error(f"Error fetching Yahoo Finance news: {str(e)}")
-            
-        return articles
-    
-    def fetch_rss_feeds(self):
-        """
-        Fetch news from expanded RSS feeds
-        """
-        articles = []
-        rss_feeds = [
-            'https://economictimes.indiatimes.com/markets/stocks/rssfeeds/2146842.cms',
-            'https://www.business-standard.com/rss/markets-106.rss',
-            'https://www.livemint.com/rss/companies',
-            'https://www.fiercepharma.com/rss',  # Pharma news
-            'https://www.reuters.com/arc/outboundfeeds/newsml/BUSINESS-NEWS/INDIA',  # Indian business
-            'https://www.biospace.com/rss/news'  # Biotech news
-        ]
-        
-        for feed_url in rss_feeds:
-            try:
-                feed = feedparser.parse(feed_url)
-                
-                for entry in feed.entries:
-                    try:
-                        title = entry.get('title', '').lower()
-                        summary = entry.get('summary', '').lower()
-                        
-                        # Check relevance to Biocon or Semglee
-                        if any(keyword in title or keyword in summary for keyword in ['biocon', 'semglee', 'insulin glargine', 'biosimilar']):
-                            if hasattr(entry, 'published_parsed') and entry.published_parsed:
-                                pub_date = datetime(*entry.published_parsed[:6])
-                            else:
-                                pub_date = datetime.now()
-                            
-                            article = {
-                                'date': pub_date.strftime('%Y-%m-%d'),
-                                'datetime': pub_date,
-                                'title': entry.get('title', ''),
-                                'summary': entry.get('summary', ''),
-                                'url': entry.get('link', ''),
-                                'source': f'RSS - {feed_url.split("/")[-1]}',
-                                'search_query': 'RSS Feed',
-                                'raw_content': entry.get('title', '') + ' ' + entry.get('summary', '')
-                            }
-                            articles.append(article)
-                    
-                    except Exception as e:
-                        continue
-                        
-            except Exception as e:
-                logger.error(f"Error fetching RSS feed {feed_url}: {str(e)}")
-                continue
-                
-        return articles
-    
-    def analyze_sentiment_advanced(self, text):
-        """
-        Advanced multi-model sentiment analysis with dynamic weighting
-        """
-        if not text or len(text.strip()) < 5:
-            return {
-                'finbert_sentiment': 0.0,
-                'finbert_label': 'neutral',
-                'distilbert_sentiment': 0.0,
-                'distilbert_label': 'neutral',
-                'vader_compound': 0.0,
-                'textblob_polarity': 0.0,
-                'ensemble_sentiment': 0.0,
-                'confidence': 0.0
-            }
-        
-        results = {}
-        weights = {'finbert': 0.4, 'distilbert': 0.3, 'vader': 0.2, 'textblob': 0.1}
-        available_models = []
-        
-        # 1. FinBERT Analysis
-        if self.finbert_analyzer:
-            try:
-                finbert_result = self.finbert_analyzer(text[:512])
-                if finbert_result:
-                    label = finbert_result[0]['label'].lower()
-                    score = finbert_result[0]['score']
-                    
-                    if label == 'positive':
-                        results['finbert_sentiment'] = score
-                    elif label == 'negative':
-                        results['finbert_sentiment'] = -score
-                    else:
-                        results['finbert_sentiment'] = 0.0
-                    
-                    results['finbert_label'] = label
-                    results['finbert_confidence'] = score
-                    available_models.append('finbert')
-                else:
-                    results['finbert_sentiment'] = 0.0
-                    results['finbert_label'] = 'neutral'
-                    results['finbert_confidence'] = 0.0
-            except Exception as e:
-                logger.error(f"FinBERT analysis failed: {str(e)}")
-                results['finbert_sentiment'] = 0.0
-                results['finbert_label'] = 'neutral'
-                results['finbert_confidence'] = 0.0
-        else:
-            results['finbert_sentiment'] = 0.0
-            results['finbert_label'] = 'neutral'
-            results['finbert_confidence'] = 0.0
-        
-        # 2. DistilBERT Analysis
-        if self.distilbert_analyzer:
-            try:
-                distilbert_result = self.distilbert_analyzer(text[:512])
-                if distilbert_result:
-                    label = distilbert_result[0]['label'].lower()
-                    score = distilbert_result[0]['score']
-                    
-                    if label == 'positive':
-                        results['distilbert_sentiment'] = score
-                    elif label == 'negative':
-                        results['distilbert_sentiment'] = -score
-                    else:
-                        results['distilbert_sentiment'] = 0.0
-                    
-                    results['distilbert_label'] = label
-                    results['distilbert_confidence'] = score
-                    available_models.append('distilbert')
-                else:
-                    results['distilbert_sentiment'] = 0.0
-                    results['distilbert_label'] = 'neutral'
-                    results['distilbert_confidence'] = 0.0
-            except Exception as e:
-                logger.error(f"DistilBERT analysis failed: {str(e)}")
-                results['distilbert_sentiment'] = 0.0
-                results['distilbert_label'] = 'neutral'
-                results['distilbert_confidence'] = 0.0
-        else:
-            results['distilbert_sentiment'] = 0.0
-            results['distilbert_label'] = 'neutral'
-            results['distilbert_confidence'] = 0.0
-        
-        # 3. VADER Analysis
-        if self.vader_analyzer:
-            try:
-                vader_scores = self.vader_analyzer.polarity_scores(text)
-                results['vader_compound'] = vader_scores['compound']
-                results['vader_positive'] = vader_scores['pos']
-                results['vader_negative'] = vader_scores['neg']
-                results['vader_neutral'] = vader_scores['neu']
-                available_models.append('vader')
-            except Exception as e:
-                logger.error(f"VADER analysis failed: {str(e)}")
-                results['vader_compound'] = 0.0
-                results['vader_positive'] = 0.0
-                results['vader_negative'] = 0.0
-                results['vader_neutral'] = 1.0
-        else:
-            results['vader_compound'] = 0.0
-            results['vader_positive'] = 0.0
-            results['vader_negative'] = 0.0
-            results['vader_neutral'] = 1.0
-        
-        # 4. TextBlob Analysis
-        try:
-            blob = TextBlob(text)
-            results['textblob_polarity'] = blob.sentiment.polarity
-            results['textblob_subjectivity'] = blob.sentiment.subjectivity
-            available_models.append('textblob')
-        except Exception as e:
-            logger.error(f"TextBlob analysis failed: {str(e)}")
-            results['textblob_polarity'] = 0.0
-            results['textblob_subjectivity'] = 0.0
-        
-        # 5. Dynamic Ensemble Sentiment
-        if available_models:
-            total_weight = sum(weights[model] for model in available_models)
-            ensemble_sentiment = sum(
-                results.get(f"{model}_sentiment", 0.0) * weights[model] / total_weight
-                for model in available_models
-            )
-        else:
-            ensemble_sentiment = results['textblob_polarity']
-        
-        results['ensemble_sentiment'] = ensemble_sentiment
-        
-        # Calculate confidence
-        confidences = [
-            results.get('finbert_confidence', 0.0),
-            results.get('distilbert_confidence', 0.0),
-            abs(results.get('vader_compound', 0.0)),
-            abs(results.get('textblob_polarity', 0.0))
-        ]
-        results['confidence'] = np.mean([c for c in confidences if c > 0]) if any(c > 0 for c in confidences) else 0.0
-        
-        return results
-    
-    def classify_fda_milestone(self, article):
-        """
-        Classify article by FDA milestone type with fuzzy matching and semantic similarity
-        """
-        title = article.get('title', '').lower()
-        summary = article.get('summary', '').lower()
-        text_to_search = f"{title} {summary}"
-        
-        classification = {
-            'fda_milestone_type': 'other',
-            'milestone_confidence': 0.0,
-            'milestone_keywords_found': [],
-            'drug_specific': False,
-            'company_specific': False,
-            'importance_score': 1,
-            'semantic_score': 0.0
-        }
-        
-        # Check for drug-specific content
-        drug_keywords = [
-            self.drug['name'].lower(),
-            self.drug['scientific_name'].lower(),
-            'semglee',
-            'insulin glargine-yfgn',
-            'biosimilar insulin'
-        ]
-        classification['drug_specific'] = any(keyword in text_to_search for keyword in drug_keywords)
-        
-        # Check for company-specific content
-        company_keywords = [
-            self.company['name'].lower(),
-            'biocon biologics',
-            'kiran mazumdar',
-            'kiran mazumdar-shaw'
-        ]
-        classification['company_specific'] = any(keyword in text_to_search for keyword in company_keywords)
-        
-        # FDA milestone classification
-        best_match_score = 0
-        best_milestone_type = 'other'
-        found_keywords = []
-        
-        for milestone_type, milestone_info in FDA_MILESTONES.items():
-            keywords = milestone_info['keywords']
-            matches = []
-            
-            # Exact and fuzzy matching
-            for keyword in keywords:
-                if keyword.lower() in text_to_search:
-                    matches.append(keyword)
-                elif FUZZY_AVAILABLE and fuzz.partial_ratio(keyword.lower(), text_to_search) > 80:
-                    matches.append(keyword)
-            
-            # Semantic similarity if Sentence Transformer available
-            semantic_score = 0.0
-            if self.sentence_transformer and matches:
+        if news_data:
+            for item in news_data:
                 try:
-                    keyword_embeddings = self.sentence_transformer.encode(keywords)
-                    text_embedding = self.sentence_transformer.encode(text_to_search)
-                    semantic_score = np.max(cosine_similarity([text_embedding], keyword_embeddings)[0])
-                    if semantic_score > 0.7:
-                        matches.extend([k for k in keywords if k not in matches])
+                    if 'providerPublishTime' in item:
+                        pub_date = datetime.fromtimestamp(item['providerPublishTime'])
+                    else:
+                        pub_date = datetime.now()
+                    
+                    article = {
+                        'date': pub_date.strftime('%Y-%m-%d'),
+                        'datetime': pub_date.strftime('%Y-%m-%d %H:%M:%S'),
+                        'title': item.get('title', ''),
+                        'summary': item.get('summary', ''),
+                        'url': item.get('link', ''),
+                        'source': 'Yahoo Finance',
+                        'search_query': f'{COMPANY["name"]} Company News',
+                        'query_type': 'Company Financial News'
+                    }
+                    articles.append(article)
+                
                 except Exception as e:
-                    logger.error(f"Semantic similarity failed: {str(e)}")
-            
-            if matches:
-                match_score = (len(matches) * milestone_info['importance'] + semantic_score * 10) / 2
-                if match_score > best_match_score:
-                    best_match_score = match_score
-                    best_milestone_type = milestone_type
-                    found_keywords = matches
-                    classification['semantic_score'] = semantic_score
-        
-        classification['fda_milestone_type'] = best_milestone_type
-        classification['milestone_keywords_found'] = found_keywords
-        classification['milestone_confidence'] = min(best_match_score / 10.0, 1.0)
-        
-        # Calculate importance score
-        importance_score = 1
-        if classification['drug_specific']:
-            importance_score += 10
-        if classification['company_specific']:
-            importance_score += 5
-        if best_milestone_type != 'other':
-            importance_score += FDA_MILESTONES[best_milestone_type]['importance']
-        if classification['semantic_score'] > 0.7:
-            importance_score += 5
-        
-        classification['importance_score'] = importance_score
-        
-        return classification
-    
-    def process_article(self, article):
-        """
-        Process single article with sentiment analysis and classification
-        """
-        try:
-            text_content = article.get('raw_content', '')
-            sentiment_results = self.analyze_sentiment_advanced(text_content)
-            classification_results = self.classify_fda_milestone(article)
-            
-            processed_article = {
-                **article,
-                **sentiment_results,
-                **classification_results
-            }
-            
-            return processed_article
-        except Exception as e:
-            logger.error(f"Error processing article: {str(e)}")
-            return article
-    
-    def collect_comprehensive_news(self):
-        """
-        Collect news from all sources and time periods with expanded queries
-        """
-        logger.info("🎯 Starting comprehensive news collection...")
-        
-        query_groups = self.generate_comprehensive_search_queries()
-        all_articles = []
-        
-        time_periods = [
-            ('2015-01-01', '2017-01-01', ['financial_queries', 'corporate_queries']),
-            ('2017-01-01', '2021-12-31', ['fda_queries', 'financial_queries']),
-            ('2021-01-01', self.end_date, ['fda_queries', 'market_queries', 'financial_queries'])
-        ]
-        
-        for start_date, end_date, query_types in time_periods:
-            logger.info(f"📅 Collecting news for period: {start_date} to {end_date}")
-            
-            period_queries = []
-            for query_type in query_types:
-                if query_type in query_groups:
-                    period_queries.extend(query_groups[query_type])  # Removed [:8] limit
-            
-            for query in period_queries:
-                try:
-                    time.sleep(1.0)  # Reduced rate limit for faster collection
-                    articles = self.fetch_google_news(query, (start_date, end_date))
-                    all_articles.extend(articles)
-                except Exception as e:
-                    logger.error(f"Error with query {query}: {str(e)}")
                     continue
-            
-            try:
-                yahoo_articles = self.fetch_yahoo_news(self.company['name'])
-                all_articles.extend(yahoo_articles)
-            except Exception as e:
-                logger.error(f"Error fetching Yahoo Finance: {str(e)}")
         
-        try:
-            rss_articles = self.fetch_rss_feeds()
-            all_articles.extend(rss_articles)
-        except Exception as e:
-            logger.error(f"Error fetching RSS feeds: {str(e)}")
+        print(f"✓ Collected {len(articles)} Yahoo Finance articles")
+        return articles
         
-        # Remove duplicates
-        seen_articles = set()
-        unique_articles = []
-        
-        for article in all_articles:
-            identifier = (article.get('url', ''), article.get('title', ''))
-            if identifier not in seen_articles:
-                seen_articles.add(identifier)
-                unique_articles.append(article)
-        
-        logger.info(f"✅ Collected {len(unique_articles)} unique articles")
-        self.collected_articles = unique_articles
-        return unique_articles
-    
-    def process_all_articles(self):
-        """
-        Process all collected articles with sentiment and classification
-        """
-        logger.info("🧠 Processing articles with advanced NLP...")
-        
-        processed_articles = []
-        
-        for i, article in enumerate(self.collected_articles):
-            try:
-                if i % 50 == 0:
-                    logger.info(f"  Processed {i}/{len(self.collected_articles)} articles...")
-                
-                processed_article = self.process_article(article)
-                processed_articles.append(processed_article)
-                
-            except Exception as e:
-                logger.error(f"Error processing article {i}: {str(e)}")
-                continue
-        
-        self.processed_articles = processed_articles
-        logger.info(f"✅ Processed {len(processed_articles)} articles")
-        return processed_articles
-    
-    def create_daily_aggregation(self):
-        """
-        Create daily sentiment aggregation aligned with stock data
-        """
-        logger.info("📊 Creating daily sentiment aggregation...")
-        
-        try:
-            if not self.processed_articles:
-                logger.warning("No articles to aggregate")
-                return pd.DataFrame()
-            
-            df = pd.DataFrame(self.processed_articles)
-            
-            # Group by date
-            daily_agg = df.groupby('date').agg({
-                'ensemble_sentiment': ['mean', 'std', 'count'],
-                'finbert_sentiment': ['mean', 'std'],
-                'confidence': 'mean',
-                'importance_score': ['mean', 'max', 'sum'],
-                'drug_specific': 'sum',
-                'company_specific': 'sum',
-                'fda_milestone_type': lambda x: '|'.join(set(x)),
-                'semantic_score': 'mean'
-            }).reset_index()
-            
-            # Flatten column names
-            daily_agg.columns = [
-                'date', 'avg_sentiment', 'sentiment_std', 'news_count',
-                'finbert_avg', 'finbert_std', 'avg_confidence',
-                'avg_importance', 'max_importance', 'total_importance',
-                'drug_specific_count', 'company_specific_count', 'fda_milestones',
-                'avg_semantic_score'
-            ]
-            
-            # Fill missing days
-            date_range = pd.date_range(start=self.start_date, end=self.end_date, freq='D')
-            daily_agg = daily_agg.set_index('date').reindex(date_range.strftime('%Y-%m-%d')).fillna({
-                'avg_sentiment': 0, 'sentiment_std': 0, 'news_count': 0, 'finbert_avg': 0,
-                'finbert_std': 0, 'avg_confidence': 0, 'avg_importance': 0, 'max_importance': 0,
-                'total_importance': 0, 'drug_specific_count': 0, 'company_specific_count': 0,
-                'avg_semantic_score': 0
-            }).reset_index().rename(columns={'index': 'date'})
-            
-            # Smooth sentiment
-            daily_agg['avg_sentiment_smoothed'] = daily_agg['avg_sentiment'].rolling(window=3, min_periods=1).mean()
-            
-            # Create milestone flags
-            for milestone in FDA_MILESTONES.keys():
-                daily_agg[f'has_{milestone}'] = daily_agg['fda_milestones'].str.contains(
-                    milestone, na=False
-                ).astype(int)
-            
-            # Calculate additional metrics
-            daily_agg['drug_news_ratio'] = (
-                daily_agg['drug_specific_count'] / daily_agg['news_count']
-            ).fillna(0)
-            
-            daily_agg['importance_score'] = (
-                daily_agg['drug_specific_count'] * 10 +
-                daily_agg['max_importance'] +
-                daily_agg.get('has_approval_process', pd.Series([0] * len(daily_agg))) * 20 +
-                daily_agg.get('has_regulatory_review', pd.Series([0] * len(daily_agg))) * 15
-            )
-            
-            # Sort by date
-            daily_agg = daily_agg.sort_values('date')
-            
-            self.daily_aggregation = daily_agg
-            logger.info(f"✅ Daily aggregation created: {len(daily_agg)} days")
-            return daily_agg
-            
-        except Exception as e:
-            logger.error(f"Error creating daily aggregation: {str(e)}")
-            return pd.DataFrame()
-    
-    def save_data(self):
-        """
-        Save all collected and processed data
-        """
-        logger.info("💾 Saving news data...")
-        
-        try:
-            # Save processed articles
-            if self.processed_articles:
-                news_df = pd.DataFrame(self.processed_articles)
-                news_file = PATHS['data'] / DATA_FILES['news_data']
-                news_df.to_csv(news_file, index=False)
-                logger.info(f"✅ News data saved: {news_file} ({len(news_df)} rows)")
-                
-                # Save FDA events
-                fda_events = news_df[news_df['fda_milestone_type'] != 'other'].copy()
-                if not fda_events.empty:
-                    fda_file = PATHS['data'] / DATA_FILES['fda_events']
-                    fda_events.to_csv(fda_file, index=False)
-                    logger.info(f"✅ FDA events saved: {fda_file} ({len(fda_events)} rows)")
-            
-            # Save daily aggregation
-            if self.daily_aggregation is not None and not self.daily_aggregation.empty:
-                daily_file = PATHS['data'] / DATA_FILES['daily_sentiment']
-                self.daily_aggregation.to_csv(daily_file, index=False)
-                logger.info(f"✅ Daily sentiment saved: {daily_file} ({len(self.daily_aggregation)} rows)")
-            
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error saving data: {str(e)}")
-            return False
-    
-    def print_comprehensive_summary(self):
-        """
-        Print detailed collection summary with enhanced metrics
-        """
-        print("\n" + "="*80)
-        print("🧠 ADVANCED NEWS COLLECTION SUMMARY")
-        print("="*80)
-        
-        if not self.processed_articles:
-            print("❌ No articles processed")
-            return
-        
-        df = pd.DataFrame(self.processed_articles)
-        
-        print(f"📰 News Collection Overview:")
-        print(f"   Total Articles: {len(df):,}")
-        print(f"   Date Range: {df['date'].min()} to {df['date'].max()}")
-        print(f"   Unique Sources: {df['source'].nunique()}")
-        print(f"   Average Confidence: {df['confidence'].mean():.3f}")
-        print(f"   Average Semantic Score: {df['semantic_score'].mean():.3f}")
-        
-        print(f"\n🧠 Sentiment Analysis Summary:")
-        print(f"   FinBERT Available: {'✅' if self.finbert_analyzer else '❌'}")
-        print(f"   DistilBERT Available: {'✅' if self.distilbert_analyzer else '❌'}")
-        print(f"   VADER Available: {'✅' if self.vader_analyzer else '❌'}")
-        print(f"   Sentence Transformer Available: {'✅' if self.sentence_transformer else '❌'}")
-        print(f"   Average Ensemble Sentiment: {df['ensemble_sentiment'].mean():.3f}")
-        
-        print(f"\n💊 FDA Milestone Breakdown:")
-        milestone_counts = df['fda_milestone_type'].value_counts()
-        for milestone, count in milestone_counts.items():
-            print(f"   {milestone}: {count} articles")
-        
-        print(f"\n🎯 Relevance Analysis:")
-        print(f"   Drug-specific articles: {df['drug_specific'].sum()}")
-        print(f"   Company-specific articles: {df['company_specific'].sum()}")
-        print(f"   High importance articles (score ≥ 20): {len(df[df['importance_score'] >= 20])}")
-        
-        if self.daily_aggregation is not None:
-            print(f"\n📊 Daily Aggregation:")
-            print(f"   Days with news: {len(self.daily_aggregation[self.daily_aggregation['news_count'] > 0])}")
-            print(f"   Total days (including no-news): {len(self.daily_aggregation)}")
-            print(f"   Avg articles per news day: {self.daily_aggregation['news_count'][self.daily_aggregation['news_count'] > 0].mean():.1f}")
-            print(f"   High importance days (score ≥ 20): {len(self.daily_aggregation[self.daily_aggregation['importance_score'] >= 20])}")
-        
-        print(f"\n📁 Output Files:")
-        print(f"   ✅ data/news_data.csv - All processed articles")
-        print(f"   ✅ data/daily_sentiment.csv - Daily sentiment aggregation")
-        print(f"   ✅ data/fda_events.csv - FDA milestone events")
-        
-        print(f"\n🎉 Ready for Day 2: Model Training")
-        print("="*80)
-    
-    def execute(self):
-        """
-        Execute the complete advanced news collection pipeline
-        """
-        try:
-            logger.info("🚀 Starting Advanced News Collection Pipeline...")
-            
-            self.initialize_sentiment_models()
-            self.collect_comprehensive_news()
-            
-            if self.collected_articles:
-                self.process_all_articles()
-            else:
-                logger.warning("⚠️ No articles collected, creating sample data...")
-                self.processed_articles = create_sample_news_data()
-            
-            self.create_daily_aggregation()
-            success = self.save_data()
-            
-            if success:
-                self.print_comprehensive_summary()
-                logger.info("🎉 Advanced news collection completed successfully!")
-                return True
-            else:
-                logger.error("❌ Failed to save data")
-                return False
-                
-        except Exception as e:
-            logger.error(f"❌ News collection failed: {str(e)}")
-            logger.info("🔄 Creating sample data as fallback...")
-            try:
-                self.processed_articles = create_sample_news_data()
-                self.create_daily_aggregation()
-                success = self.save_data()
-                if success:
-                    self.print_comprehensive_summary()
-                    return True
-            except Exception as fallback_error:
-                logger.error(f"❌ Even sample data creation failed: {str(fallback_error)}")
-            return False
+    except Exception as e:
+        print(f"⚠️  Error fetching Yahoo Finance: {str(e)}")
+        return []
 
-def create_sample_news_data():
-    """
-    Create comprehensive sample news data covering the entire FDA journey
-    """
-    logger.info("📝 Creating comprehensive sample news data...")
+def create_comprehensive_sample_data():
+    """Create comprehensive sample data covering the entire FDA journey"""
+    print("\n=== CREATING COMPREHENSIVE SAMPLE DATA ===")
     
     sample_articles = [
+        # Pre-application period (2015-2017)
         {
             'date': '2016-03-15',
-            'datetime': datetime(2016, 3, 15, 10, 30),
-            'title': 'Biocon initiates development of insulin glargine biosimilar program',
-            'summary': 'Biocon announces strategic initiative to develop insulin glargine biosimilar targeting diabetes market with significant cost advantages.',
+            'datetime': '2016-03-15 10:30:00',
+            'title': 'Biocon begins development of insulin glargine biosimilar program',
+            'summary': 'Biocon announces initiation of development program for insulin glargine biosimilar to compete with Lantus.',
             'url': 'https://example.com/biocon-insulin-development',
             'source': 'Sample Data',
-            'search_query': 'biocon insulin development',
-            'raw_content': 'Biocon initiates development of insulin glargine biosimilar program targeting diabetes market',
-            'ensemble_sentiment': 0.65,
-            'finbert_sentiment': 0.7,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.85,
-            'distilbert_sentiment': 0.6,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.78,
-            'vader_compound': 0.5832,
-            'textblob_polarity': 0.4,
-            'confidence': 0.72,
-            'fda_milestone_type': 'application_phase',
-            'milestone_confidence': 0.6,
-            'milestone_keywords_found': ['development', 'biosimilar'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 18,
-            'semantic_score': 0.8
+            'query_type': 'Pre-Application Development'
         },
+        
+        # FDA application period (2017-2019)
         {
             'date': '2017-09-20',
-            'datetime': datetime(2017, 9, 20, 14, 15),
-            'title': 'Biocon submits BLA for insulin glargine biosimilar to FDA',
-            'summary': 'Biocon files comprehensive Biologics License Application seeking FDA approval for Semglee, insulin glargine-yfgn biosimilar.',
+            'datetime': '2017-09-20 14:15:00',
+            'title': 'Biocon submits insulin glargine biosimilar application to FDA',
+            'summary': 'Biocon files Biologics License Application (BLA) for insulin glargine-yfgn with FDA seeking approval.',
             'url': 'https://example.com/biocon-bla-submission',
-            'source': 'Sample Data',  
-            'search_query': 'biocon FDA submission',
-            'raw_content': 'Biocon submits BLA for insulin glargine biosimilar to FDA seeking approval',
-            'ensemble_sentiment': 0.72,
-            'finbert_sentiment': 0.8,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.92,
-            'distilbert_sentiment': 0.75,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.88,
-            'vader_compound': 0.6249,
-            'textblob_polarity': 0.5,
-            'confidence': 0.84,
-            'fda_milestone_type': 'application_phase',
-            'milestone_confidence': 0.9,
-            'milestone_keywords_found': ['BLA submission', 'FDA submission'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 28,
-            'semantic_score': 0.85
+            'source': 'Sample Data',
+            'query_type': 'FDA Application Milestone'
         },
+        
         {
             'date': '2018-05-10',
-            'datetime': datetime(2018, 5, 10, 11, 20),
-            'title': 'FDA accepts Biocon insulin glargine BLA for substantive review',
-            'summary': 'FDA formally accepts Biocon BLA for insulin glargine-yfgn and assigns PDUFA target action date for regulatory decision.',
+            'datetime': '2018-05-10 11:20:00',
+            'title': 'FDA accepts Biocon\'s insulin glargine BLA for review',
+            'summary': 'FDA accepts Biocon\'s BLA for insulin glargine-yfgn and assigns PDUFA date for regulatory decision.',
             'url': 'https://example.com/fda-accepts-bla',
             'source': 'Sample Data',
-            'search_query': 'biocon FDA review',
-            'raw_content': 'FDA accepts Biocon insulin glargine BLA for substantive review with PDUFA date',
-            'ensemble_sentiment': 0.78,
-            'finbert_sentiment': 0.85,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.94,
-            'distilbert_sentiment': 0.8,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.9,
-            'vader_compound': 0.7096,
-            'textblob_polarity': 0.6,
-            'confidence': 0.86,
-            'fda_milestone_type': 'regulatory_review',
-            'milestone_confidence': 0.95,
-            'milestone_keywords_found': ['FDA review', 'PDUFA date'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 32,
-            'semantic_score': 0.9
+            'query_type': 'FDA Review Milestone'
         },
+        
+        # Clinical and regulatory milestones (2018-2020)
         {
             'date': '2019-02-14',
-            'datetime': datetime(2019, 2, 14, 16, 45),
-            'title': 'Biocon completes pivotal Phase III biosimilarity studies for insulin glargine',
-            'summary': 'Biocon announces successful completion of comprehensive Phase III clinical trials demonstrating biosimilarity to reference Lantus.',
+            'datetime': '2019-02-14 16:45:00',
+            'title': 'Biocon completes Phase III clinical trials for insulin glargine biosimilar',
+            'summary': 'Biocon announces successful completion of Phase III clinical trials demonstrating bioequivalence to Lantus.',
             'url': 'https://example.com/phase3-completion',
             'source': 'Sample Data',
-            'search_query': 'biocon clinical trial',
-            'raw_content': 'Biocon completes pivotal Phase III biosimilarity studies demonstrating equivalence to Lantus',
-            'ensemble_sentiment': 0.83,
-            'finbert_sentiment': 0.9,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.96,
-            'distilbert_sentiment': 0.85,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.92,
-            'vader_compound': 0.7717,
-            'textblob_polarity': 0.7,
-            'confidence': 0.89,
-            'fda_milestone_type': 'clinical_trials',
-            'milestone_confidence': 0.92,
-            'milestone_keywords_found': ['Phase III trial', 'clinical trial', 'study results'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 35,
-            'semantic_score': 0.87
+            'query_type': 'Clinical Trial Milestone'
         },
+        
         {
             'date': '2020-08-25',
-            'datetime': datetime(2020, 8, 25, 13, 30),
-            'title': 'FDA conducts pre-approval inspection of Biocon insulin manufacturing facility',
-            'summary': 'FDA inspection team completes comprehensive review of Biocon insulin manufacturing facility as part of BLA review process.',
+            'datetime': '2020-08-25 13:30:00',
+            'title': 'FDA conducts inspection of Biocon manufacturing facility',
+            'summary': 'FDA inspection team visits Biocon\'s insulin manufacturing facility as part of BLA review process.',
             'url': 'https://example.com/fda-inspection',
             'source': 'Sample Data',
-            'search_query': 'biocon FDA inspection',
-            'raw_content': 'FDA conducts pre-approval inspection of Biocon insulin manufacturing facility',
-            'ensemble_sentiment': 0.42,
-            'finbert_sentiment': 0.45,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.65,
-            'distilbert_sentiment': 0.4,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.58,
-            'vader_compound': 0.3818,
-            'textblob_polarity': 0.3,
-            'confidence': 0.54,
-            'fda_milestone_type': 'regulatory_review',
-            'milestone_confidence': 0.85,
-            'milestone_keywords_found': ['FDA inspection'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 24,
-            'semantic_score': 0.75
+            'query_type': 'Regulatory Review Process'
         },
+        
+        # Approval milestone (2021)
         {
             'date': '2021-07-29',
-            'datetime': datetime(2021, 7, 29, 15, 30),
-            'title': 'FDA Approves Biocon Semglee as First Interchangeable Insulin Biosimilar',
-            'summary': 'FDA grants approval for Semglee (insulin glargine-yfgn) as both biosimilar and interchangeable with reference Lantus, marking historic regulatory milestone.',
+            'datetime': '2021-07-29 15:30:00',
+            'title': 'FDA Approves Biocon\'s Semglee as First Interchangeable Insulin Biosimilar',
+            'summary': 'FDA approves Semglee (insulin glargine-yfgn) as both biosimilar and interchangeable with Lantus, marking historic milestone.',
             'url': 'https://example.com/semglee-fda-approval',
             'source': 'Sample Data',
-            'search_query': 'semglee FDA approval',
-            'raw_content': 'FDA Approves Biocon Semglee as First Interchangeable Insulin Biosimilar historic milestone',
-            'ensemble_sentiment': 0.95,
-            'finbert_sentiment': 0.98,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.99,
-            'distilbert_sentiment': 0.95,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.97,
-            'vader_compound': 0.8807,
-            'textblob_polarity': 0.9,
-            'confidence': 0.96,
-            'fda_milestone_type': 'approval_process',
-            'milestone_confidence': 1.0,
-            'milestone_keywords_found': ['FDA approval', 'biosimilar approval', 'interchangeable designation'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 45,
-            'semantic_score': 0.95
+            'query_type': 'FDA Approval Milestone'
         },
+        
         {
             'date': '2021-07-30',
-            'datetime': datetime(2021, 7, 30, 9, 15),
-            'title': 'Biocon Stock Surges 15% Following Historic Semglee FDA Approval',
-            'summary': 'Biocon shares jump to 52-week high as investors celebrate FDA approval of first interchangeable insulin biosimilar.',
+            'datetime': '2021-07-30 09:15:00',
+            'title': 'Biocon Stock Surges 15% on Semglee FDA Approval News',
+            'summary': 'Biocon shares jump to 52-week high following FDA approval of Semglee as first interchangeable insulin biosimilar.',
             'url': 'https://example.com/biocon-stock-surge',
             'source': 'Sample Data',
-            'search_query': 'biocon stock price',
-            'raw_content': 'Biocon Stock Surges 15% Following Historic Semglee FDA Approval celebrates milestone',
-            'ensemble_sentiment': 0.88,
-            'finbert_sentiment': 0.92,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.95,
-            'distilbert_sentiment': 0.9,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.93,
-            'vader_compound': 0.8126,
-            'textblob_polarity': 0.75,
-            'confidence': 0.89,
-            'fda_milestone_type': 'approval_process',
-            'milestone_confidence': 0.8,
-            'milestone_keywords_found': ['FDA approval'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 38,
-            'semantic_score': 0.88
+            'query_type': 'Stock Market Impact'
         },
+        
+        # Market launch and implementation (2021-2022)
         {
             'date': '2021-09-15',
-            'datetime': datetime(2021, 9, 15, 11, 45),
-            'title': 'Semglee Commercial Launch Initiates Across US Healthcare Systems',
-            'summary': 'Biocon and Viatris announce nationwide commercial availability of Semglee in US pharmacies with competitive pricing strategy.',
+            'datetime': '2021-09-15 11:45:00',
+            'title': 'Semglee Commercial Launch Begins in US Market',
+            'summary': 'Biocon and Viatris announce commercial availability of Semglee in US pharmacies nationwide.',
             'url': 'https://example.com/semglee-commercial-launch',
             'source': 'Sample Data',
-            'search_query': 'semglee launch',
-            'raw_content': 'Semglee Commercial Launch Initiates Across US Healthcare Systems nationwide availability',
-            'ensemble_sentiment': 0.75,
-            'finbert_sentiment': 0.8,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.87,
-            'distilbert_sentiment': 0.78,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.84,
-            'vader_compound': 0.6808,
-            'textblob_polarity': 0.6,
-            'confidence': 0.79,
-            'fda_milestone_type': 'post_approval',
-            'milestone_confidence': 0.9,
-            'milestone_keywords_found': ['commercial launch'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 28,
-            'semantic_score': 0.82
+            'query_type': 'Market Launch Milestone'
         },
+        
         {
             'date': '2022-01-20',
-            'datetime': datetime(2022, 1, 20, 14, 30),
-            'title': 'Major Hospital Networks Add Semglee to Preferred Formularies',
-            'summary': 'Leading US hospital systems incorporate Semglee into preferred insulin formularies citing significant cost savings and proven efficacy.',
+            'datetime': '2022-01-20 14:30:00',
+            'title': 'Major Hospital Systems Add Semglee to Formularies',
+            'summary': 'Leading hospital networks across US add Semglee to preferred insulin formularies citing cost savings.',
             'url': 'https://example.com/hospital-formulary-adoption',
             'source': 'Sample Data',
-            'search_query': 'semglee hospital adoption',
-            'raw_content': 'Major Hospital Networks Add Semglee to Preferred Formularies cost savings efficacy',
-            'ensemble_sentiment': 0.72,
-            'finbert_sentiment': 0.78,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.83,
-            'distilbert_sentiment': 0.75,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.8,
-            'vader_compound': 0.6369,
-            'textblob_polarity': 0.55,
-            'confidence': 0.75,
-            'fda_milestone_type': 'post_approval',
-            'milestone_confidence': 0.85,
-            'milestone_keywords_found': ['hospital adoption'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 26,
-            'semantic_score': 0.8
+            'query_type': 'Hospital Adoption Impact'
         },
+        
+        # Market performance and real-world evidence (2022-2024)
         {
             'date': '2022-06-12',
-            'datetime': datetime(2022, 6, 12, 10, 15),
-            'title': 'Semglee Captures 8% US Insulin Glargine Market Share in First Year',
-            'summary': 'Real-world prescription data demonstrates Semglee achieving substantial market penetration with strong physician and patient acceptance.',
+            'datetime': '2022-06-12 10:15:00',
+            'title': 'Semglee Captures 8% Market Share in First Year',
+            'summary': 'Real-world data shows Semglee gaining significant market share in US insulin glargine market.',
             'url': 'https://example.com/semglee-market-share',
             'source': 'Sample Data',
-            'search_query': 'semglee market share',
-            'raw_content': 'Semglee Captures 8% US Insulin Glargine Market Share substantial penetration acceptance',
-            'ensemble_sentiment': 0.8,
-            'finbert_sentiment': 0.85,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.9,
-            'distilbert_sentiment': 0.82,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.87,
-            'vader_compound': 0.7269,
-            'textblob_polarity': 0.65,
-            'confidence': 0.82,
-            'fda_milestone_type': 'post_approval',
-            'milestone_confidence': 0.75,
-            'milestone_keywords_found': ['market penetration'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 30,
-            'semantic_score': 0.85
+            'query_type': 'Market Performance Data'
         },
+        
         {
             'date': '2023-03-08',
-            'datetime': datetime(2023, 3, 8, 16, 20),
-            'title': 'Biocon Reports 45% Semglee Revenue Growth in Q4 Earnings',
-            'summary': 'Biocon Q4 financial results highlight robust Semglee revenue expansion driven by increasing hospital adoption and market penetration.',
+            'datetime': '2023-03-08 16:20:00',
+            'title': 'Biocon Reports Strong Semglee Revenue Growth in Q4',
+            'summary': 'Biocon Q4 earnings show 45% increase in Semglee revenue driven by expanding hospital adoption.',
             'url': 'https://example.com/semglee-revenue-growth',
             'source': 'Sample Data',
-            'search_query': 'biocon earnings semglee',
-            'raw_content': 'Biocon Reports 45% Semglee Revenue Growth robust expansion increasing adoption',
-            'ensemble_sentiment': 0.85,
-            'finbert_sentiment': 0.9,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.93,
-            'distilbert_sentiment': 0.87,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.9,
-            'vader_compound': 0.7845,
-            'textblob_polarity': 0.7,
-            'confidence': 0.88,
-            'fda_milestone_type': 'post_approval',
-            'milestone_confidence': 0.6,
-            'milestone_keywords_found': ['market penetration'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 32,
-            'semantic_score': 0.83
+            'query_type': 'Financial Impact Update'
         },
+        
+        # Recent market dynamics (2024-2025)
         {
             'date': '2024-01-25',
-            'datetime': datetime(2024, 1, 25, 12, 0),
-            'title': 'Insurance Coverage Expansion Accelerates Semglee Prescription Growth',
-            'summary': 'Major US insurance providers expand Semglee coverage following publication of comprehensive real-world efficacy and safety data.',
+            'datetime': '2024-01-25 12:00:00',
+            'title': 'Insurance Coverage Expansion Boosts Semglee Prescriptions',
+            'summary': 'Major insurance providers expand Semglee coverage following real-world efficacy data publication.',
             'url': 'https://example.com/insurance-coverage-expansion',
             'source': 'Sample Data',
-            'search_query': 'semglee insurance coverage',
-            'raw_content': 'Insurance Coverage Expansion Accelerates Semglee Prescription Growth real-world efficacy safety',
-            'ensemble_sentiment': 0.77,
-            'finbert_sentiment': 0.82,
-            'finbert_label': 'positive',
-            'finbert_confidence': 0.86,
-            'distilbert_sentiment': 0.8,
-            'distilbert_label': 'positive',
-            'distilbert_confidence': 0.83,
-            'vader_compound': 0.6597,
-            'textblob_polarity': 0.6,
-            'confidence': 0.78,
-            'fda_milestone_type': 'post_approval',
-            'milestone_confidence': 0.7,
-            'milestone_keywords_found': ['prescription volume'],
-            'drug_specific': True,
-            'company_specific': True,
-            'importance_score': 27,
-            'semantic_score': 0.8
+            'query_type': 'Market Access Improvement'
         }
     ]
     
-    logger.info(f"✅ Created {len(sample_articles)} comprehensive sample articles covering FDA journey")
+    print(f"✓ Created {len(sample_articles)} comprehensive sample articles covering FDA journey")
     return sample_articles
 
-def main():
-    """
-    Main execution function for Day 1 - Step 2
-    """
-    print("🧠 BIOCON FDA PROJECT - DAY 1 STEP 2")
-    print("Advanced News Collection with FinBERT Sentiment Analysis")
-    print("="*70)
-    print(f"🏢 Company: {COMPANY_INFO['name']} ({COMPANY_INFO['ticker']})")
-    print(f"💊 Drug: {DRUG_INFO['full_name']}")
-    print(f"🎯 Features: FinBERT + DistilBERT + VADER + TextBlob + FDA Milestones + Semantic Analysis")
-    print("-" * 70)
+def classify_news_by_fda_milestone(articles):
+    """Classify news by FDA milestone, market impact, and ALL company news categories"""
+    print("\n=== CLASSIFYING NEWS BY FDA MILESTONES + ALL COMPANY NEWS ===")
     
-    # Initialize and run collector
-    collector = AdvancedNewsCollector()
-    success = collector.execute()
+    classified_articles = []
+    
+    for article in articles:
+        try:
+            title = article.get('title', '').lower()
+            summary = article.get('summary', '').lower()
+            text_to_search = f"{title} {summary}"
+            
+            # Initialize classification
+            article['fda_milestone_type'] = 'Other'
+            article['market_impact_type'] = 'Other'
+            article['company_news_category'] = 'Other'
+            article['priority_score'] = 1
+            
+            # Check for drug-specific content
+            drug_mentioned = any(keyword in text_to_search for keyword in [
+                PRIMARY_DRUG['name'].lower(),
+                PRIMARY_DRUG['scientific_name'].lower(),
+                'semglee', 'insulin glargine-yfgn'
+            ])
+            
+            # Classify by FDA milestone
+            for milestone_type, keywords in FDA_MILESTONES.items():
+                if any(keyword.lower() in text_to_search for keyword in keywords):
+                    article['fda_milestone_type'] = milestone_type
+                    break
+            
+            # Classify by market impact
+            for impact_type, keywords in MARKET_IMPACT_KEYWORDS.items():
+                if any(keyword.lower() in text_to_search for keyword in keywords):
+                    article['market_impact_type'] = impact_type
+                    break
+            
+            # Classify by comprehensive company news categories
+            for category_type, keywords in COMPANY_NEWS_CATEGORIES.items():
+                if any(keyword.lower() in text_to_search for keyword in keywords):
+                    article['company_news_category'] = category_type
+                    break
+            
+            # Calculate priority score
+            priority_score = 1
+            
+            if drug_mentioned:
+                priority_score += 10  # Drug-specific gets highest priority
+            
+            # FDA milestone scoring
+            milestone_scores = {
+                'application_phase': 8,
+                'clinical_trials': 7,
+                'regulatory_review': 9,
+                'approval_process': 10,
+                'post_approval': 6,
+                'regulatory_issues': 8
+            }
+            priority_score += milestone_scores.get(article['fda_milestone_type'], 0)
+            
+            # Market impact scoring
+            impact_scores = {
+                'hospital_adoption': 7,
+                'competitive_impact': 5,
+                'financial_impact': 6
+            }
+            priority_score += impact_scores.get(article['market_impact_type'], 0)
+            
+            # Company news category scoring
+            company_scores = {
+                'financial_results': 8,
+                'insider_trading': 7,
+                'corporate_actions': 6,
+                'partnerships_deals': 7,
+                'regulatory_compliance': 6,
+                'business_expansion': 5,
+                'research_development': 6,
+                'market_rumors': 4
+            }
+            priority_score += company_scores.get(article['company_news_category'], 0)
+            
+            article['drug_specific'] = drug_mentioned
+            article['priority_score'] = priority_score
+            
+            # Add company mentions
+            article['company_mentioned'] = any(name.lower() in text_to_search for name in [
+                COMPANY['name'].lower(),
+                *[sub.lower() for sub in COMPANY['subsidiary_names']]
+            ])
+            
+            # Keep ALL relevant articles (lowered threshold to capture more company news)
+            if priority_score > 1 or article['company_mentioned']:
+                classified_articles.append(article)
+        
+        except Exception as e:
+            print(f"⚠️  Error classifying article: {str(e)}")
+            continue
+    
+    # Sort by priority score (highest first)
+    classified_articles = sorted(classified_articles, key=lambda x: x['priority_score'], reverse=True)
+    
+    # Print comprehensive classification summary
+    milestone_counts = {}
+    company_news_counts = {}
+    
+    for article in classified_articles:
+        milestone = article.get('fda_milestone_type', 'Other')
+        company_category = article.get('company_news_category', 'Other')
+        
+        milestone_counts[milestone] = milestone_counts.get(milestone, 0) + 1
+        company_news_counts[company_category] = company_news_counts.get(company_category, 0) + 1
+    
+    print(f"✓ FDA Milestone Classification:")
+    for milestone, count in milestone_counts.items():
+        print(f"    {milestone}: {count} articles")
+    
+    print(f"✓ Company News Classification:")
+    for category, count in company_news_counts.items():
+        print(f"    {category}: {count} articles")
+    
+    print(f"✓ Total relevant articles: {len(classified_articles)}")
+    return classified_articles
+
+def calculate_comprehensive_sentiment(articles, sentiment_analyzer=None):
+    """Calculate sentiment with FDA milestone and market impact weighting"""
+    print("\n=== CALCULATING COMPREHENSIVE SENTIMENT SCORES ===")
+    
+    for article in articles:
+        try:
+            text = f"{article.get('title', '')} {article.get('summary', '')}"
+            
+            if not text.strip():
+                article['sentiment_score'] = 0
+                article['sentiment_label'] = 'neutral'
+                continue
+            
+            # TextBlob sentiment
+            blob = TextBlob(text)
+            textblob_score = blob.sentiment.polarity
+            
+            # NLTK VADER sentiment (if available)
+            if sentiment_analyzer:
+                vader_scores = sentiment_analyzer.polarity_scores(text)
+                vader_score = vader_scores['compound']
+                combined_score = (textblob_score + vader_score) / 2
+            else:
+                combined_score = textblob_score
+            
+            # Apply weighting based on milestone importance
+            milestone_weights = {
+                'approval_process': 2.0,
+                'regulatory_review': 1.8,
+                'application_phase': 1.6,
+                'regulatory_issues': 1.7,
+                'clinical_trials': 1.5,
+                'post_approval': 1.3
+            }
+            
+            milestone_type = article.get('fda_milestone_type', 'Other')
+            milestone_weight = milestone_weights.get(milestone_type, 1.0)
+            
+            # Additional weight for drug-specific news
+            drug_weight = 1.5 if article.get('drug_specific', False) else 1.0
+            
+            # Calculate final weighted sentiment
+            final_weight = milestone_weight * drug_weight
+            weighted_sentiment = combined_score * final_weight
+            
+            # Classify sentiment
+            if weighted_sentiment > 0.1:
+                sentiment_label = 'positive'
+            elif weighted_sentiment < -0.1:
+                sentiment_label = 'negative'
+            else:
+                sentiment_label = 'neutral'
+            
+            article['sentiment_score'] = combined_score
+            article['weighted_sentiment'] = weighted_sentiment
+            article['sentiment_label'] = sentiment_label
+            article['sentiment_weight'] = final_weight
+        
+        except Exception as e:
+            print(f"⚠️  Error calculating sentiment: {str(e)}")
+            article['sentiment_score'] = 0
+            article['weighted_sentiment'] = 0
+            article['sentiment_label'] = 'neutral'
+            article['sentiment_weight'] = 1.0
+    
+    print("✓ Calculated comprehensive sentiment scores with FDA milestone weighting")
+    return articles
+
+def create_comprehensive_daily_aggregation(articles):
+    """Create daily aggregation with FDA milestone tracking"""
+    print("\n=== CREATING COMPREHENSIVE DAILY AGGREGATION ===")
+    
+    try:
+        df = pd.DataFrame(articles)
+        
+        if df.empty:
+            print("❌ No articles to aggregate")
+            return pd.DataFrame()
+        
+        # Group by date and calculate comprehensive aggregations
+        daily_agg = df.groupby('date').agg({
+            'sentiment_score': ['mean', 'std', 'count'],
+            'weighted_sentiment': ['mean', 'std'],
+            'priority_score': ['mean', 'max', 'sum'],
+            'drug_specific': 'sum',
+            'company_mentioned': 'sum',
+            'fda_milestone_type': lambda x: '|'.join(x.unique()),
+            'market_impact_type': lambda x: '|'.join(x.unique())
+        }).reset_index()
+        
+        # Flatten column names
+        daily_agg.columns = [
+            'date', 'avg_sentiment', 'sentiment_std', 'news_count',
+            'weighted_avg_sentiment', 'weighted_sentiment_std',
+            'avg_priority', 'max_priority', 'total_priority',
+            'drug_specific_count', 'company_news_count',
+            'fda_milestones', 'market_impacts'
+        ]
+        
+        # Fill NaN values
+        daily_agg['sentiment_std'] = daily_agg['sentiment_std'].fillna(0)
+        daily_agg['weighted_sentiment_std'] = daily_agg['weighted_sentiment_std'].fillna(0)
+        
+        # Create additional metrics
+        daily_agg['drug_news_ratio'] = daily_agg['drug_specific_count'] / daily_agg['news_count']
+        
+        # Create FDA milestone flags
+        milestone_types = list(FDA_MILESTONES.keys())
+        for milestone in milestone_types:
+            daily_agg[f'has_{milestone}'] = daily_agg['fda_milestones'].str.contains(milestone, na=False).astype(int)
+        
+        # Create importance score for correlation analysis
+        daily_agg['day_importance_score'] = (
+            daily_agg['drug_specific_count'] * 10 +
+            daily_agg['max_priority'] +
+            daily_agg['has_approval_process'] * 20 +
+            daily_agg['has_regulatory_review'] * 15 +
+            daily_agg['has_clinical_trials'] * 10 +
+            daily_agg['has_regulatory_issues'] * 12
+        )
+        
+        # Sort by date
+        daily_agg = daily_agg.sort_values('date')
+        
+        print(f"✓ Created comprehensive daily aggregation: {len(daily_agg)} days with news")
+        
+        # Show high-importance days
+        high_importance = daily_agg[daily_agg['day_importance_score'] >= 20]
+        if not high_importance.empty:
+            print(f"✓ High-importance days (FDA milestones): {len(high_importance)}")
+        
+        return daily_agg
+        
+    except Exception as e:
+        print(f"❌ Error creating daily aggregation: {str(e)}")
+        return pd.DataFrame()
+
+def save_comprehensive_data(articles, daily_agg, data_path):
+    """Save comprehensive news data with FDA milestone tracking"""
+    print("\n=== SAVING COMPREHENSIVE NEWS DATA ===")
+    
+    try:
+        # Save main news dataset
+        news_df = pd.DataFrame(articles)
+        if not news_df.empty:
+            # Sort by priority score and date
+            news_df = news_df.sort_values(['priority_score', 'datetime'], ascending=[False, True])
+            
+            news_file = os.path.join(data_path, 'news_data.csv')
+            news_df.to_csv(news_file, index=False)
+            
+            # Verify file
+            if os.path.exists(news_file) and os.path.getsize(news_file) > 100:
+                print(f"✓ Comprehensive news data saved: {news_file}")
+                print(f"✓ File size: {os.path.getsize(news_file):,} bytes")
+                
+                # Show sample with comprehensive info
+                print("Sample news data (by priority and FDA milestone):")
+                sample_cols = ['date', 'title', 'fda_milestone_type', 'priority_score', 'weighted_sentiment']
+                available_cols = [col for col in sample_cols if col in news_df.columns]
+                print(news_df[available_cols].head(5))
+            else:
+                print("❌ News file not saved properly")
+                return False
+        
+        # Save daily aggregation
+        if not daily_agg.empty:
+            daily_file = os.path.join(data_path, 'daily_sentiment.csv')
+            daily_agg.to_csv(daily_file, index=False)
+            
+            # Verify file
+            if os.path.exists(daily_file) and os.path.getsize(daily_file) > 50:
+                print(f"✓ Daily sentiment data saved: {daily_file}")
+                print(f"✓ File size: {os.path.getsize(daily_file):,} bytes")
+                
+                # Show sample with FDA milestone info
+                print("Sample daily sentiment data:")
+                sample_cols = ['date', 'weighted_avg_sentiment', 'drug_specific_count', 'day_importance_score']
+                available_cols = [col for col in sample_cols if col in daily_agg.columns]
+                print(daily_agg[available_cols].head(5))
+            else:
+                print("❌ Daily sentiment file not saved properly")
+                return False
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error saving comprehensive data: {str(e)}")
+        return False
+
+def create_fda_milestone_summary(articles):
+    """Create summary of FDA milestones for analysis"""
+    print("\n=== CREATING FDA MILESTONE SUMMARY ===")
+    
+    try:
+        df = pd.DataFrame(articles)
+        if df.empty:
+            return pd.DataFrame()
+        
+        # Filter for high-priority articles
+        milestone_articles = df[df['priority_score'] >= 10].copy()
+        
+        if milestone_articles.empty:
+            print("⚠️  No high-priority milestone articles found")
+            return pd.DataFrame()
+        
+        # Create milestone summary
+        milestone_summary = milestone_articles.groupby(['date', 'fda_milestone_type']).agg({
+            'title': 'first',
+            'sentiment_score': 'mean',
+            'weighted_sentiment': 'mean',
+            'priority_score': 'max',
+            'drug_specific': 'max'
+        }).reset_index()
+        
+        # Add milestone order for chronological analysis
+        milestone_order = {
+            'application_phase': 1,
+            'clinical_trials': 2,
+            'regulatory_review': 3,
+            'approval_process': 4,
+            'post_approval': 5,
+            'regulatory_issues': 6
+        }
+        
+        milestone_summary['milestone_order'] = milestone_summary['fda_milestone_type'].map(milestone_order)
+        milestone_summary = milestone_summary.sort_values(['milestone_order', 'date'])
+        
+        print(f"✓ Created FDA milestone summary with {len(milestone_summary)} key events")
+        return milestone_summary
+        
+    except Exception as e:
+        print(f"❌ Error creating milestone summary: {str(e)}")
+        return pd.DataFrame()
+
+def print_comprehensive_summary(articles, daily_agg):
+    """Print comprehensive analysis summary"""
+    print("\n" + "="*80)
+    print("COMPREHENSIVE FDA DRUG JOURNEY NEWS COLLECTION SUMMARY")
+    print("="*80)
+    
+    if articles:
+        # Time period analysis
+        dates = sorted([a['date'] for a in articles if a.get('date')])
+        if dates:
+            print(f"✓ TIME PERIOD: {dates[0]} to {dates[-1]} (2015-2025)")
+        
+        # Article breakdown by period
+        pre_app = sum(1 for a in articles if a.get('date', '') < '2017-01-01')
+        fda_journey = sum(1 for a in articles if '2017-01-01' <= a.get('date', '') <= '2021-12-31')
+        post_approval = sum(1 for a in articles if a.get('date', '') > '2021-12-31')
+        
+        print(f"✓ ARTICLE BREAKDOWN:")
+        print(f"    Pre-Application (2015-2017): {pre_app} articles")
+        print(f"    FDA Journey (2017-2021): {fda_journey} articles")
+        print(f"    Market Implementation (2022-2025): {post_approval} articles")
+        print(f"    TOTAL: {len(articles)} articles")
+        
+        # FDA milestone breakdown
+        milestone_counts = {}
+        for article in articles:
+            milestone = article.get('fda_milestone_type', 'Other')
+            milestone_counts[milestone] = milestone_counts.get(milestone, 0) + 1
+        
+        print(f"\n✓ FDA MILESTONE BREAKDOWN:")
+        for milestone, count in sorted(milestone_counts.items()):
+            print(f"    {milestone}: {count} articles")
+        
+        # Drug-specific analysis
+        drug_specific = sum(1 for a in articles if a.get('drug_specific', False))
+        approval_related = sum(1 for a in articles if a.get('fda_milestone_type') == 'approval_process')
+        
+        print(f"\n✓ DRUG-SPECIFIC ANALYSIS:")
+        print(f"    {PRIMARY_DRUG['name']}-specific articles: {drug_specific}")
+        print(f"    FDA approval-related articles: {approval_related}")
+        
+        # Market impact analysis
+        hospital_adoption = sum(1 for a in articles if a.get('market_impact_type') == 'hospital_adoption')
+        financial_impact = sum(1 for a in articles if a.get('market_impact_type') == 'financial_impact')
+        
+        print(f"\n✓ COMPREHENSIVE COMPANY NEWS ANALYSIS:")
+        print(f"    Financial results articles: {sum(1 for a in articles if a.get('company_news_category') == 'financial_results')}")
+        print(f"    Insider trading/management articles: {sum(1 for a in articles if a.get('company_news_category') == 'insider_trading')}")
+        print(f"    Corporate actions articles: {sum(1 for a in articles if a.get('company_news_category') == 'corporate_actions')}")
+        print(f"    Partnership/deal articles: {sum(1 for a in articles if a.get('company_news_category') == 'partnerships_deals')}")
+        print(f"    Regulatory compliance articles: {sum(1 for a in articles if a.get('company_news_category') == 'regulatory_compliance')}")
+        print(f"    Business expansion articles: {sum(1 for a in articles if a.get('company_news_category') == 'business_expansion')}")
+        print(f"    R&D articles: {sum(1 for a in articles if a.get('company_news_category') == 'research_development')}")
+        print(f"    Market rumors/analyst articles: {sum(1 for a in articles if a.get('company_news_category') == 'market_rumors')}")
+        
+        print(f"\n✓ FILES CREATED:")
+        print(f"    news_data.csv - Complete dataset: FDA + Financial + Corporate + Insider + Market news")
+        print(f"    daily_sentiment.csv - Daily aggregation for comprehensive stock correlation")
+        
+        print(f"\n✓ COMPREHENSIVE ANALYSIS READY:")
+        print(f"    ✓ FDA milestones + Financial results + Corporate actions")
+        print(f"    ✓ Insider trading + Management changes + Partnership deals")
+        print(f"    ✓ Regulatory compliance + Business expansion + R&D updates")
+        print(f"    ✓ Market rumors + Analyst reports + All company news")
+        print(f"    ✓ Complete company news ecosystem for stock correlation analysis")
+        
+    else:
+        print("❌ No articles collected")
+    
+    print("="*80)
+
+def main():
+    """Main function for comprehensive FDA drug journey news collection"""
+    print("COMPREHENSIVE FDA DRUG JOURNEY NEWS COLLECTOR")
+    print(f"Target Drug: {PRIMARY_DRUG['full_name']}")
+    print(f"Company: {COMPANY['name']} ({COMPANY['ticker']})")
+    print(f"Analysis Period: {DATA_CONFIG['start_date']} to {DATA_CONFIG['end_date']}")
+    print(f"FDA Journey: {PRIMARY_DRUG['application_year']} (application) to present")
+    print("="*80)
+    
+    # Step 1: Clear old data
+    clear_old_news_data()
+    
+    # Step 2: Check data folder
+    data_path = check_data_folder()
+    
+    # Step 3: Setup sentiment analysis
+    sentiment_analyzer = setup_sentiment_analysis()
+    
+    # Step 4: Collect comprehensive news data across all periods
+    all_articles = fetch_comprehensive_news_data()
+    
+    # Step 5: Add sample data if insufficient real data
+    if len(all_articles) < DATA_CONFIG['min_articles_threshold']:
+        print(f"\n⚠️  Only {len(all_articles)} articles found, adding comprehensive sample data")
+        sample_articles = create_comprehensive_sample_data()
+        all_articles.extend(sample_articles)
+    
+    print(f"\nTotal articles collected across all periods: {len(all_articles)}")
+    
+    # Step 6: Classify by FDA milestones and market impact
+    classified_articles = classify_news_by_fda_milestone(all_articles)
+    
+    # Step 7: Calculate comprehensive sentiment with FDA weighting
+    articles_with_sentiment = calculate_comprehensive_sentiment(classified_articles, sentiment_analyzer)
+    
+    # Step 8: Create comprehensive daily aggregation
+    daily_sentiment = create_comprehensive_daily_aggregation(articles_with_sentiment)
+    
+    # Step 9: Save comprehensive data
+    success = save_comprehensive_data(articles_with_sentiment, daily_sentiment, data_path)
+    
+    # Step 10: Print comprehensive summary
+    print_comprehensive_summary(articles_with_sentiment, daily_sentiment)
     
     if success:
-        print("\n🎉 SUCCESS: Advanced news collection completed!")
-        print("✅ Multi-model sentiment analysis performed")
-        print("✅ FDA milestone classification with semantic analysis completed")
-        print("✅ Daily sentiment aggregation created")
-        print("✅ Data saved to: data/news_data.csv, data/daily_sentiment.csv, data/fda_events.csv")
-        print("🔄 Ready for Day 2: Advanced Model Training")
+        print("\n🎉 SUCCESS: Comprehensive FDA drug journey news collection completed!")
+        print("✓ Complete timeline from 2015 pre-application to 2025 market implementation")
+        print("✓ FDA milestone tracking for regulatory correlation analysis")
+        print("✓ Hospital adoption and market penetration tracking")
+        print("✓ Ready for comprehensive stock price correlation analysis")
+        return True
     else:
-        print("\n❌ FAILED: News collection failed")
-        print("💡 Check logs for details: logs/news_collection.log")
-        print("🔧 Troubleshooting: Verify internet connection, model downloads, and dependencies")
-    
-    return success
+        print("\n💥 FAILED: News data collection failed!")
+        return False
 
 if __name__ == "__main__":
     main()

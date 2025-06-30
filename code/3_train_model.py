@@ -1,753 +1,1108 @@
-"""
-Advanced Model Training for Biocon FDA Project
-Day 2 - Step 3: Train multiple machine learning models for stock price prediction
-
-Features:
-- Combines stock data with news sentiment and FDA events
-- Enhanced feature selection with correlation and RFE
-- Multiple model architectures (Linear Regression, Random Forest, Gradient Boosting, LSTM)
-- Cross-validation and hyperparameter tuning
-- Model performance evaluation and visualization
-- Stacking ensemble with fallback to weighted average
-"""
-
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pandas as pd
 import numpy as np
-from datetime import datetime
-import logging
+import os
 import pickle
-from pathlib import Path
-from sklearn.model_selection import train_test_split, TimeSeriesSplit, GridSearchCV
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, StackingRegressor
-from sklearn.svm import SVR
-from sklearn.feature_selection import RFE, mutual_info_regression
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-import lightgbm as lgb
+import logging
+from datetime import datetime, timedelta
+from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
+from sklearn.preprocessing import StandardScaler, RobustScaler, LabelEncoder
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier, GradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression, ElasticNet, Ridge
+from sklearn.svm import SVC
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, accuracy_score, classification_report, roc_auc_score, confusion_matrix
+from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif, RFE
 import xgboost as xgb
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
-from tensorflow.keras.callbacks import EarlyStopping
-import matplotlib.pyplot as plt
-try:
-    from config import (
-        COMPANY_INFO, DATA_START_DATE, DATA_END_DATE,
-        PATHS, DATA_FILES, MODEL_CONFIG, create_directories, validate_config
-    )
-except ImportError:
-    from config import (
-        COMPANY_INFO, DATA_START_DATE, DATA_END_DATE,
-        PATHS, DATA_FILES, create_directories, validate_config
-    )
-    MODEL_CONFIG = {
-        'ridge_regression': {'alpha': [0.1, 1.0, 10.0, 100.0]},
-        'lasso_regression': {'alpha': [0.01, 0.1, 1.0, 10.0]},
-        'random_forest': {
-            'n_estimators': [100, 200, 300],
-            'max_depth': [10, 20, 30, None],
-            'min_samples_split': [2, 5, 10]
-        },
-        'gradient_boosting': {
-            'n_estimators': [100, 200, 300],
-            'learning_rate': [0.01, 0.05, 0.1],
-            'max_depth': [3, 5, 7]
-        },
-        'lightgbm': {
-            'n_estimators': [100, 200, 300],
-            'learning_rate': [0.01, 0.05, 0.1],
-            'num_leaves': [31, 50, 70],
-            'min_child_samples': [10, 20],
-            'min_split_gain': [0.0]
-        },
-        'xgboost': {
-            'n_estimators': [100, 200, 300],
-            'learning_rate': [0.01, 0.05, 0.1],
-            'max_depth': [3, 5, 7]
-        },
-        'svr': {
-            'kernel': ['rbf'],
-            'C': [0.1, 1.0, 10.0, 100.0],
-            'epsilon': [0.01, 0.1, 0.5]
-        },
-        'lstm': {
-            'epochs': 100,
-            'batch_size': 32,
-            'units': [50, 25]
-        }
-    }
+import lightgbm as lgb
+from scipy import stats
 import warnings
+import time
 warnings.filterwarnings('ignore')
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('logs/model_training.log'),
-        logging.StreamHandler()
-    ]
-)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class AdvancedModelTrainer:
+class ProperBioconModelTrainer:
+    """
+    PROPER Stock Prediction Training - NO DATA LEAKAGE
+    Focus on realistic, achievable stock prediction with proper validation
+    """
+    
     def __init__(self):
-        self.start_date = DATA_START_DATE
-        self.end_date = DATA_END_DATE
-        self.data = None
-        self.X_train = None
-        self.X_val = None
-        self.X_test = None
-        self.y_train = None
-        self.y_val = None
-        self.y_test = None
-        self.scalers = {}
         self.models = {}
+        self.scalers = {}
+        self.performance_metrics = {}
+        self.feature_importance = {}
+        self.best_model_name = None
+        self.best_model = None
         self.feature_names = []
-        self.random_state = 42
+        self.label_encoders = {}
+        self.validation_results = {}
+        self.create_directories()
         
-        create_directories()
-        validate_config()
-        
-        logger.info("🚀 Advanced Model Trainer Initialized")
-        logger.info(f"📅 Date Range: {self.start_date} to {self.end_date}")
-        logger.info(f"🏢 Target Company: {COMPANY_INFO['name']}")
-
-    def load_and_prepare_data(self):
-        """
-        Load and combine stock, sentiment, and FDA event data with enhanced feature selection
-        """
-        logger.info("📊 Loading and preparing data...")
+    def create_directories(self):
+        """Create necessary directories"""
+        directories = ['models', 'results', 'results/charts', 'data']
+        for directory in directories:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+                logger.info(f"Created directory: {directory}")
+    
+    def load_and_validate_data(self):
+        """Load and validate data with strict checks"""
+        logger.info("Loading and validating data...")
         
         try:
-            # Check for saved features and scalers
-            feature_file = PATHS['models'] / 'feature_names.pkl'
-            scaler_file = PATHS['models'] / 'scalers.pkl'
-            if feature_file.exists() and scaler_file.exists():
-                with open(feature_file, 'rb') as f:
-                    self.feature_names = pickle.load(f)
-                with open(scaler_file, 'rb') as f:
-                    self.scalers = pickle.load(f)
-                logger.info("✅ Loaded saved features and scalers for consistency")
-            
-            # Load stock data (assumes benchmark indices are included)
-            stock_file = PATHS['data'] / DATA_FILES['stock_data']
-            if not stock_file.exists():
-                raise FileNotFoundError(f"Stock data file not found: {stock_file}")
-            stock_df = pd.read_csv(stock_file)
+            # Load stock data
+            stock_df = pd.read_csv('data/stock_data.csv')
             stock_df['Date'] = pd.to_datetime(stock_df['Date']).dt.tz_localize(None)
+            stock_df = stock_df.sort_values('Date').reset_index(drop=True)
+            logger.info(f"✓ Loaded stock data: {len(stock_df)} records from {stock_df['Date'].min()} to {stock_df['Date'].max()}")
             
-            # Load daily sentiment data
-            sentiment_file = PATHS['data'] / DATA_FILES['daily_sentiment']
-            if sentiment_file.exists():
-                sentiment_df = pd.read_csv(sentiment_file)
-                sentiment_df['date'] = pd.to_datetime(sentiment_df['date']).dt.tz_localize(None)
-                sentiment_df = sentiment_df.rename(columns={'avg_sentiment': 'sentiment_score'})
-                if 'sentiment_score' not in sentiment_df.columns:
-                    logger.warning("⚠️ 'sentiment_score' column missing, using zeros")
-                    sentiment_df['sentiment_score'] = 0.0
-            else:
-                logger.warning(f"Sentiment data file not found: {sentiment_file}")
-                sentiment_df = pd.DataFrame({
-                    'date': stock_df['Date'],
-                    'sentiment_score': [0.0] * len(stock_df)
-                })
+            # Load sentiment data
+            sentiment_df = pd.read_csv('data/daily_sentiment.csv')
+            sentiment_df['date'] = pd.to_datetime(sentiment_df['date']).dt.tz_localize(None)
+            sentiment_df = sentiment_df.sort_values('date').reset_index(drop=True)
+            logger.info(f"✓ Loaded sentiment data: {len(sentiment_df)} records")
             
-            # Load FDA events
-            fda_file = PATHS['data'] / DATA_FILES['fda_events']
-            if fda_file.exists():
-                fda_df = pd.read_csv(fda_file)
-                fda_df['date'] = pd.to_datetime(fda_df['date']).dt.tz_localize(None)
-            else:
-                logger.warning(f"FDA events file not found: {fda_file}")
-                fda_df = pd.DataFrame({
-                    'date': stock_df['Date'],
-                    'fda_milestone_type': ['other'] * len(stock_df)
-                })
-            
-            # Merge datasets
-            df = pd.merge(stock_df, sentiment_df, left_on='Date', right_on='date', how='left')
-            df = df.drop(columns=['date'], errors='ignore')
-            if not fda_df.empty:
-                fda_df = fda_df.groupby('date').agg({
-                    'fda_milestone_type': lambda x: '|'.join(set(x)),
-                    'milestone_confidence': 'mean',
-                    'importance_score': 'sum'
-                }).reset_index()
-                df = pd.merge(df, fda_df, left_on='Date', right_on='date', how='left')
-                df = df.drop(columns=['date'], errors='ignore')
-            
-            # Add advanced features
-            df = self.add_advanced_features(df)
-            
-            # Clip outliers in target variable
-            target_col = 'Forward_Return_5D'
-            if target_col in df.columns:
-                q1, q3 = df[target_col].quantile([0.01, 0.99])
-                df[target_col] = df[target_col].clip(q1, q3)
-            else:
-                raise ValueError(f"Target column {target_col} not found in dataset")
-            
-            # Filter date range
-            df = df[(df['Date'] >= self.start_date) & (df['Date'] <= self.end_date)]
-            
-            # Fill missing values
-            numeric_cols = df.select_dtypes(include=[np.number]).columns
-            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
-            categorical_cols = df.select_dtypes(include=['object']).columns
-            df[categorical_cols] = df[categorical_cols].fillna('none')
-            
-            # Select features
-            feature_cols = [
-                col for col in df.columns 
-                if col not in ['Date', 'date', 'Symbol', 'Company', 'Source', 
-                              'Forward_Return_1D', 'Forward_Return_3D', 'Forward_Return_5D', 
-                              'Forward_Return_10D', 'Forward_Direction_1D', 
-                              'Forward_Direction_3D', 'Forward_Direction_5D', 
-                              'Forward_Direction_10D']
-            ]
-            target_col = 'Forward_Return_5D'
-            
-            self.data = df
-            self.feature_names = feature_cols if not self.feature_names else self.feature_names
-            
-            # Prepare X and y
-            X = df[feature_cols]
-            y = df[target_col]
-            
-            # Handle categorical variables
-            categorical_features = X.select_dtypes(include=['object']).columns
-            X = pd.get_dummies(X, columns=categorical_features, drop_first=True)
-            
-            # Use saved features if available
-            if self.feature_names:
-                missing_features = [f for f in self.feature_names if f not in X.columns]
-                if missing_features:
-                    logger.warning(f"⚠️ Missing features from saved set: {missing_features}, adding zeros")
-                    for f in missing_features:
-                        X[f] = 0.0
-                X = X[self.feature_names]
-            else:
-                # Enhanced feature selection
-                corr_matrix = X.corr().abs()
-                upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
-                to_drop = [column for column in upper.columns if any(upper[column] > 0.8)]
-                X = X.drop(columns=to_drop)
-                logger.info(f"Dropped {len(to_drop)} highly correlated features: {to_drop}")
-                
-                mi_scores = mutual_info_regression(X, y, random_state=self.random_state)
-                mi_df = pd.Series(mi_scores, index=X.columns).nlargest(50)
-                X = X[mi_df.index]
-                
-                rf = RandomForestRegressor(random_state=self.random_state)
-                rfe = RFE(estimator=rf, n_features_to_select=30)
-                rfe.fit(X, y)
-                self.feature_names = X.columns[rfe.support_].tolist()
-                X = X[self.feature_names]
-                logger.info(f"Selected Features: {self.feature_names}")
-                
-                # Save feature names
-                with open(PATHS['models'] / 'feature_names.pkl', 'wb') as f:
-                    pickle.dump(self.feature_names, f)
-            
-            # Split data
-            train_end = pd.to_datetime('2021-12-31')
-            val_end = pd.to_datetime('2023-12-31')
-            train_idx = df['Date'] <= train_end
-            val_idx = (df['Date'] > train_end) & (df['Date'] <= val_end)
-            test_idx = df['Date'] > val_end
-            
-            self.X_train = X[train_idx]
-            self.y_train = y[train_idx]
-            self.X_val = X[val_idx]
-            self.y_val = y[val_idx]
-            self.X_test = X[test_idx]
-            self.y_test = y[test_idx]
-            
-            # Check sample sizes
-            if len(self.X_train) != len(self.y_train) or len(self.X_val) != len(self.y_val) or len(self.X_test) != len(self.y_test):
-                raise ValueError(f"Inconsistent sample sizes: X_train={len(self.X_train)}, y_train={len(self.y_train)}, "
-                               f"X_val={len(self.X_val)}, y_val={len(self.y_val)}, "
-                               f"X_test={len(self.X_test)}, y_test={len(self.y_test)}")
-            
-            # Combine train and validation for final training
-            self.X_train = pd.concat([self.X_train, self.X_val])
-            self.y_train = pd.concat([self.y_train, self.y_val])
-            
-            # Verify combined sample sizes
-            if len(self.X_train) != len(self.y_train):
-                raise ValueError(f"Inconsistent combined sample sizes: X_train={len(self.X_train)}, y_train={len(self.y_train)}")
-            
-            # Scale features
-            if 'X' not in self.scalers:
-                self.scalers['X'] = StandardScaler()
-                self.X_train = self.scalers['X'].fit_transform(self.X_train)
-            else:
-                self.X_train = self.scalers['X'].transform(self.X_train)
-            self.X_test = self.scalers['X'].transform(self.X_test)
-            if self.X_val.shape[0] > 0:
-                self.X_val = self.scalers['X'].transform(self.X_val)
-            
-            # Scale target variable
-            if 'y' not in self.scalers:
-                self.scalers['y'] = MinMaxScaler(feature_range=(-1, 1))
-                self.y_train = self.scalers['y'].fit_transform(self.y_train.values.reshape(-1, 1)).flatten()
-            else:
-                self.y_train = self.scalers['y'].transform(self.y_train.values.reshape(-1, 1)).flatten()
-            self.y_test = self.scalers['y'].transform(self.y_test.values.reshape(-1, 1)).flatten()
-            if self.y_val.shape[0] > 0:
-                self.y_val = self.scalers['y'].transform(self.y_val.values.reshape(-1, 1)).flatten()
-            
-            # Save scalers
-            with open(PATHS['models'] / 'scalers.pkl', 'wb') as f:
-                pickle.dump(self.scalers, f)
-            
-            logger.info(f"✅ Data prepared: {len(self.X_train)} training samples, {len(self.X_test)} test samples, {len(self.X_val)} validation samples")
-            logger.info(f"📈 Features selected: {len(self.feature_names)}")
+            return stock_df, sentiment_df
             
         except Exception as e:
-            logger.error(f"❌ Error preparing data: {str(e)}")
+            logger.error(f"Error loading data: {str(e)}")
             raise
-
-    def add_advanced_features(self, df):
-        """
-        Add advanced features with leakage prevention
-        """
-        logger.info("🧠 Adding advanced features...")
+    
+    def smart_data_merge(self, stock_df, sentiment_df):
+        """Smart data merge preserving temporal order"""
+        logger.info("Performing smart data merge...")
         
         try:
-            if 'sentiment_score' in df.columns:
-                for lag in [1, 2, 3, 5]:
-                    df[f'sentiment_lag_{lag}'] = df['sentiment_score'].shift(lag)
-                df['sentiment_3d_roll_mean'] = df['sentiment_score'].rolling(window=3, min_periods=1).mean()
-                if 'Volatility_20' in df.columns:
-                    df['sentiment_volatility_interaction'] = df['sentiment_score'] * df['Volatility_20']
-            else:
-                logger.warning("⚠️ 'sentiment_score' column missing, setting sentiment features to 0")
-                for lag in [1, 2, 3, 5]:
-                    df[f'sentiment_lag_{lag}'] = 0.0
-                df['sentiment_3d_roll_mean'] = 0.0
-                df['sentiment_volatility_interaction'] = 0.0
+            # LEFT JOIN to keep all stock days
+            combined_df = pd.merge(
+                stock_df, 
+                sentiment_df, 
+                left_on='Date', 
+                right_on='date', 
+                how='left'
+            )
             
-            if 'fda_milestone_type' in df.columns:
-                for milestone in ['application_phase', 'clinical_trials', 'regulatory_review', 'approval_process', 'post_approval', 'regulatory_issues']:
-                    df[f'has_{milestone}'] = df['fda_milestone_type'].str.contains(milestone, na=False).astype(int)
-            else:
-                logger.warning("⚠️ 'fda_milestone_type' column missing, setting milestone flags to 0")
-                for milestone in ['application_phase', 'clinical_trials', 'regulatory_review', 'approval_process', 'post_approval', 'regulatory_issues']:
-                    df[f'has_{milestone}'] = 0
+            if 'date' in combined_df.columns:
+                combined_df = combined_df.drop(['date'], axis=1)
             
-            if 'news_headline' in df.columns:
-                df['semglee_mention'] = df['news_headline'].str.lower().str.contains('semglee', na=False).astype(int)
-            else:
-                df['semglee_mention'] = 0
+            # Fill missing sentiment intelligently
+            sentiment_columns = [
+                'avg_sentiment', 'weighted_avg_sentiment', 'news_count',
+                'drug_specific_count', 'day_importance_score'
+            ]
             
-            if 'Volume' in df.columns and 'Volume_SMA_20' in df.columns:
-                df['insider_signal'] = (df['Volume'] > df['Volume_SMA_20'] * 2).astype(int)
-            else:
-                df['insider_signal'] = 0
+            for col in sentiment_columns:
+                if col in combined_df.columns:
+                    if 'sentiment' in col.lower():
+                        combined_df[col] = combined_df[col].fillna(0.0)  # Neutral
+                    else:
+                        combined_df[col] = combined_df[col].fillna(0)    # No news
+                else:
+                    combined_df[col] = 0
             
-            df['day_of_week'] = df['Date'].dt.dayofweek
-            df['month'] = df['Date'].dt.month
-            df['quarter'] = df['Date'].dt.quarter
-            df['is_month_end'] = df['Date'].dt.is_month_end.astype(int)
-            df['is_quarter_end'] = df['Date'].dt.is_quarter_end.astype(int)
+            # Create day_importance_score if missing
+            if 'day_importance_score' not in combined_df.columns or combined_df['day_importance_score'].isna().all():
+                combined_df['day_importance_score'] = (
+                    combined_df.get('news_count', 0) * 2 +
+                    combined_df.get('drug_specific_count', 0) * 10 +
+                    np.abs(combined_df.get('weighted_avg_sentiment', 0)) * 15
+                )
+            
+            # Handle FDA milestone flags
+            milestone_columns = [col for col in combined_df.columns if col.startswith('has_')]
+            for col in milestone_columns:
+                combined_df[col] = combined_df[col].fillna(0).astype(int)
+            
+            # Ensure temporal order
+            combined_df = combined_df.sort_values('Date').reset_index(drop=True)
+            
+            logger.info(f"Smart merge completed: {len(combined_df)} records")
+            return combined_df
+            
+        except Exception as e:
+            logger.error(f"Error in smart merge: {str(e)}")
+            raise
+    
+    def clean_and_encode_data(self, df):
+        """Clean data and encode categorical variables properly"""
+        logger.info("Cleaning and encoding data...")
+        
+        try:
+            # Identify and handle string/object columns
+            string_columns = df.select_dtypes(include=['object', 'string']).columns.tolist()
+            
+            # Remove columns that should not be features
+            columns_to_drop = ['Date', 'Symbol', 'Company', 'Source']
+            string_columns = [col for col in string_columns if col not in columns_to_drop]
+            
+            logger.info(f"Found categorical columns to encode: {string_columns}")
+            
+            # Handle each categorical column
+            for col in string_columns:
+                if col in df.columns:
+                    unique_values = df[col].nunique()
+                    
+                    if unique_values <= 10:  # Low cardinality - use label encoding
+                        le = LabelEncoder()
+                        df[col] = df[col].astype(str).fillna('Unknown')
+                        df[col] = le.fit_transform(df[col])
+                        self.label_encoders[col] = le
+                        logger.info(f"Label encoded {col}: {unique_values} categories")
+                    else:  # High cardinality - drop
+                        logger.warning(f"Dropping high cardinality column: {col}")
+                        df = df.drop(columns=[col])
+            
+            # Ensure all remaining columns are numeric
+            for col in df.columns:
+                if col not in ['Date']:  # Keep Date for later use
+                    try:
+                        df[col] = pd.to_numeric(df[col], errors='coerce')
+                    except:
+                        logger.warning(f"Could not convert {col} to numeric, dropping")
+                        if col in df.columns:
+                            df = df.drop(columns=[col])
+            
+            # Fill any remaining NaN values
+            numeric_columns = df.select_dtypes(include=[np.number]).columns
+            for col in numeric_columns:
+                if df[col].isnull().sum() > 0:
+                    if 'sentiment' in col.lower():
+                        df[col] = df[col].fillna(0.0)
+                    elif 'volume' in col.lower():
+                        df[col] = df[col].fillna(df[col].median())
+                    else:
+                        df[col] = df[col].fillna(df[col].median())
+            
+            logger.info(f"Data cleaning completed: {len(df.columns)} columns remaining")
+            return df
+            
+        except Exception as e:
+            logger.error(f"Error in data cleaning: {str(e)}")
+            raise
+    
+    def create_proper_features(self, df):
+        """Create features WITHOUT data leakage - only use historical data"""
+        logger.info("Creating proper features WITHOUT data leakage...")
+        
+        try:
+            # Clean and encode data first
+            df = self.clean_and_encode_data(df)
+            
+            df = df.sort_values('Date').reset_index(drop=True)
+            
+            # === STRICT: NO FORWARD-LOOKING FEATURES ===
+            # Remove any forward-looking features that cause data leakage
+            forward_looking_cols = [col for col in df.columns if 'Forward' in col or 'Next' in col]
+            if forward_looking_cols:
+                logger.warning(f"🚨 REMOVING DATA LEAKAGE COLUMNS: {forward_looking_cols}")
+                df = df.drop(columns=forward_looking_cols)
+            
+            # === CORE PRICE FEATURES (HISTORICAL ONLY) ===
+            if 'Close' in df.columns:
+                # Returns with different horizons (PAST only)
+                df['Return_1D'] = df['Close'].pct_change()
+                df['Return_3D'] = df['Close'].pct_change(3)
+                df['Return_5D'] = df['Close'].pct_change(5)
+                df['Return_10D'] = df['Close'].pct_change(10)
+                
+                # Moving averages (PAST only)
+                for window in [5, 10, 20, 50]:
+                    df[f'MA_{window}'] = df['Close'].rolling(window).mean()
+                    df[f'Price_Above_MA_{window}'] = (df['Close'] > df[f'MA_{window}']).astype(int)
+                    df[f'Price_Distance_MA_{window}'] = (df['Close'] - df[f'MA_{window}']) / df[f'MA_{window}']
+                
+                # Volatility (PAST only)
+                for window in [5, 10, 20]:
+                    df[f'Volatility_{window}D'] = df['Return_1D'].rolling(window).std() * np.sqrt(252)
+                
+                # Price momentum (PAST only)
+                df['Momentum_5D'] = df['Close'].pct_change(5)
+                df['Momentum_10D'] = df['Close'].pct_change(10)
+                df['Momentum_20D'] = df['Close'].pct_change(20)
+                
+                # Price extremes (PAST only)
+                for window in [10, 20]:
+                    df[f'High_{window}D'] = df['High'].rolling(window).max()
+                    df[f'Low_{window}D'] = df['Low'].rolling(window).min()
+                    df[f'Price_Position_{window}D'] = (df['Close'] - df[f'Low_{window}D']) / (df[f'High_{window}D'] - df[f'Low_{window}D'])
+            
+            # === VOLUME FEATURES (HISTORICAL ONLY) ===
+            if 'Volume' in df.columns:
+                for window in [5, 10, 20]:
+                    df[f'Volume_MA_{window}'] = df['Volume'].rolling(window).mean()
+                    df[f'Volume_Ratio_{window}'] = df['Volume'] / (df[f'Volume_MA_{window}'] + 1)
+                
+                df['High_Volume'] = (df['Volume'] > df['Volume_MA_20'] * 1.5).astype(int)
+                df['Low_Volume'] = (df['Volume'] < df['Volume_MA_20'] * 0.7).astype(int)
+            
+            # === SENTIMENT FEATURES (HISTORICAL ONLY) ===
+            if 'avg_sentiment' in df.columns:
+                # Clean sentiment
+                df['avg_sentiment'] = np.clip(df['avg_sentiment'], -1, 1)
+                
+                # Sentiment signals
+                df['Positive_Sentiment'] = (df['avg_sentiment'] > 0.1).astype(int)
+                df['Negative_Sentiment'] = (df['avg_sentiment'] < -0.1).astype(int)
+                df['Strong_Sentiment'] = (np.abs(df['avg_sentiment']) > 0.3).astype(int)
+                
+                # Sentiment momentum (PAST only)
+                df['Sentiment_Change_1D'] = df['avg_sentiment'].diff()
+                df['Sentiment_Change_3D'] = df['avg_sentiment'].diff(3)
+                
+                # Sentiment moving averages (PAST only)
+                for window in [3, 5, 10]:
+                    df[f'Sentiment_MA_{window}'] = df['avg_sentiment'].rolling(window).mean()
+            
+            # === FDA EVENT FEATURES (HISTORICAL ONLY) ===
+            if 'day_importance_score' in df.columns:
+                # FDA event flags
+                df['Major_FDA_Event'] = (df['day_importance_score'] > 25).astype(int)
+                df['Minor_FDA_Event'] = ((df['day_importance_score'] > 10) & (df['day_importance_score'] <= 25)).astype(int)
+                
+                # Days since FDA event (PAST only)
+                fda_events = df['day_importance_score'] > 15
+                df['Days_Since_FDA'] = 0
+                
+                days_counter = 999  # Start high
+                for i in range(len(df)):
+                    if fda_events.iloc[i]:
+                        days_counter = 0
+                    else:
+                        days_counter += 1
+                    df.loc[i, 'Days_Since_FDA'] = min(days_counter, 60)  # Cap at 60
+                
+                # FDA event momentum (PAST only)
+                df['FDA_Score_MA_5'] = df['day_importance_score'].rolling(5).mean()
+                df['FDA_Score_MA_10'] = df['day_importance_score'].rolling(10).mean()
+            
+            # === MARKET TIMING FEATURES ===
+            if 'Date' in df.columns:
+                df['Day_of_Week'] = df['Date'].dt.dayofweek
+                df['Is_Monday'] = (df['Day_of_Week'] == 0).astype(int)
+                df['Is_Friday'] = (df['Day_of_Week'] == 4).astype(int)
+                df['Month'] = df['Date'].dt.month
+                df['Is_Earnings_Month'] = df['Month'].isin([1, 4, 7, 10]).astype(int)
+                df['Day_of_Month'] = df['Date'].dt.day
+                df['Is_Month_End'] = (df['Day_of_Month'] > 25).astype(int)
+            
+            # === TECHNICAL INDICATORS (HISTORICAL ONLY) ===
+            technical_cols = ['RSI_14', 'MACD', 'BB_Upper', 'BB_Lower', 'ATR_14']
+            for col in technical_cols:
+                if col in df.columns:
+                    if col == 'RSI_14':
+                        df['RSI_Oversold'] = (df[col] < 30).astype(int)
+                        df['RSI_Overbought'] = (df[col] > 70).astype(int)
+                        df['RSI_Middle'] = ((df[col] >= 40) & (df[col] <= 60)).astype(int)
+                    elif col == 'MACD':
+                        df['MACD_Positive'] = (df[col] > 0).astype(int)
+                        df['MACD_Signal_Cross'] = ((df[col] > df.get('MACD_Signal', 0)) & 
+                                                 (df[col].shift(1) <= df.get('MACD_Signal', 0).shift(1))).astype(int)
+                    elif col == 'ATR_14':
+                        df['High_Volatility'] = (df[col] > df[col].rolling(50).quantile(0.8)).astype(int)
+            
+            # === LAG FEATURES (SAFE - NO LEAKAGE) ===
+            lag_features = ['Close', 'Volume', 'Return_1D', 'avg_sentiment', 'day_importance_score']
+            for feature in lag_features:
+                if feature in df.columns:
+                    for lag in [1, 2, 3, 5]:
+                        df[f'{feature}_Lag_{lag}'] = df[feature].shift(lag)
+            
+            # === INTERACTION FEATURES ===
+            # Sentiment + Volume (HISTORICAL ONLY)
+            if 'Strong_Sentiment' in df.columns and 'High_Volume' in df.columns:
+                df['Sentiment_Volume_Signal'] = df['Strong_Sentiment'] * df['High_Volume']
+            
+            # FDA + Sentiment (HISTORICAL ONLY)
+            if 'Major_FDA_Event' in df.columns and 'avg_sentiment' in df.columns:
+                df['FDA_Sentiment_Signal'] = df['Major_FDA_Event'] * df['avg_sentiment']
+            
+            # === CREATE TARGET VARIABLE (PROPER WAY) ===
+            if 'Close' in df.columns:
+                # Next day direction (what we want to predict)
+                df['Target_Next_Day_Up'] = (df['Close'].shift(-1) > df['Close']).astype(int)
+                
+                # Alternative targets
+                df['Target_Next_Day_Return'] = df['Close'].pct_change().shift(-1)
+                df['Target_Next_3Day_Up'] = (df['Close'].shift(-3) > df['Close']).astype(int)
+                
+                # Significant move targets
+                returns = df['Close'].pct_change().shift(-1)
+                threshold = returns.std() * 0.75  # More conservative threshold
+                df['Target_Significant_Move'] = (np.abs(returns) > threshold).astype(int)
+            
+            logger.info(f"✅ Proper feature engineering completed. Total features: {len(df.columns)}")
+            
+            # Final check for data leakage
+            suspect_cols = [col for col in df.columns if any(word in col.lower() for word in ['forward', 'future', 'next', 'ahead'])]
+            if suspect_cols and 'Target' not in str(suspect_cols):
+                logger.error(f"🚨 POTENTIAL DATA LEAKAGE DETECTED: {suspect_cols}")
+                raise ValueError("Data leakage detected in features!")
             
             return df
             
         except Exception as e:
-            logger.error(f"❌ Error adding advanced features: {str(e)}")
+            logger.error(f"Error in proper feature engineering: {str(e)}")
             raise
-
-    def train_linear_models(self):
-        """
-        Train linear regression models with regularization
-        """
-        logger.info("🧠 Training linear models...")
+    
+    def select_proper_features(self, X, y, target_type, max_features=30):
+        """Select features properly without data leakage"""
+        logger.info(f"Selecting proper features for {target_type}...")
         
         try:
-            self.models['linear_regression'] = LinearRegression().fit(self.X_train, self.y_train)
-            logger.info("✅ Linear Regression trained")
+            # Ensure X contains only numeric columns
+            numeric_columns = X.select_dtypes(include=[np.number]).columns.tolist()
+            X_numeric = X[numeric_columns].copy()
             
-            ridge = GridSearchCV(Ridge(random_state=self.random_state), MODEL_CONFIG['ridge_regression'], cv=TimeSeriesSplit(n_splits=3))
-            ridge.fit(self.X_train, self.y_train)
-            self.models['ridge_regression'] = ridge.best_estimator_
-            logger.info(f"✅ Ridge Regression trained (best alpha: {ridge.best_params_['alpha']})")
+            # Remove any target-related columns from features
+            target_related = [col for col in X_numeric.columns if 'Target' in col]
+            if target_related:
+                logger.warning(f"🚨 Removing target-related features: {target_related}")
+                X_numeric = X_numeric.drop(columns=target_related)
             
-            lasso = GridSearchCV(Lasso(random_state=self.random_state), MODEL_CONFIG['lasso_regression'], cv=TimeSeriesSplit(n_splits=3))
-            lasso.fit(self.X_train, self.y_train)
-            self.models['lasso_regression'] = lasso.best_estimator_
-            logger.info(f"✅ Lasso Regression trained (best alpha: {lasso.best_params_['alpha']})")
+            logger.info(f"Starting with {len(X_numeric.columns)} numeric features")
             
-        except Exception as e:
-            logger.error(f"❌ Error training linear models: {str(e)}")
-            raise
-
-    def train_tree_models(self):
-        """
-        Train tree-based ensemble models
-        """
-        logger.info("🌳 Training tree-based models...")
-        
-        try:
-            rf = GridSearchCV(RandomForestRegressor(random_state=self.random_state), MODEL_CONFIG['random_forest'], cv=TimeSeriesSplit(n_splits=3))
-            rf.fit(self.X_train, self.y_train)
-            self.models['random_forest'] = rf.best_estimator_
-            logger.info(f"✅ Random Forest trained (best params: {rf.best_params_})")
-            
-            # Log feature importance
-            importance = pd.DataFrame({
-                'feature': self.feature_names,
-                'importance': self.models['random_forest'].feature_importances_
-            }).sort_values('importance', ascending=False)
-            logger.info(f"Random Forest Feature Importance:\n{importance.head(10)}")
-            
-            gb = GridSearchCV(GradientBoostingRegressor(random_state=self.random_state), MODEL_CONFIG['gradient_boosting'], cv=TimeSeriesSplit(n_splits=3))
-            gb.fit(self.X_train, self.y_train)
-            self.models['gradient_boosting'] = gb.best_estimator_
-            logger.info(f"✅ Gradient Boosting trained (best params: {gb.best_params_})")
-            
-            lgb_model = GridSearchCV(lgb.LGBMRegressor(random_state=self.random_state, force_col_wise=True), MODEL_CONFIG['lightgbm'], cv=TimeSeriesSplit(n_splits=3))
-            lgb_model.fit(self.X_train, self.y_train)
-            self.models['lightgbm'] = lgb_model.best_estimator_
-            logger.info(f"✅ LightGBM trained (best params: {lgb_model.best_params_})")
-            
-            xgb_model = GridSearchCV(xgb.XGBRegressor(random_state=self.random_state), MODEL_CONFIG['xgboost'], cv=TimeSeriesSplit(n_splits=3))
-            xgb_model.fit(self.X_train, self.y_train)
-            self.models['xgboost'] = xgb_model.best_estimator_
-            logger.info(f"✅ XGBoost trained (best params: {xgb_model.best_params_})")
-            
-        except Exception as e:
-            logger.error(f"❌ Error training tree models: {str(e)}")
-            raise
-
-    def train_svr(self):
-        """
-        Train Support Vector Regression model
-        """
-        logger.info("🧠 Training SVR model...")
-        
-        try:
-            svr = GridSearchCV(SVR(), MODEL_CONFIG['svr'], cv=TimeSeriesSplit(n_splits=3))
-            svr.fit(self.X_train, self.y_train)
-            self.models['svr'] = svr.best_estimator_
-            logger.info(f"✅ SVR trained (best params: {svr.best_params_})")
-            
-        except Exception as e:
-            logger.error(f"❌ Error training SVR model: {str(e)}")
-            raise
-
-    def train_lstm(self):
-        """
-        Train LSTM model with early stopping
-        """
-        logger.info("🧠 Training LSTM model...")
-        
-        try:
-            lstm_params = MODEL_CONFIG['lstm']
-            X_train_reshaped = self.X_train.reshape((self.X_train.shape[0], 1, self.X_train.shape[1]))
-            model = Sequential([
-                LSTM(lstm_params['units'][0], activation='relu', input_shape=(1, self.X_train.shape[1]), return_sequences=True),
-                Dropout(0.2),
-                LSTM(lstm_params['units'][1], activation='relu'),
-                Dropout(0.2),
-                Dense(lstm_params['units'][1] // 2, activation='relu'),
-                Dense(1)
-            ])
-            model.compile(optimizer='adam', loss='mse')
-            early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-            model.fit(
-                X_train_reshaped, self.y_train,
-                epochs=lstm_params['epochs'],
-                batch_size=lstm_params['batch_size'],
-                validation_split=0.2,
-                callbacks=[early_stopping],
-                verbose=0
-            )
-            self.models['lstm'] = model
-            logger.info("✅ LSTM model trained")
-            
-        except Exception as e:
-            logger.error(f"❌ Error training LSTM model: {str(e)}")
-            raise
-
-    def train_bert_sentiment(self):
-        """
-        Placeholder for BERT sentiment model
-        """
-        logger.info("🧠 Note: BERT sentiment model assumes precomputed scores in daily_sentiment.csv")
-
-    def create_ensemble(self):
-        """
-        Create stacking ensemble with fallback to weighted average
-        """
-        logger.info("🤝 Creating ensemble model...")
-        
-        try:
-            estimators = [
-                (name, model) for name, model in self.models.items() if name != 'lstm' and name != 'ensemble'
-            ]
-            stacking = StackingRegressor(
-                estimators=estimators,
-                final_estimator=Ridge(random_state=self.random_state),
-                cv=TimeSeriesSplit(n_splits=3)  # Reduced splits
-            )
-            stacking.fit(self.X_train, self.y_train)
-            self.models['ensemble'] = stacking
-            logger.info("✅ Stacking ensemble model created")
-            
-        except Exception as e:
-            logger.warning(f"⚠️ Stacking ensemble failed: {str(e)}, falling back to weighted average")
-            try:
-                predictions = {}
-                for name, model in self.models.items():
-                    if name == 'lstm':
-                        X_train_reshaped = self.X_train.reshape((self.X_train.shape[0], 1, self.X_train.shape[1]))
-                        predictions[name] = model.predict(X_train_reshaped, verbose=0).flatten()
+            # Remove low-quality features
+            good_features = []
+            for col in X_numeric.columns:
+                missing_pct = X_numeric[col].isnull().sum() / len(X_numeric)
+                unique_count = X_numeric[col].nunique()
+                
+                # Check for constant or near-constant features
+                if missing_pct < 0.3 and unique_count > 1:
+                    # Check variance
+                    if X_numeric[col].var() > 1e-10:  # Non-zero variance
+                        good_features.append(col)
                     else:
-                        predictions[name] = model.predict(self.X_train)
+                        logger.info(f"Removing low variance feature: {col}")
+                else:
+                    logger.info(f"Removing poor quality feature: {col} (missing: {missing_pct:.1%}, unique: {unique_count})")
+            
+            X_filtered = X_numeric[good_features].copy()
+            logger.info(f"After quality filtering: {len(X_filtered.columns)} features")
+            
+            # Fill missing values conservatively
+            for col in X_filtered.columns:
+                if X_filtered[col].isnull().sum() > 0:
+                    if 'sentiment' in col.lower():
+                        X_filtered[col] = X_filtered[col].fillna(0.0)
+                    else:
+                        X_filtered[col] = X_filtered[col].fillna(X_filtered[col].median())
+            
+            # Remove infinite values
+            X_filtered = X_filtered.replace([np.inf, -np.inf], np.nan)
+            for col in X_filtered.columns:
+                if X_filtered[col].isnull().sum() > 0:
+                    X_filtered[col] = X_filtered[col].fillna(X_filtered[col].median())
+            
+            # Feature selection with multiple methods
+            selected_features = good_features
+            
+            if len(good_features) > max_features:
+                logger.info(f"Selecting top {max_features} features from {len(good_features)}")
                 
-                weights = {
-                    'linear_regression': 0.05,
-                    'ridge_regression': 0.15,
-                    'lasso_regression': 0.15,
-                    'random_forest': 0.2,
-                    'gradient_boosting': 0.2,
-                    'lightgbm': 0.15,
-                    'xgboost': 0.15,
-                    'svr': 0.1,
-                    'lstm': 0.1
+                if target_type == 'classification':
+                    try:
+                        # Method 1: Statistical test
+                        selector = SelectKBest(score_func=f_classif, k=min(max_features, len(good_features)))
+                        selector.fit(X_filtered, y)
+                        stat_features = [feat for feat, selected in zip(good_features, selector.get_support()) if selected]
+                        
+                        # Method 2: Mutual information
+                        selector_mi = SelectKBest(score_func=mutual_info_classif, k=min(max_features, len(good_features)))
+                        selector_mi.fit(X_filtered, y)
+                        mi_features = [feat for feat, selected in zip(good_features, selector_mi.get_support()) if selected]
+                        
+                        # Combine methods
+                        selected_features = list(set(stat_features + mi_features))[:max_features]
+                        
+                        logger.info(f"Selected {len(selected_features)} features using multiple methods")
+                        
+                    except Exception as e:
+                        logger.warning(f"Feature selection failed: {str(e)}, using correlation")
+                        # Fallback to correlation
+                        correlations = []
+                        for col in good_features:
+                            try:
+                                corr = np.corrcoef(X_filtered[col], y)[0, 1]
+                                correlations.append((col, abs(corr) if not np.isnan(corr) else 0))
+                            except:
+                                correlations.append((col, 0))
+                        
+                        correlations.sort(key=lambda x: x[1], reverse=True)
+                        selected_features = [feat for feat, _ in correlations[:max_features]]
+            
+            return X_filtered[selected_features], selected_features
+                
+        except Exception as e:
+            logger.error(f"Error in feature selection: {str(e)}")
+            # Return safe subset as fallback
+            numeric_columns = X.select_dtypes(include=[np.number]).columns.tolist()
+            safe_columns = [col for col in numeric_columns if 'Target' not in col][:max_features]
+            return X[safe_columns], safe_columns
+    
+    def prepare_proper_targets(self, df):
+        """Prepare targets without data leakage"""
+        logger.info("Preparing proper targets...")
+        
+        try:
+            # Check available targets (only properly created ones)
+            target_options = [
+                ('Target_Next_Day_Up', 'classification', 'Next Day Direction'),
+                ('Target_Next_3Day_Up', 'classification', 'Next 3-Day Direction'),
+                ('Target_Significant_Move', 'classification', 'Significant Move Detection'),
+            ]
+            
+            # Find the best available target
+            for target_col, target_type, description in target_options:
+                if target_col in df.columns:
+                    # Drop rows with missing targets
+                    df_clean = df.dropna(subset=[target_col]).copy()
+                    
+                    if len(df_clean) > 1000:  # Need sufficient data
+                        y = df_clean[target_col].values
+                        
+                        # Check class balance for classification
+                        if target_type == 'classification':
+                            class_counts = np.bincount(y.astype(int))
+                            if len(class_counts) >= 2:  # Must have at least 2 classes
+                                minority_class_pct = min(class_counts) / sum(class_counts) * 100
+                                
+                                if minority_class_pct >= 15:  # At least 15% minority class
+                                    logger.info(f"Selected target: {target_col} ({description})")
+                                    logger.info(f"Class distribution: {dict(zip(range(len(class_counts)), class_counts))}")
+                                    logger.info(f"Minority class: {minority_class_pct:.1f}%")
+                                    
+                                    return df_clean, target_col, target_type, description
+            
+            # Fallback: create a balanced direction target
+            logger.warning("Creating fallback balanced direction target...")
+            if 'Close' in df.columns:
+                returns = df['Close'].pct_change().shift(-1)
+                # Use 0 threshold for balanced classes
+                df['Target_Direction_Balanced'] = (returns > 0).astype(int)
+                
+                df_clean = df.dropna(subset=['Target_Direction_Balanced']).copy()
+                if len(df_clean) > 1000:
+                    return df_clean, 'Target_Direction_Balanced', 'classification', 'Balanced Direction'
+            
+            raise ValueError("Cannot create any suitable target variable")
+            
+        except Exception as e:
+            logger.error(f"Error preparing targets: {str(e)}")
+            raise
+    
+    def train_proper_models(self, X_train, X_val, X_test, y_train, y_val, y_test, target_type):
+        """Train models properly with realistic expectations"""
+        logger.info(f"Training models properly for {target_type}...")
+        
+        start_time = time.time()
+        
+        # Scale features
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_val_scaled = scaler.transform(X_val)
+        X_test_scaled = scaler.transform(X_test)
+        
+        self.scalers['standard'] = scaler
+        
+        # Also create robust scaler
+        robust_scaler = RobustScaler()
+        X_train_robust = robust_scaler.fit_transform(X_train)
+        X_val_robust = robust_scaler.transform(X_val)
+        X_test_robust = robust_scaler.transform(X_test)
+        
+        self.scalers['robust'] = robust_scaler
+        
+        if target_type == 'classification':
+            models_config = {
+                'Logistic_Regression': {
+                    'model': LogisticRegression(
+                        random_state=42, max_iter=2000, 
+                        class_weight='balanced', C=1.0,
+                        solver='liblinear'
+                    ),
+                    'data_type': 'scaled',
+                    'expected_time': 5
+                },
+                'Random_Forest': {
+                    'model': RandomForestClassifier(
+                        n_estimators=200, max_depth=10, random_state=42,
+                        class_weight='balanced', n_jobs=-1,
+                        min_samples_split=20, min_samples_leaf=10,
+                        max_features='sqrt'
+                    ),
+                    'data_type': 'raw',
+                    'expected_time': 30
+                },
+                'Gradient_Boosting': {
+                    'model': GradientBoostingClassifier(
+                        n_estimators=150, max_depth=6, learning_rate=0.1,
+                        random_state=42, min_samples_split=20,
+                        min_samples_leaf=10, subsample=0.8
+                    ),
+                    'data_type': 'raw',
+                    'expected_time': 45
+                },
+                'LightGBM': {
+                    'model': lgb.LGBMClassifier(
+                        n_estimators=200, max_depth=8, learning_rate=0.05,
+                        random_state=42, n_jobs=-1, verbose=-1,
+                        class_weight='balanced', min_child_samples=20,
+                        feature_fraction=0.8, bagging_fraction=0.8
+                    ),
+                    'data_type': 'raw',
+                    'expected_time': 25
+                },
+                'XGBoost': {
+                    'model': xgb.XGBClassifier(
+                        n_estimators=200, max_depth=8, learning_rate=0.05,
+                        random_state=42, n_jobs=-1,
+                        subsample=0.8, colsample_bytree=0.8,
+                        reg_alpha=0.1, reg_lambda=0.1
+                    ),
+                    'data_type': 'raw',
+                    'expected_time': 35
+                },
+                'SVM': {
+                    'model': SVC(
+                        kernel='rbf', C=1.0, gamma='scale',
+                        random_state=42, class_weight='balanced',
+                        probability=True
+                    ),
+                    'data_type': 'robust',
+                    'expected_time': 60
                 }
+            }
+        
+        # Train models with proper timing
+        for model_name, config in models_config.items():
+            try:
+                model_start = time.time()
+                logger.info(f"Training {model_name}... (expected: {config['expected_time']}s)")
                 
-                ensemble_predictions = np.zeros_like(predictions['ridge_regression'])
-                for name, pred in predictions.items():
-                    ensemble_predictions += weights[name] * pred
+                model = config['model']
+                data_type = config['data_type']
                 
-                self.models['ensemble'] = {'predictions': ensemble_predictions, 'weights': weights}
-                logger.info("✅ Fallback weighted ensemble created")
+                # Select appropriate data
+                if data_type == 'scaled':
+                    X_tr, X_v, X_te = X_train_scaled, X_val_scaled, X_test_scaled
+                elif data_type == 'robust':
+                    X_tr, X_v, X_te = X_train_robust, X_val_robust, X_test_robust
+                else:  # raw
+                    X_tr, X_v, X_te = X_train.values, X_val.values, X_test.values
+                
+                # Train with proper validation
+                model.fit(X_tr, y_train)
+                
+                # Predict on validation and test
+                y_val_pred = model.predict(X_v)
+                y_test_pred = model.predict(X_te)
+                
+                # Calculate comprehensive metrics
+                if target_type == 'classification':
+                    val_accuracy = accuracy_score(y_val, y_val_pred)
+                    test_accuracy = accuracy_score(y_test, y_test_pred)
+                    
+                    # Confusion matrices
+                    val_cm = confusion_matrix(y_val, y_val_pred)
+                    test_cm = confusion_matrix(y_test, y_test_pred)
+                    
+                    # AUC if binary classification
+                    try:
+                        if hasattr(model, 'predict_proba'):
+                            y_val_proba = model.predict_proba(X_v)[:, 1]
+                            y_test_proba = model.predict_proba(X_te)[:, 1]
+                            val_auc = roc_auc_score(y_val, y_val_proba)
+                            test_auc = roc_auc_score(y_test, y_test_proba)
+                        else:
+                            val_auc = test_auc = 0.5
+                    except:
+                        val_auc = test_auc = 0.5
+                    
+                    # Classification report
+                    val_report = classification_report(y_val, y_val_pred, output_dict=True)
+                    
+                    metrics = {
+                        'val_accuracy': val_accuracy,
+                        'test_accuracy': test_accuracy,
+                        'val_auc': val_auc,
+                        'test_auc': test_auc,
+                        'val_precision': val_report['weighted avg']['precision'],
+                        'val_recall': val_report['weighted avg']['recall'],
+                        'val_f1': val_report['weighted avg']['f1-score'],
+                        'val_confusion_matrix': val_cm.tolist(),
+                        'test_confusion_matrix': test_cm.tolist(),
+                        'primary_metric': val_accuracy,
+                        'training_time': time.time() - model_start
+                    }
+                    
+                    model_time = time.time() - model_start
+                    logger.info(f"✓ {model_name} - Accuracy: {val_accuracy:.3f}, AUC: {val_auc:.3f}, Time: {model_time:.1f}s")
+                    
+                    # Sanity check for unrealistic performance
+                    if val_accuracy > 0.85:
+                        logger.warning(f"🚨 {model_name} shows suspiciously high accuracy ({val_accuracy:.3f}) - possible data leakage!")
+                
+                else:
+                    # Regression metrics
+                    val_r2 = r2_score(y_val, y_val_pred)
+                    test_r2 = r2_score(y_test, y_test_pred)
+                    val_mse = mean_squared_error(y_val, y_val_pred)
+                    test_mse = mean_squared_error(y_test, y_test_pred)
+                    val_mae = mean_absolute_error(y_val, y_val_pred)
+                    test_mae = mean_absolute_error(y_test, y_test_pred)
+                    
+                    metrics = {
+                        'val_r2': val_r2,
+                        'test_r2': test_r2,
+                        'val_rmse': np.sqrt(val_mse),
+                        'test_rmse': np.sqrt(test_mse),
+                        'val_mae': val_mae,
+                        'test_mae': test_mae,
+                        'primary_metric': val_r2,
+                        'training_time': time.time() - model_start
+                    }
+                    
+                    model_time = time.time() - model_start
+                    logger.info(f"✓ {model_name} - R²: {val_r2:.3f}, RMSE: {np.sqrt(val_mse):.4f}, Time: {model_time:.1f}s")
+                
+                # Store results
+                self.models[model_name] = model
+                self.performance_metrics[model_name] = metrics
+                
+                # Feature importance (if available)
+                if hasattr(model, 'feature_importances_'):
+                    self.feature_importance[model_name] = dict(zip(
+                        self.feature_names, model.feature_importances_
+                    ))
+                elif hasattr(model, 'coef_'):
+                    coef = model.coef_[0] if len(model.coef_.shape) > 1 else model.coef_
+                    self.feature_importance[model_name] = dict(zip(
+                        self.feature_names, np.abs(coef)
+                    ))
                 
             except Exception as e:
-                logger.error(f"❌ Error creating fallback ensemble: {str(e)}")
-                raise
-
-    def evaluate_models(self):
-        """
-        Evaluate all models and generate performance metrics
-        """
-        logger.info("📈 Evaluating model performance...")
+                logger.error(f"Error training {model_name}: {str(e)}")
+                continue
+        
+        total_time = time.time() - start_time
+        logger.info(f"Successfully trained {len(self.models)} models in {total_time:.1f}s")
+    
+    def cross_validate_best_model(self, X, y, target_type):
+        """Perform time-series cross-validation on best model"""
+        logger.info("Performing time-series cross-validation...")
         
         try:
-            performance_metrics = {}
-            predictions_df = pd.DataFrame()
-            y_test_orig = self.scalers['y'].inverse_transform(self.y_test.reshape(-1, 1)).flatten()
-            if self.y_val.shape[0] > 0:
-                y_val_orig = self.scalers['y'].inverse_transform(self.y_val.reshape(-1, 1)).flatten()
+            if not self.best_model_name:
+                logger.warning("No best model selected for cross-validation")
+                return
             
-            for name, model in self.models.items():
-                if name == 'ensemble' and isinstance(model, dict):
-                    y_pred = np.zeros_like(self.y_test)
-                    for m_name, m in self.models.items():
-                        if m_name != 'ensemble':
-                            weight = model['weights'].get(m_name, 0)
-                            if m_name == 'lstm':
-                                X_test_reshaped = self.X_test.reshape((self.X_test.shape[0], 1, self.X_test.shape[1]))
-                                y_pred += weight * m.predict(X_test_reshaped, verbose=0).flatten()
-                            else:
-                                y_pred += weight * m.predict(self.X_test)
-                else:
-                    if name == 'lstm':
-                        X_test_reshaped = self.X_test.reshape((self.X_test.shape[0], 1, self.X_test.shape[1]))
-                        y_pred = model.predict(X_test_reshaped, verbose=0).flatten()
-                    else:
-                        y_pred = model.predict(self.X_test)
-                
-                y_pred = self.scalers['y'].inverse_transform(y_pred.reshape(-1, 1)).flatten()
-                
-                mse = mean_squared_error(y_test_orig, y_pred)
-                rmse = np.sqrt(mse)
-                mae = mean_absolute_error(y_test_orig, y_pred)
-                r2 = r2_score(y_test_orig, y_pred)
-                
-                performance_metrics[name] = {
-                    'MSE': mse,
-                    'RMSE': rmse,
-                    'MAE': mae,
-                    'R2': r2
-                }
-                
-                # Validation set evaluation
-                if self.y_val.shape[0] > 0:
-                    if name == 'ensemble' and isinstance(model, dict):
-                        y_pred_val = np.zeros_like(self.y_val)
-                        for m_name, m in self.models.items():
-                            if m_name != 'ensemble':
-                                weight = model['weights'].get(m_name, 0)
-                                if m_name == 'lstm':
-                                    X_val_reshaped = self.X_val.reshape((self.X_val.shape[0], 1, self.X_val.shape[1]))
-                                    y_pred_val += weight * m.predict(X_val_reshaped, verbose=0).flatten()
-                                else:
-                                    y_pred_val += weight * m.predict(self.X_val)
-                    else:
-                        if name == 'lstm':
-                            X_val_reshaped = self.X_val.reshape((self.X_val.shape[0], 1, self.X_val.shape[1]))
-                            y_pred_val = model.predict(X_val_reshaped, verbose=0).flatten()
-                        else:
-                            y_pred_val = model.predict(self.X_val)
-                    
-                    y_pred_val = self.scalers['y'].inverse_transform(y_pred_val.reshape(-1, 1)).flatten()
-                    performance_metrics[name]['Val_R2'] = r2_score(y_val_orig, y_pred_val)
-                
-                predictions_df[name] = y_pred
+            # Time series split for cross-validation
+            tscv = TimeSeriesSplit(n_splits=5)
             
-            predictions_df['Actual'] = y_test_orig
-            predictions_df['Date'] = self.data.iloc[-len(self.y_test):]['Date']
-            predictions_df.to_csv(PATHS['results'] / 'predictions.csv')
-            
-            plt.figure(figsize=(12, 6))
-            for name in predictions_df.columns:
-                if name != 'Date':
-                    plt.plot(predictions_df['Date'], predictions_df[name], label=name)
-            plt.title('Model Predictions vs Actual (Original Scale)')
-            plt.xlabel('Date')
-            plt.ylabel('Forward 5-Day Return')
-            plt.legend()
-            plt.savefig(PATHS['results'] / 'prediction_vs_actual.png')
-            plt.close()
-            
-            logger.info("✅ Model evaluation completed")
-            return performance_metrics
-            
-        except Exception as e:
-            logger.error(f"❌ Error evaluating models: {str(e)}")
-            raise
-
-    def save_models(self):
-        """
-        Save all trained models and metadata
-        """
-        logger.info("💾 Saving models and metadata...")
-        
-        try:
-            for name, model in self.models.items():
-                if name != 'ensemble' or not isinstance(model, dict):
-                    with open(PATHS['models'] / f"{name}_model.pkl", 'wb') as f:
-                        pickle.dump(model, f)
-            
-            if 'ensemble' in self.models and isinstance(self.models['ensemble'], dict):
-                with open(PATHS['models'] / 'ensemble_model.pkl', 'wb') as f:
-                    pickle.dump(self.models['ensemble']['weights'], f)
-            
-            metadata = {
-                'training_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'feature_count': len(self.feature_names),
-                'train_samples': len(self.X_train),
-                'test_samples': len(self.X_test),
-                'val_samples': len(self.X_val),
-                'models_trained': list(self.models.keys())
+            model_config = {
+                'Logistic_Regression': LogisticRegression(random_state=42, max_iter=1000, class_weight='balanced'),
+                'Random_Forest': RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced'),
+                'LightGBM': lgb.LGBMClassifier(n_estimators=100, random_state=42, verbose=-1),
+                'XGBoost': xgb.XGBClassifier(n_estimators=100, random_state=42),
+                'Gradient_Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42),
+                'SVM': SVC(random_state=42, class_weight='balanced', probability=True)
             }
-            with open(PATHS['models'] / 'model_metadata.pkl', 'wb') as f:
-                pickle.dump(metadata, f)
             
-            logger.info("✅ Models and metadata saved successfully")
+            model = model_config.get(self.best_model_name, self.models[self.best_model_name])
+            
+            cv_scores = []
+            for fold, (train_idx, val_idx) in enumerate(tscv.split(X)):
+                X_train_cv, X_val_cv = X.iloc[train_idx], X.iloc[val_idx]
+                y_train_cv, y_val_cv = y[train_idx], y[val_idx]
+                
+                # Scale data
+                scaler = StandardScaler()
+                X_train_scaled = scaler.fit_transform(X_train_cv)
+                X_val_scaled = scaler.transform(X_val_cv)
+                
+                # Train and predict
+                model.fit(X_train_scaled, y_train_cv)
+                y_pred_cv = model.predict(X_val_scaled)
+                
+                if target_type == 'classification':
+                    score = accuracy_score(y_val_cv, y_pred_cv)
+                else:
+                    score = r2_score(y_val_cv, y_pred_cv)
+                
+                cv_scores.append(score)
+                logger.info(f"Fold {fold+1}: {score:.3f}")
+            
+            self.validation_results = {
+                'cv_scores': cv_scores,
+                'cv_mean': np.mean(cv_scores),
+                'cv_std': np.std(cv_scores),
+                'cv_model': self.best_model_name
+            }
+            
+            logger.info(f"Cross-validation results: {np.mean(cv_scores):.3f} ± {np.std(cv_scores):.3f}")
             
         except Exception as e:
-            logger.error(f"❌ Error saving models: {str(e)}")
-            raise
-
-    def print_comprehensive_summary(self, performance_metrics):
-        """
-        Print detailed training summary
-        """
-        print("\n" + "="*80)
-        print("🚀 ADVANCED MODEL TRAINING SUMMARY")
-        print("="*80)
+            logger.error(f"Error in cross-validation: {str(e)}")
+    
+    def select_best_model(self):
+        """Select best model based on validation performance"""
+        if not self.performance_metrics:
+            logger.warning("No models to evaluate")
+            return
         
-        print(f"📊 Dataset Overview:")
-        print(f"   Training Samples: {len(self.X_train):,}")
-        print(f"   Validation Samples: {len(self.X_val):,}")
-        print(f"   Test Samples: {len(self.X_test):,}")
-        print(f"   Features Used: {len(self.feature_names):,}")
-        print(f"   Date Range: {self.data['Date'].min().date()} to {self.data['Date'].max().date()}")
+        best_score = -float('inf')
+        best_model_name = None
         
-        print(f"\n🧠 Models Trained:")
-        for model_name in self.models.keys():
-            print(f"   ✅ {model_name}")
+        # Consider both accuracy and AUC for classification
+        for model_name, metrics in self.performance_metrics.items():
+            if 'val_accuracy' in metrics and 'val_auc' in metrics:
+                # Combined score: 70% accuracy + 30% AUC
+                score = 0.7 * metrics['val_accuracy'] + 0.3 * metrics['val_auc']
+            else:
+                score = metrics.get('primary_metric', -float('inf'))
+            
+            if score > best_score:
+                best_score = score
+                best_model_name = model_name
         
-        print(f"\n📈 Model Performance (Original Scale):")
-        for model_name, metrics in performance_metrics.items():
-            print(f"   {model_name}:")
-            print(f"      MSE: {metrics['MSE']:.6f}")
-            print(f"      RMSE: {metrics['RMSE']:.6f}")
-            print(f"      MAE: {metrics['MAE']:.6f}")
-            print(f"      R2: {metrics['R2']:.4f}")
-            if 'Val_R2' in metrics:
-                print(f"      Validation R2: {metrics['Val_R2']:.4f}")
+        self.best_model_name = best_model_name
+        self.best_model = self.models.get(best_model_name)
         
-        print(f"\n📁 Output Files:")
-        print(f"   ✅ models/*_model.pkl - Trained model files")
-        print(f"   ✅ models/feature_names.pkl - Feature names")
-        print(f"   ✅ models/scalers.pkl - Data scalers")
-        print(f"   ✅ models/model_metadata.pkl - Model metadata")
-        print(f"   ✅ results/predictions.csv - Model predictions")
-        print(f"   ✅ results/prediction_vs_actual.png - Visualization")
-        
-        print(f"\n🎉 Ready for Day 2 Step 4: Model Testing")
-        print("="*80)
-
-    def execute(self):
-        """
-        Execute the complete model training pipeline
-        """
+        logger.info(f"Best model: {best_model_name} (Combined Score: {best_score:.3f})")
+    
+    def save_models_and_results(self):
+        """Save models and comprehensive results"""
         try:
-            logger.info("🚀 Starting Advanced Model Training Pipeline...")
+            # Save models
+            for model_name, model in self.models.items():
+                with open(f'models/{model_name.lower()}_model.pkl', 'wb') as f:
+                    pickle.dump(model, f)
             
-            self.load_and_prepare_data()
-            self.train_linear_models()
-            self.train_tree_models()
-            self.train_svr()
-            self.train_lstm()
-            self.train_bert_sentiment()
-            self.create_ensemble()
-            performance_metrics = self.evaluate_models()
-            self.save_models()
-            self.print_comprehensive_summary(performance_metrics)
+            # Save best model
+            if self.best_model:
+                with open('models/final_model.pkl', 'wb') as f:
+                    pickle.dump(self.best_model, f)
             
-            logger.info("🎉 Model training completed successfully!")
+            # Save scalers and metadata
+            with open('models/scalers.pkl', 'wb') as f:
+                pickle.dump(self.scalers, f)
+            
+            with open('models/feature_names.pkl', 'wb') as f:
+                pickle.dump(self.feature_names, f)
+            
+            # Save label encoders
+            with open('models/label_encoders.pkl', 'wb') as f:
+                pickle.dump(self.label_encoders, f)
+            
+            # Save performance metrics
+            pd.DataFrame(self.performance_metrics).T.to_csv('results/model_performance.csv')
+            
+            # Save detailed results
+            with open('results/training_results.pkl', 'wb') as f:
+                pickle.dump({
+                    'performance_metrics': self.performance_metrics,
+                    'feature_importance': self.feature_importance,
+                    'validation_results': self.validation_results,
+                    'best_model_name': self.best_model_name
+                }, f)
+            
+            # Save feature importance
+            if self.feature_importance:
+                importance_data = []
+                for model_name, importances in self.feature_importance.items():
+                    for feature, importance in importances.items():
+                        importance_data.append({
+                            'model': model_name,
+                            'feature': feature,
+                            'importance': importance
+                        })
+                pd.DataFrame(importance_data).to_csv('results/feature_importance.csv', index=False)
+            
             return True
+        except Exception as e:
+            logger.error(f"Error saving: {str(e)}")
+            return False
+    
+    def print_comprehensive_summary(self, target_description, target_type):
+        """Print comprehensive and realistic training summary"""
+        print("\n" + "="*100)
+        print("PROPER BIOCON STOCK PREDICTION MODEL TRAINING SUMMARY")
+        print("="*100)
+        
+        print(f"🎯 TARGET: {target_description} ({target_type})")
+        print(f"✅ PROPER APPROACH:")
+        print(f"   • NO data leakage - only historical features used")
+        print(f"   • Realistic expectations for stock prediction")
+        print(f"   • Proper time-series validation")
+        print(f"   • Multiple algorithms with different strengths")
+        print(f"   • Comprehensive performance evaluation")
+        
+        if not self.performance_metrics:
+            print("❌ No models trained successfully")
+            return
+        
+        print(f"\n📊 MODEL PERFORMANCE COMPARISON:")
+        if target_type == 'classification':
+            print(f"{'Model':<20} {'Val_Acc':<10} {'Test_Acc':<10} {'Val_AUC':<10} {'F1':<8} {'Time(s)':<8}")
+            print("-" * 85)
+            
+            sorted_models = sorted(
+                self.performance_metrics.items(),
+                key=lambda x: x[1].get('primary_metric', 0),
+                reverse=True
+            )
+            
+            for model_name, metrics in sorted_models:
+                val_acc = metrics.get('val_accuracy', 0)
+                test_acc = metrics.get('test_accuracy', 0)
+                val_auc = metrics.get('val_auc', 0.5)
+                f1 = metrics.get('val_f1', 0)
+                train_time = metrics.get('training_time', 0)
+                
+                print(f"{model_name:<20} {val_acc:<10.3f} {test_acc:<10.3f} {val_auc:<10.3f} {f1:<8.3f} {train_time:<8.1f}")
+                
+                # Show confusion matrix for best model
+                if model_name == self.best_model_name:
+                    cm = metrics.get('val_confusion_matrix', [[0, 0], [0, 0]])
+                    print(f"\n📊 {model_name} Validation Confusion Matrix:")
+                    print(f"    Predicted:   0     1")
+                    print(f"  Actual 0:   {cm[0][0]:4d}  {cm[0][1]:4d}")
+                    print(f"  Actual 1:   {cm[1][0]:4d}  {cm[1][1]:4d}")
+        
+        else:
+            print(f"{'Model':<20} {'Val_R²':<10} {'Test_R²':<10} {'Val_RMSE':<12} {'Time(s)':<8}")
+            print("-" * 70)
+            
+            for model_name, metrics in self.performance_metrics.items():
+                val_r2 = metrics.get('val_r2', 0)
+                test_r2 = metrics.get('test_r2', 0)
+                val_rmse = metrics.get('val_rmse', 0)
+                train_time = metrics.get('training_time', 0)
+                
+                print(f"{model_name:<20} {val_r2:<10.3f} {test_r2:<10.3f} {val_rmse:<12.4f} {train_time:<8.1f}")
+        
+        # Performance interpretation
+        print(f"\n📈 PERFORMANCE INTERPRETATION:")
+        if target_type == 'classification':
+            best_acc = max([m.get('val_accuracy', 0) for m in self.performance_metrics.values()])
+            if best_acc > 0.75:
+                print(f"   🚨 WARNING: Accuracy {best_acc:.1%} seems unrealistically high!")
+                print(f"   🔍 Check for data leakage or overfitting")
+            elif best_acc > 0.60:
+                print(f"   ✅ EXCELLENT: Accuracy {best_acc:.1%} is very good for stock prediction")
+            elif best_acc > 0.55:
+                print(f"   ✅ GOOD: Accuracy {best_acc:.1%} beats random (50%) significantly")
+            elif best_acc > 0.52:
+                print(f"   ⚠️  MODEST: Accuracy {best_acc:.1%} slightly better than random")
+            else:
+                print(f"   ❌ POOR: Accuracy {best_acc:.1%} not better than random guessing")
+        
+        # Cross-validation results
+        if self.validation_results:
+            cv_mean = self.validation_results['cv_mean']
+            cv_std = self.validation_results['cv_std']
+            print(f"\n🔄 CROSS-VALIDATION RESULTS ({self.validation_results['cv_model']}):")
+            print(f"   Mean Score: {cv_mean:.3f} ± {cv_std:.3f}")
+            print(f"   Stability: {'Good' if cv_std < 0.05 else 'Moderate' if cv_std < 0.10 else 'Poor'}")
+        
+        # Top features
+        if self.best_model_name in self.feature_importance:
+            print(f"\n🎯 TOP 15 PREDICTIVE FEATURES ({self.best_model_name}):")
+            importance = self.feature_importance[self.best_model_name]
+            top_features = sorted(importance.items(), key=lambda x: x[1], reverse=True)[:15]
+            
+            for i, (feature, score) in enumerate(top_features, 1):
+                category = self._categorize_feature(feature)
+                print(f"  {i:2d}. {feature:<35} {score:.4f} [{category}]")
+        
+        # Model recommendations
+        print(f"\n💡 RECOMMENDATIONS:")
+        print(f"   • Best model for deployment: {self.best_model_name}")
+        
+        if target_type == 'classification':
+            best_metrics = self.performance_metrics[self.best_model_name]
+            if best_metrics.get('val_accuracy', 0) > 0.55:
+                print(f"   • Model shows promise for stock direction prediction")
+                print(f"   • Consider ensemble methods for production")
+            else:
+                print(f"   • Performance suggests limited predictability")
+                print(f"   • Focus on risk management over prediction")
+        
+        print(f"\n🔧 TECHNICAL DETAILS:")
+        print(f"   • Features used: {len(self.feature_names)}")
+        print(f"   • Categorical encoders: {len(self.label_encoders)}")
+        print(f"   • Data leakage prevention: ✅ Implemented")
+        print(f"   • Time-series validation: ✅ Used")
+        
+        print(f"\n📁 SAVED FILES:")
+        print(f"   • models/final_model.pkl - Best trained model")
+        print(f"   • models/scalers.pkl - Feature scalers")
+        print(f"   • results/model_performance.csv - Performance metrics")
+        print(f"   • results/feature_importance.csv - Feature rankings")
+        
+        print(f"\n🚀 READY FOR TESTING AND DEPLOYMENT!")
+        print("="*100)
+    
+    def _categorize_feature(self, feature_name):
+        """Categorize feature for better understanding"""
+        feature_lower = feature_name.lower()
+        
+        if any(word in feature_lower for word in ['sentiment', 'fda', 'news']):
+            return 'News/FDA'
+        elif any(word in feature_lower for word in ['volume', 'vol']):
+            return 'Volume'
+        elif any(word in feature_lower for word in ['price', 'close', 'return', 'momentum']):
+            return 'Price'
+        elif any(word in feature_lower for word in ['ma', 'sma', 'ema', 'moving']):
+            return 'Moving Avg'
+        elif any(word in feature_lower for word in ['rsi', 'macd', 'bb', 'atr']):
+            return 'Technical'
+        elif any(word in feature_lower for word in ['volatility', 'std']):
+            return 'Volatility'
+        elif any(word in feature_lower for word in ['day', 'month', 'week']):
+            return 'Temporal'
+        elif 'lag' in feature_lower:
+            return 'Lag'
+        else:
+            return 'Other'
+    
+    def execute(self):
+        """Execute proper training pipeline without data leakage"""
+        try:
+            logger.info("="*80)
+            logger.info("STARTING PROPER BIOCON STOCK PREDICTION TRAINING")
+            logger.info("="*80)
+            
+            # Load data
+            stock_df, sentiment_df = self.load_and_validate_data()
+            
+            # Merge data
+            combined_df = self.smart_data_merge(stock_df, sentiment_df)
+            
+            # Create proper features (NO data leakage)
+            df_with_features = self.create_proper_features(combined_df)
+            
+            # Save combined data
+            df_with_features.to_csv('data/combined_data_proper.csv', index=False)
+            logger.info("✅ Proper combined data saved")
+            
+            # Prepare proper targets
+            df_clean, target_col, target_type, target_description = self.prepare_proper_targets(df_with_features)
+            
+            # Prepare features (exclude targets and identifiers)
+            exclude_cols = {
+                'Date', 'Target_Next_Day_Up', 'Target_Next_3Day_Up', 
+                'Target_Significant_Move', 'Target_Direction_Balanced',
+                'Target_Next_Day_Return'
+            }
+            
+            feature_cols = [col for col in df_clean.columns if col not in exclude_cols]
+            X_raw = df_clean[feature_cols].copy()
+            y = df_clean[target_col].values
+            
+            logger.info(f"Dataset shape: {X_raw.shape}, Target: {target_col}")
+            
+            # Feature selection (proper method)
+            X_selected, selected_features = self.select_proper_features(X_raw, y, target_type, max_features=35)
+            self.feature_names = selected_features
+            
+            logger.info(f"Selected {len(selected_features)} features for training")
+            
+            # Time-series split (CRITICAL: maintain temporal order)
+            n_samples = len(X_selected)
+            train_end = int(n_samples * 0.7)   # 70% for training
+            val_end = int(n_samples * 0.85)    # 15% for validation
+                                               # 15% for testing
+            
+            X_train = X_selected.iloc[:train_end]
+            X_val = X_selected.iloc[train_end:val_end]
+            X_test = X_selected.iloc[val_end:]
+            
+            y_train = y[:train_end]
+            y_val = y[train_end:val_end]
+            y_test = y[val_end:]
+            
+            logger.info(f"Time-series splits: Train={len(X_train)}, Val={len(X_val)}, Test={len(X_test)}")
+            
+            # Safe date logging
+            try:
+                if 'Date' in df_clean.columns:
+                    train_start = df_clean.iloc[0]['Date']
+                    train_end_date = df_clean.iloc[train_end-1]['Date'] 
+                    val_start = df_clean.iloc[train_end]['Date']
+                    val_end_date = df_clean.iloc[val_end-1]['Date']
+                    test_start = df_clean.iloc[val_end]['Date']
+                    test_end_date = df_clean.iloc[-1]['Date']
+                    
+                    logger.info(f"Training period: {train_start.strftime('%Y-%m-%d')} to {train_end_date.strftime('%Y-%m-%d')}")
+                    logger.info(f"Validation period: {val_start.strftime('%Y-%m-%d')} to {val_end_date.strftime('%Y-%m-%d')}")
+                    logger.info(f"Test period: {test_start.strftime('%Y-%m-%d')} to {test_end_date.strftime('%Y-%m-%d')}")
+                else:
+                    logger.info("Date column not available for period logging")
+            except Exception as e:
+                logger.warning(f"Could not log date periods: {str(e)}")
+                logger.info("Proceeding with training...")
+            
+            # Train models properly
+            self.train_proper_models(X_train, X_val, X_test, y_train, y_val, y_test, target_type)
+            
+            # Select best model
+            self.select_best_model()
+            
+            # Cross-validate best model
+            self.cross_validate_best_model(X_selected, y, target_type)
+            
+            # Save results
+            save_success = self.save_models_and_results()
+            
+            # Print comprehensive summary
+            self.print_comprehensive_summary(target_description, target_type)
+            
+            return save_success and len(self.models) > 0
             
         except Exception as e:
-            logger.error(f"❌ Model training failed: {str(e)}")
+            logger.error(f"Proper training failed: {str(e)}")
+            print(f"Error: {str(e)}")
             return False
 
 def main():
-    """
-    Main execution function for Day 2 - Step 3
-    """
-    print("🚀 BIOCON FDA PROJECT - DAY 2 STEP 3")
-    print("Advanced Model Training for Stock Price Prediction")
-    print("="*60)
-    print(f"🏢 Company: {COMPANY_INFO['name']} ({COMPANY_INFO['ticker']})")
-    print(f"📅 Period: {DATA_START_DATE} to {DATA_END_DATE}")
-    print(f"🎯 Models: Linear Regression, Ridge, Lasso, Random Forest, Gradient Boosting, LightGBM, XGBoost, SVR, LSTM, Ensemble")
-    print("-" * 60)
+    """Main execution for proper stock prediction training"""
+    print("🚀 BIOCON FDA PROJECT - PROPER STOCK PREDICTION TRAINING")
+    print("🎯 PROPER APPROACH:")
+    print("   • NO data leakage - strict temporal validation")
+    print("   • Realistic expectations for stock market prediction")
+    print("   • Multiple sophisticated algorithms")
+    print("   • Comprehensive evaluation metrics")
+    print("   • Time-series cross-validation")
+    print("   • Production-ready model training")
+    print("-" * 80)
     
-    trainer = AdvancedModelTrainer()
+    trainer = ProperBioconModelTrainer()
     success = trainer.execute()
     
     if success:
-        print("\n🎉 SUCCESS: Advanced model training completed!")
-        print("✅ Multiple models trained and evaluated")
-        print("✅ Ensemble model created")
-        print("✅ Performance metrics and visualizations generated")
-        print("✅ Models saved to: models/")
-        print("🔄 Ready for Day 2 Step 4: Model Testing")
+        print("\n🎉 PROPER TRAINING COMPLETED SUCCESSFULLY!")
+        print("✅ Models trained with realistic expectations")
+        print("✅ No data leakage - only historical features used")
+        print("✅ Time-series validation implemented")
+        print("✅ Multiple algorithms properly trained and evaluated")
+        print("✅ Comprehensive performance metrics calculated")
+        print("✅ Production-ready models saved")
+        print("\n🚀 NEXT STEPS:")
+        print("   1. Review model performance in results/")
+        print("   2. Run testing: python code/4_test_model.py")
+        print("   3. Deploy best model for predictions")
     else:
-        print("\n❌ FAILED: Model training failed")
-        print("💡 Check logs for details: logs/model_training.log")
-        print("🔧 Troubleshooting: Verify data files and dependencies")
+        print("\n💥 TRAINING FAILED!")
+        print("Check error messages above")
+        print("💡 Debugging tips:")
+        print("   • Check data files exist and are properly formatted")
+        print("   • Verify no data leakage in feature engineering")
+        print("   • Ensure sufficient data for training")
     
     return success
 

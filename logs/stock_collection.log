@@ -254,3 +254,1691 @@
 2025-06-28 05:34:36,861 - INFO - 📁 File size: 4915.8 KB
 2025-06-28 05:34:36,924 - INFO - ✅ Technical indicators saved: data/technical_indicators.csv
 2025-06-28 05:34:36,925 - INFO - 🎉 Stock data collection completed successfully!
+2025-06-29 05:08:31,128 - INFO - Configuration validated successfully
+2025-06-29 05:08:31,128 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 05:08:31,128 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 05:08:31.127517
+2025-06-29 05:08:31,128 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 05:08:31,128 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 05:08:31,128 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 05:08:31,128 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 05:08:31,128 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:08:31,128 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-06-29 05:08:33,189 - ERROR - $BIOCON.NS: possibly delisted; no price data found  (1d 2015-01-01 00:00:00 -> 2025-06-29 05:08:31.127517)
+2025-06-29 05:08:33,189 - WARNING -   ⚠️ Insufficient data for BIOCON.NS from Yahoo Finance
+2025-06-29 05:08:33,189 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:08:33,590 - ERROR -   ❌ Error in NSE India download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON.NS&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:08:33,591 - ERROR - ❌ Failed to download BIOCON from all sources
+2025-06-29 05:08:33,591 - ERROR - ❌ Failed to collect BIOCON data
+2025-06-29 05:08:33,591 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 05:08:33,591 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 05:08:33,591 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-06-29 05:08:34,389 - ERROR - $^NSEI: possibly delisted; no price data found  (1d 2015-01-01 00:00:00 -> 2025-06-29 05:08:31.127517)
+2025-06-29 05:08:34,390 - WARNING -   ⚠️ Insufficient data for ^NSEI from Yahoo Finance
+2025-06-29 05:08:34,390 - INFO -   Trying NSE India for NIFTY50
+2025-06-29 05:08:34,532 - ERROR -   ❌ Error in NSE India download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY50&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:08:34,532 - ERROR - ❌ Failed to download NIFTY50 from all sources
+2025-06-29 05:08:34,532 - ERROR - ❌ Failed to collect NIFTY50 data
+2025-06-29 05:08:34,532 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 05:08:34,532 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 05:08:34,532 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-06-29 05:08:35,167 - ERROR - $^CNXPHARMA: possibly delisted; no price data found  (1d 2015-01-01 00:00:00 -> 2025-06-29 05:08:31.127517)
+2025-06-29 05:08:35,168 - WARNING -   ⚠️ Insufficient data for ^CNXPHARMA from Yahoo Finance
+2025-06-29 05:08:35,168 - INFO -   Trying Yahoo Finance symbol: ^NIPHARM
+2025-06-29 05:08:35,868 - ERROR - Failed to get ticker '^NIPHARM' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:08:35,868 - ERROR - $^NIPHARM: possibly delisted; no timezone found
+2025-06-29 05:08:35,868 - WARNING -   ⚠️ Insufficient data for ^NIPHARM from Yahoo Finance
+2025-06-29 05:08:35,868 - INFO -   Trying NSE India for NIFTY_PHARMA
+2025-06-29 05:08:35,998 - ERROR -   ❌ Error in NSE India download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY_PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:08:35,998 - ERROR - ❌ Failed to download NIFTY_PHARMA from all sources
+2025-06-29 05:08:35,998 - ERROR - ❌ Failed to collect NIFTY_PHARMA data
+2025-06-29 05:08:35,998 - INFO - 📈 Collecting INDIA_VIX data...
+2025-06-29 05:08:35,998 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 05:08:35,998 - INFO -   Trying Yahoo Finance symbol: ^INDIAVIX
+2025-06-29 05:08:36,669 - ERROR - Failed to get ticker '^INDIAVIX' reason: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:08:36,670 - ERROR - $^INDIAVIX: possibly delisted; no timezone found
+2025-06-29 05:08:36,670 - WARNING -   ⚠️ Insufficient data for ^INDIAVIX from Yahoo Finance
+2025-06-29 05:08:36,671 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 05:08:36,924 - ERROR -   ❌ Error in NSE India download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:08:36,924 - ERROR - ❌ Failed to download INDIA_VIX from all sources
+2025-06-29 05:08:36,924 - ERROR - ❌ Failed to collect INDIA_VIX data
+2025-06-29 05:08:36,925 - INFO - 📊 Total datasets collected: 0
+2025-06-29 05:08:36,925 - ERROR - ❌ Stock data collection failed: ❌ No data collected from any source
+2025-06-29 05:11:15,743 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:15,743 - INFO - Configuration validated successfully
+2025-06-29 05:11:15,743 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 05:11:15,743 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 05:11:14.865390
+2025-06-29 05:11:15,743 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 05:11:15,743 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 05:11:15,743 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 05:11:15,743 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 05:11:15,743 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:11:17,577 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/BIOCON.NS?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=BIOCON.NS&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:11:18,417 - WARNING - ⚠️ Symbol validation failed for BIOCON.NS on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:11:18,418 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 05:11:18,418 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:11:19,021 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:19,086 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:19,914 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:19,914 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:11:22,468 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:22,592 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:23,254 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:23,254 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:11:27,804 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:27,875 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:28,537 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:28,538 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:28,538 - WARNING - ⚠️ All sources failed for BIOCON, using mock data
+2025-06-29 05:11:28,561 - INFO -   ✅ Generated mock data for BIOCON: 2737 records
+2025-06-29 05:11:28,562 - INFO - ✅ BIOCON: 2737 records collected
+2025-06-29 05:11:28,562 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 05:11:28,562 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 05:11:29,297 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/%5ENSEI?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=%5ENSEI&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:11:29,993 - WARNING - ⚠️ Symbol validation failed for ^NSEI on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:11:29,993 - WARNING - ⚠️ Invalid symbol ^NSEI for Yahoo Finance
+2025-06-29 05:11:29,993 - INFO -   Trying NSE India for NIFTY50
+2025-06-29 05:11:30,497 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:30,576 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:31,193 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:31,193 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:11:33,744 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:33,838 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:34,478 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:34,478 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:11:39,050 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:39,111 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:39,801 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:39,801 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:39,801 - WARNING - ⚠️ All sources failed for NIFTY50, using mock data
+2025-06-29 05:11:39,830 - INFO -   ✅ Generated mock data for NIFTY50: 2737 records
+2025-06-29 05:11:39,830 - INFO - ✅ NIFTY50: 2737 records collected
+2025-06-29 05:11:39,830 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 05:11:39,830 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 05:11:40,511 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/%5ECNXPHARMA?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=%5ECNXPHARMA&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:11:41,265 - WARNING - ⚠️ Symbol validation failed for ^CNXPHARMA on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:11:41,266 - WARNING - ⚠️ Invalid symbol ^CNXPHARMA for Yahoo Finance
+2025-06-29 05:11:41,969 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/%5ENIPHARM?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=%5ENIPHARM&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:11:42,626 - WARNING - ⚠️ Symbol validation failed for ^NIPHARM on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:11:42,626 - WARNING - ⚠️ Invalid symbol ^NIPHARM for Yahoo Finance
+2025-06-29 05:11:42,626 - INFO -   Trying NSE India for NIFTY_PHARMA
+2025-06-29 05:11:43,377 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:43,452 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:44,299 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:44,299 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:11:46,862 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:46,951 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:47,579 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:47,579 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:11:52,123 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:52,199 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:52,837 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:52,837 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:52,838 - WARNING - ⚠️ All sources failed for NIFTY_PHARMA, using mock data
+2025-06-29 05:11:52,861 - INFO -   ✅ Generated mock data for NIFTY_PHARMA: 2737 records
+2025-06-29 05:11:52,862 - INFO - ✅ NIFTY_PHARMA: 2737 records collected
+2025-06-29 05:11:52,862 - INFO - 📈 Collecting INDIA_VIX data...
+2025-06-29 05:11:52,862 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 05:11:53,626 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/%5EINDIAVIX?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=%5EINDIAVIX&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:11:54,307 - WARNING - ⚠️ Symbol validation failed for ^INDIAVIX on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:11:54,308 - WARNING - ⚠️ Invalid symbol ^INDIAVIX for Yahoo Finance
+2025-06-29 05:11:54,308 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 05:11:54,830 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:54,912 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:55,657 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:55,657 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:11:58,219 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:58,315 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:11:59,041 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:11:59,041 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:12:03,659 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:12:03,717 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:12:04,419 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:12:04,419 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:12:04,419 - WARNING - ⚠️ All sources failed for INDIA_VIX, using mock data
+2025-06-29 05:12:04,448 - INFO -   ✅ Generated mock data for INDIA_VIX: 2737 records
+2025-06-29 05:12:04,448 - INFO - ✅ INDIA_VIX: 2737 records collected
+2025-06-29 05:12:04,448 - INFO - 📊 Total datasets collected: 4
+2025-06-29 05:12:04,448 - INFO - 🏗️ Creating master dataset...
+2025-06-29 05:12:04,448 - INFO - 📊 Base dataset: 2737 Biocon records
+2025-06-29 05:12:04,448 - INFO - 🔧 Adding technical indicators...
+2025-06-29 05:12:04,457 - INFO - ✅ Technical indicators added successfully
+2025-06-29 05:12:04,458 - INFO - 📢 Adding BSE announcements to dataset...
+2025-06-29 05:12:04,458 - INFO - 📢 Fetching BSE announcements...
+2025-06-29 05:12:04,896 - ERROR - ❌ Error fetching BSE announcements: 404 Client Error: Not Found for url: https://www.bseindia.com/corporates/corporate_actions.aspx?scode=532523
+2025-06-29 05:12:04,897 - WARNING - ⚠️ No announcements to add
+2025-06-29 05:12:04,897 - INFO - 📊 Calculating market relative metrics...
+2025-06-29 05:12:04,914 - INFO - ✅ Market relative metrics calculated successfully
+2025-06-29 05:12:04,914 - INFO - 🧠 Adding advanced features...
+2025-06-29 05:12:04,931 - INFO - ✅ Advanced features added successfully
+2025-06-29 05:12:04,939 - INFO - ✅ Master dataset created: 2737 records, 138 features
+2025-06-29 05:12:04,939 - INFO - 💾 Saving stock data...
+2025-06-29 05:12:05,145 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/stock_data.csv
+2025-06-29 05:12:05,145 - INFO - 📁 File size: 5641.3 KB
+2025-06-29 05:12:05,211 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/bse_announcements.csv
+2025-06-29 05:12:05,211 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/technical_indicators.csv
+2025-06-29 05:12:05,213 - INFO - 🎉 Stock data collection completed successfully!
+2025-06-29 05:17:01,307 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:17:25,818 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:17:50,793 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:17:50,794 - WARNING - ⚠️ Alpha Vantage API key not set. Set environment variable ALPHA_VANTAGE_API_KEY
+2025-06-29 05:17:50,794 - INFO - Configuration validated successfully
+2025-06-29 05:17:50,794 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 05:17:50,794 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 05:17:49.855532
+2025-06-29 05:17:50,794 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 05:17:50,794 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 05:17:50,794 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 05:17:50,794 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 05:17:50,794 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:17:54,453 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 05:17:54,454 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 05:17:54,454 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:17:54,959 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:17:55,176 - ERROR -   ❌ Error in NSE India API download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:17:55,176 - INFO -   Trying nsepy for BIOCON
+2025-06-29 05:17:56,310 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,310 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,311 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,311 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,311 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,312 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,313 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,313 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,315 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,316 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,317 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,319 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,320 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,322 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,325 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,325 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,326 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,326 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,326 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,327 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,514 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,514 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,514 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,514 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,514 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,514 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,515 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,515 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,515 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,515 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,515 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,515 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,515 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,516 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,517 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,518 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,519 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,524 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,524 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,529 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,653 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,666 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,666 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,684 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,685 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,690 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,691 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,691 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,693 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,693 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,693 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,694 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,697 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:17:56,718 - ERROR -   ❌ Error downloading from nsepy: 'ThreadReturns' object has no attribute 'result'
+2025-06-29 05:17:56,718 - WARNING - ⚠️ All sources failed for BIOCON, using mock data
+2025-06-29 05:17:56,738 - INFO -   ✅ Generated mock data for BIOCON: 2737 records
+2025-06-29 05:17:56,738 - INFO - ✅ BIOCON: 2737 records collected
+2025-06-29 05:17:56,738 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 05:17:56,738 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 05:17:59,982 - ERROR - ❌ Failed to get Yahoo crumb for ^NSEI: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/%5ENSEI/history/
+2025-06-29 05:17:59,983 - WARNING - ⚠️ Invalid symbol ^NSEI for Yahoo Finance
+2025-06-29 05:17:59,983 - INFO -   Trying NSE India for NIFTY50
+2025-06-29 05:18:00,936 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:18:01,025 - ERROR -   ❌ Error in NSE India API download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:18:01,026 - INFO -   Trying nsepy for NIFTY50
+2025-06-29 05:18:01,395 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,396 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,417 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,418 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,418 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,418 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,419 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,419 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,419 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,420 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,421 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,422 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,423 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,423 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,424 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,425 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,426 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,430 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,430 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,433 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,566 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,579 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,579 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,579 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,579 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,579 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,583 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,584 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,609 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,609 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,625 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,713 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,713 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,713 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,713 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,713 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,713 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,714 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,714 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:01,729 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 05:18:01,729 - WARNING - ⚠️ All sources failed for NIFTY50, using mock data
+2025-06-29 05:18:01,746 - INFO -   ✅ Generated mock data for NIFTY50: 2737 records
+2025-06-29 05:18:01,746 - INFO - ✅ NIFTY50: 2737 records collected
+2025-06-29 05:18:01,746 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 05:18:01,746 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 05:18:04,687 - ERROR - ❌ Failed to get Yahoo crumb for ^NIPHARM: list index out of range
+2025-06-29 05:18:04,687 - WARNING - ⚠️ Invalid symbol ^NIPHARM for Yahoo Finance
+2025-06-29 05:18:04,687 - INFO -   Trying NSE India for NIFTY_PHARMA
+2025-06-29 05:18:05,275 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:18:05,340 - ERROR -   ❌ Error in NSE India API download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:18:05,341 - INFO -   Trying nsepy for NIFTY_PHARMA
+2025-06-29 05:18:05,451 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,452 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,452 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,459 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,459 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,459 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,459 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,461 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,461 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,462 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,464 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,468 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,468 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,468 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,469 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,472 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,472 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,476 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,477 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,480 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,608 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,614 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,614 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,620 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,631 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,632 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,632 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,632 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,639 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,643 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,717 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,742 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,742 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,767 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,767 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,767 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,767 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,767 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,768 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,768 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:05,781 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 05:18:05,781 - WARNING - ⚠️ All sources failed for NIFTY_PHARMA, using mock data
+2025-06-29 05:18:05,798 - INFO -   ✅ Generated mock data for NIFTY_PHARMA: 2737 records
+2025-06-29 05:18:05,798 - INFO - ✅ NIFTY_PHARMA: 2737 records collected
+2025-06-29 05:18:05,798 - INFO - 📈 Collecting INDIA_VIX data...
+2025-06-29 05:18:05,798 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 05:18:09,090 - ERROR - ❌ Failed to get Yahoo crumb for ^INDIAVIX: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/%5EINDIAVIX/history/
+2025-06-29 05:18:09,090 - WARNING - ⚠️ Invalid symbol ^INDIAVIX for Yahoo Finance
+2025-06-29 05:18:09,090 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 05:18:09,829 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:18:09,887 - ERROR -   ❌ Error in NSE India API download: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:18:09,887 - INFO -   Trying nsepy for INDIA_VIX
+2025-06-29 05:18:09,977 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,982 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,983 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,984 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,985 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,986 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,986 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,987 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,988 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,990 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,993 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,993 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:09,997 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,003 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,003 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,003 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,003 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,003 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,009 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,010 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,135 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,169 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,170 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,170 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,172 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,174 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,174 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,174 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,175 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,175 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,175 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,175 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,178 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,178 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,184 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,192 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,305 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,305 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,324 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,325 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 05:18:10,332 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 05:18:10,332 - WARNING - ⚠️ All sources failed for INDIA_VIX, using mock data
+2025-06-29 05:18:10,349 - INFO -   ✅ Generated mock data for INDIA_VIX: 2737 records
+2025-06-29 05:18:10,349 - INFO - ✅ INDIA_VIX: 2737 records collected
+2025-06-29 05:18:10,349 - INFO - 📊 Total datasets collected: 4
+2025-06-29 05:18:10,349 - WARNING - ⚠️ Mock data used for one or more datasets
+2025-06-29 05:18:10,349 - ERROR - ❌ Stock data collection failed: ❌ Mock data detected; set allow_mock_data=True to proceed with mock data
+2025-06-29 05:21:48,036 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:21:48,039 - WARNING - ⚠️ Alpha Vantage API key not set. Set environment variable ALPHA_VANTAGE_API_KEY
+2025-06-29 05:21:48,039 - WARNING - ⚠️ Proxy configuration incomplete. Set HTTP_PROXY and HTTPS_PROXY environment variables
+2025-06-29 05:21:48,039 - INFO - Configuration validated successfully
+2025-06-29 05:21:48,039 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 05:21:48,039 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 05:21:47.137231
+2025-06-29 05:21:48,039 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 05:21:48,039 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 05:21:48,039 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 05:21:48,039 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 05:21:48,039 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 05:21:48,040 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:21:51,664 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 05:21:51,664 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 05:21:55,187 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.BO: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.BO/history/
+2025-06-29 05:21:55,188 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 05:21:55,188 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:21:55,250 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 05:21:55,251 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 05:21:55,251 - INFO -   Trying nsepy for BIOCON
+2025-06-29 05:21:55,251 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 05:21:55,251 - WARNING - ⚠️ All sources failed for BIOCON, using mock data
+2025-06-29 05:21:55,276 - INFO -   ✅ Generated mock data for BIOCON: 2737 records
+2025-06-29 05:21:55,277 - INFO - ✅ BIOCON: 2737 records collected
+2025-06-29 05:21:55,277 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 05:21:55,277 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 05:21:58,625 - ERROR - ❌ Failed to get Yahoo crumb for ^NSEI: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/%5ENSEI/history/
+2025-06-29 05:21:58,626 - WARNING - ⚠️ Invalid symbol ^NSEI for Yahoo Finance
+2025-06-29 05:22:01,796 - ERROR - ❌ Failed to get Yahoo crumb for NIFTY_50: list index out of range
+2025-06-29 05:22:01,796 - WARNING - ⚠️ Invalid symbol NIFTY_50 for Yahoo Finance
+2025-06-29 05:22:01,797 - INFO -   Trying NSE India for NIFTY50
+2025-06-29 05:22:01,878 - WARNING - ⚠️ Symbol validation failed for NIFTY 50 on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=NIFTY%2050
+2025-06-29 05:22:01,878 - ERROR -   ❌ Error in NSE India API download: Invalid symbol NIFTY 50 for NSE India
+2025-06-29 05:22:01,878 - INFO -   Trying nsepy for NIFTY50
+2025-06-29 05:22:01,878 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 05:22:01,878 - WARNING - ⚠️ All sources failed for NIFTY50, using mock data
+2025-06-29 05:22:01,894 - INFO -   ✅ Generated mock data for NIFTY50: 2737 records
+2025-06-29 05:22:01,894 - INFO - ✅ NIFTY50: 2737 records collected
+2025-06-29 05:22:01,894 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 05:22:01,894 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 05:22:05,212 - ERROR - ❌ Failed to get Yahoo crumb for ^CNXPHARMA: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/%5ECNXPHARMA/history/
+2025-06-29 05:22:05,213 - WARNING - ⚠️ Invalid symbol ^CNXPHARMA for Yahoo Finance
+2025-06-29 05:22:08,253 - ERROR - ❌ Failed to get Yahoo crumb for NIFTY PHARMA: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/NIFTY%20PHARMA/history/
+2025-06-29 05:22:08,253 - WARNING - ⚠️ Invalid symbol NIFTY PHARMA for Yahoo Finance
+2025-06-29 05:22:08,254 - INFO -   Trying NSE India for NIFTY_PHARMA
+2025-06-29 05:22:08,454 - WARNING - ⚠️ Symbol validation failed for NIFTY PHARMA on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=NIFTY%20PHARMA
+2025-06-29 05:22:08,455 - ERROR -   ❌ Error in NSE India API download: Invalid symbol NIFTY PHARMA for NSE India
+2025-06-29 05:22:08,455 - INFO -   Trying nsepy for NIFTY_PHARMA
+2025-06-29 05:22:08,455 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 05:22:08,456 - WARNING - ⚠️ All sources failed for NIFTY_PHARMA, using mock data
+2025-06-29 05:22:08,486 - INFO -   ✅ Generated mock data for NIFTY_PHARMA: 2737 records
+2025-06-29 05:22:08,486 - INFO - ✅ NIFTY_PHARMA: 2737 records collected
+2025-06-29 05:22:08,487 - INFO - 📈 Collecting INDIA_VIX data...
+2025-06-29 05:22:08,487 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 05:22:11,890 - ERROR - ❌ Failed to get Yahoo crumb for ^INDIAVIX: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/%5EINDIAVIX/history/
+2025-06-29 05:22:11,891 - WARNING - ⚠️ Invalid symbol ^INDIAVIX for Yahoo Finance
+2025-06-29 05:22:14,939 - ERROR - ❌ Failed to get Yahoo crumb for INDIA VIX: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/INDIA%20VIX/history/
+2025-06-29 05:22:14,940 - WARNING - ⚠️ Invalid symbol INDIA VIX for Yahoo Finance
+2025-06-29 05:22:14,940 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 05:22:15,185 - WARNING - ⚠️ Symbol validation failed for INDIA_VIX on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=INDIA_VIX
+2025-06-29 05:22:15,186 - ERROR -   ❌ Error in NSE India API download: Invalid symbol INDIA_VIX for NSE India
+2025-06-29 05:22:15,186 - INFO -   Trying nsepy for INDIA_VIX
+2025-06-29 05:22:15,187 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 05:22:15,187 - WARNING - ⚠️ All sources failed for INDIA_VIX, using mock data
+2025-06-29 05:22:15,218 - INFO -   ✅ Generated mock data for INDIA_VIX: 2737 records
+2025-06-29 05:22:15,218 - INFO - ✅ INDIA_VIX: 2737 records collected
+2025-06-29 05:22:15,218 - INFO - 📊 Total datasets collected: 4
+2025-06-29 05:22:15,219 - WARNING - ⚠️ Mock data used for one or more datasets
+2025-06-29 05:22:15,219 - ERROR - ❌ Stock data collection failed: ❌ Mock data detected; set allow_mock_data=True to proceed with mock data
+2025-06-29 05:22:28,041 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:28,042 - WARNING - ⚠️ Alpha Vantage API key not set. Set environment variable ALPHA_VANTAGE_API_KEY
+2025-06-29 05:22:28,042 - WARNING - ⚠️ Proxy configuration incomplete. Set HTTP_PROXY and HTTPS_PROXY environment variables
+2025-06-29 05:22:28,042 - INFO - Configuration validated successfully
+2025-06-29 05:22:28,042 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 05:22:28,042 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 05:22:27.387772
+2025-06-29 05:22:28,042 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 05:22:28,042 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 05:22:28,042 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 05:22:28,042 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 05:22:28,042 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:22:29,746 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/BIOCON.NS?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=BIOCON.NS&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:22:30,631 - WARNING - ⚠️ Symbol validation failed for BIOCON.NS on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:22:30,631 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 05:22:32,312 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/BIOCON.BO?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=BIOCON.BO&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:22:33,150 - WARNING - ⚠️ Symbol validation failed for BIOCON.BO on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:22:33,150 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 05:22:33,150 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:22:34,009 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:34,519 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:35,262 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:35,262 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:22:37,821 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:38,100 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:38,837 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:38,837 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:22:43,429 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:43,502 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:44,439 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:44,440 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=BIOCON&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:44,440 - WARNING - ⚠️ All sources failed for BIOCON, using mock data
+2025-06-29 05:22:44,471 - INFO -   ✅ Generated mock data for BIOCON: 2737 records
+2025-06-29 05:22:44,471 - INFO - ✅ BIOCON: 2737 records collected
+2025-06-29 05:22:44,471 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 05:22:44,471 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 05:22:45,412 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/%5ENSEI?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=%5ENSEI&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:22:46,540 - WARNING - ⚠️ Symbol validation failed for ^NSEI on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:22:46,540 - WARNING - ⚠️ Invalid symbol ^NSEI for Yahoo Finance
+2025-06-29 05:22:47,397 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/NIFTY_50?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=NIFTY_50&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:22:48,077 - WARNING - ⚠️ Symbol validation failed for NIFTY_50 on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:22:48,077 - WARNING - ⚠️ Invalid symbol NIFTY_50 for Yahoo Finance
+2025-06-29 05:22:48,077 - INFO -   Trying NSE India for NIFTY50
+2025-06-29 05:22:48,651 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:48,740 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:49,436 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:49,436 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:22:51,990 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:52,063 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:52,743 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:52,743 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:22:57,253 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:57,339 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:58,102 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:22:58,102 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%2050&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:22:58,102 - WARNING - ⚠️ All sources failed for NIFTY50, using mock data
+2025-06-29 05:22:58,123 - INFO -   ✅ Generated mock data for NIFTY50: 2737 records
+2025-06-29 05:22:58,123 - INFO - ✅ NIFTY50: 2737 records collected
+2025-06-29 05:22:58,123 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 05:22:58,123 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 05:22:58,972 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/%5ECNXPHARMA?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=%5ECNXPHARMA&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:22:59,689 - WARNING - ⚠️ Symbol validation failed for ^CNXPHARMA on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:22:59,689 - WARNING - ⚠️ Invalid symbol ^CNXPHARMA for Yahoo Finance
+2025-06-29 05:23:00,407 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/NIFTY%20PHARMA?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=NIFTY+PHARMA&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:23:01,231 - WARNING - ⚠️ Symbol validation failed for NIFTY PHARMA on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:23:01,232 - WARNING - ⚠️ Invalid symbol NIFTY PHARMA for Yahoo Finance
+2025-06-29 05:23:01,232 - INFO -   Trying NSE India for NIFTY_PHARMA
+2025-06-29 05:23:01,882 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:01,988 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:02,637 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:02,638 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:23:05,237 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:05,310 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:05,984 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:05,984 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:23:10,566 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:10,638 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:11,321 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:11,322 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=NIFTY%20PHARMA&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:11,322 - WARNING - ⚠️ All sources failed for NIFTY_PHARMA, using mock data
+2025-06-29 05:23:11,347 - INFO -   ✅ Generated mock data for NIFTY_PHARMA: 2737 records
+2025-06-29 05:23:11,348 - INFO - ✅ NIFTY_PHARMA: 2737 records collected
+2025-06-29 05:23:11,348 - INFO - 📈 Collecting INDIA_VIX data...
+2025-06-29 05:23:11,348 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 05:23:12,505 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/%5EINDIAVIX?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=%5EINDIAVIX&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:23:13,208 - WARNING - ⚠️ Symbol validation failed for ^INDIAVIX on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:23:13,208 - WARNING - ⚠️ Invalid symbol ^INDIAVIX for Yahoo Finance
+2025-06-29 05:23:13,874 - ERROR - 429 Client Error: Too Many Requests for url: https://query2.finance.yahoo.com/v10/finance/quoteSummary/INDIA%20VIX?modules=financialData%2CquoteType%2CdefaultKeyStatistics%2CassetProfile%2CsummaryDetail&corsDomain=finance.yahoo.com&formatted=false&symbol=INDIA+VIX&crumb=Edge%3A+Too+Many+Requests
+2025-06-29 05:23:14,586 - WARNING - ⚠️ Symbol validation failed for INDIA VIX on Yahoo Finance: Expecting value: line 1 column 1 (char 0)
+2025-06-29 05:23:14,586 - WARNING - ⚠️ Invalid symbol INDIA VIX for Yahoo Finance
+2025-06-29 05:23:14,586 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 05:23:15,195 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:15,280 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:16,016 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:16,016 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 2 seconds...
+2025-06-29 05:23:18,681 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:18,782 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:19,501 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:19,502 - WARNING - 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025, retrying in 4 seconds...
+2025-06-29 05:23:24,123 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:24,195 - ERROR -   ❌ NSE India authentication failed: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:24,931 - INFO - ✅ NSE session initialized with cookies
+2025-06-29 05:23:24,932 - ERROR -   ❌ Error downloading from NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/historical/cm/equity?symbol=INDIA_VIX&series=%5B%22EQ%22%5D&from=01-01-2015&to=29-06-2025
+2025-06-29 05:23:24,932 - WARNING - ⚠️ All sources failed for INDIA_VIX, using mock data
+2025-06-29 05:23:24,959 - INFO -   ✅ Generated mock data for INDIA_VIX: 2737 records
+2025-06-29 05:23:24,959 - INFO - ✅ INDIA_VIX: 2737 records collected
+2025-06-29 05:23:24,959 - INFO - 📊 Total datasets collected: 4
+2025-06-29 05:23:24,959 - INFO - 🏗️ Creating master dataset...
+2025-06-29 05:23:24,960 - INFO - 📊 Base dataset: 2737 Biocon records
+2025-06-29 05:23:24,960 - INFO - 🔧 Adding technical indicators...
+2025-06-29 05:23:24,974 - INFO - ✅ Technical indicators added successfully
+2025-06-29 05:23:24,975 - INFO - 📢 Adding BSE announcements to dataset...
+2025-06-29 05:23:24,975 - INFO - 📢 Fetching BSE announcements...
+2025-06-29 05:23:25,431 - ERROR - ❌ Error fetching BSE announcements: 404 Client Error: Not Found for url: https://www.bseindia.com/corporates/corporate_actions.aspx?scode=532523
+2025-06-29 05:23:25,432 - WARNING - ⚠️ No announcements to add
+2025-06-29 05:23:25,432 - INFO - 📊 Calculating market relative metrics...
+2025-06-29 05:23:25,453 - INFO - ✅ Market relative metrics calculated successfully
+2025-06-29 05:23:25,453 - INFO - 🧠 Adding advanced features...
+2025-06-29 05:23:25,468 - INFO - ✅ Advanced features added successfully
+2025-06-29 05:23:25,476 - INFO - ✅ Master dataset created: 2737 records, 138 features
+2025-06-29 05:23:25,476 - INFO - 💾 Saving stock data...
+2025-06-29 05:23:25,676 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/stock_data.csv
+2025-06-29 05:23:25,676 - INFO - 📁 File size: 5632.3 KB
+2025-06-29 05:23:25,737 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/bse_announcements.csv
+2025-06-29 05:23:25,737 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/technical_indicators.csv
+2025-06-29 05:23:25,739 - INFO - 🎉 Stock data collection completed successfully!
+2025-06-29 05:29:25,175 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 05:29:25,178 - WARNING - ⚠️ Alpha Vantage API key not set. Set environment variable ALPHA_VANTAGE_API_KEY for reliable data
+2025-06-29 05:29:25,179 - WARNING - ⚠️ Proxy configuration incomplete. Set HTTP_PROXY and HTTPS_PROXY environment variables
+2025-06-29 05:29:25,179 - INFO - Configuration validated successfully
+2025-06-29 05:29:25,179 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 05:29:25,179 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 05:29:23.976856
+2025-06-29 05:29:25,179 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 05:29:25,179 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 05:29:25,179 - WARNING - ⚠️ Alpha Vantage API key not provided. Set ALPHA_VANTAGE_API_KEY for reliable data source.
+2025-06-29 05:29:25,179 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 05:29:25,179 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 05:29:25,179 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 05:29:25,179 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:29:29,494 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 05:29:29,495 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 05:29:33,750 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.BO: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.BO/history/
+2025-06-29 05:29:33,750 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 05:29:37,549 - ERROR - ❌ Failed to get Yahoo crumb for NSE:BIOCON: list index out of range
+2025-06-29 05:29:37,549 - WARNING - ⚠️ Invalid symbol NSE:BIOCON for Yahoo Finance
+2025-06-29 05:29:37,549 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:29:37,616 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 05:29:37,616 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 05:29:37,617 - INFO -   Trying nsepy for BIOCON
+2025-06-29 05:29:37,617 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 05:29:37,617 - ERROR - ❌ All sources failed for BIOCON. No data collected.
+2025-06-29 05:29:37,617 - WARNING - No real data available for BIOCON. Check symbols, connectivity, or API keys., retrying in 5 seconds...
+2025-06-29 05:29:42,622 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:29:46,241 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 05:29:46,241 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 05:29:49,767 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.BO: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.BO/history/
+2025-06-29 05:29:49,767 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 05:29:53,486 - ERROR - ❌ Failed to get Yahoo crumb for NSE:BIOCON: list index out of range
+2025-06-29 05:29:53,486 - WARNING - ⚠️ Invalid symbol NSE:BIOCON for Yahoo Finance
+2025-06-29 05:29:53,486 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:29:53,635 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 05:29:53,635 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 05:29:53,635 - INFO -   Trying nsepy for BIOCON
+2025-06-29 05:29:53,635 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 05:29:53,635 - ERROR - ❌ All sources failed for BIOCON. No data collected.
+2025-06-29 05:29:53,635 - WARNING - No real data available for BIOCON. Check symbols, connectivity, or API keys., retrying in 10 seconds...
+2025-06-29 05:30:03,637 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 05:30:08,672 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 05:30:08,672 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 05:30:12,969 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.BO: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.BO/history/
+2025-06-29 05:30:12,970 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 05:30:16,669 - ERROR - ❌ Failed to get Yahoo crumb for NSE:BIOCON: list index out of range
+2025-06-29 05:30:16,669 - WARNING - ⚠️ Invalid symbol NSE:BIOCON for Yahoo Finance
+2025-06-29 05:30:16,669 - INFO -   Trying NSE India for BIOCON
+2025-06-29 05:30:16,824 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 05:30:16,824 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 05:30:16,824 - INFO -   Trying nsepy for BIOCON
+2025-06-29 05:30:16,824 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 05:30:16,824 - ERROR - ❌ All sources failed for BIOCON. No data collected.
+2025-06-29 05:30:16,824 - ERROR - ❌ Stock data collection failed: No real data available for BIOCON. Check symbols, connectivity, or API keys.
+2025-06-29 06:36:18,018 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 06:36:18,020 - WARNING - ⚠️ Proxy configuration incomplete. Set HTTP_PROXY and HTTPS_PROXY environment variables
+2025-06-29 06:36:18,020 - INFO - Configuration validated successfully
+2025-06-29 06:36:18,020 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 06:36:18,020 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 06:36:16.773397
+2025-06-29 06:36:18,020 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 06:36:18,020 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 06:36:18,021 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 06:36:18,021 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 06:36:18,021 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 06:36:18,021 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:36:22,495 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 06:36:22,496 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 06:36:26,741 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.BO: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.BO/history/
+2025-06-29 06:36:26,742 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 06:36:26,742 - INFO -   Trying NSE India for BIOCON
+2025-06-29 06:36:26,805 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:36:26,805 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 06:36:26,805 - INFO -   Trying nsepy for BIOCON
+2025-06-29 06:36:26,805 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 06:36:26,805 - ERROR - ❌ All real sources failed for BIOCON. No data collected.
+2025-06-29 06:36:26,805 - WARNING - No real data available for BIOCON. Check symbols, connectivity, or proxy settings., retrying in 5 seconds...
+2025-06-29 06:36:31,811 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:36:35,372 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 06:36:35,373 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 06:36:38,944 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.BO: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.BO/history/
+2025-06-29 06:36:38,945 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 06:36:38,945 - INFO -   Trying NSE India for BIOCON
+2025-06-29 06:36:39,035 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:36:39,035 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 06:36:39,036 - INFO -   Trying nsepy for BIOCON
+2025-06-29 06:36:39,036 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 06:36:39,036 - ERROR - ❌ All real sources failed for BIOCON. No data collected.
+2025-06-29 06:36:39,036 - WARNING - No real data available for BIOCON. Check symbols, connectivity, or proxy settings., retrying in 10 seconds...
+2025-06-29 06:36:49,037 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:36:53,309 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.NS: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.NS/history/
+2025-06-29 06:36:53,310 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 06:36:57,570 - ERROR - ❌ Failed to get Yahoo crumb for BIOCON.BO: 404 Client Error: Not Found for url: https://finance.yahoo.com/quote/BIOCON.BO/history/
+2025-06-29 06:36:57,570 - WARNING - ⚠️ Invalid symbol BIOCON.BO for Yahoo Finance
+2025-06-29 06:36:57,570 - INFO -   Trying NSE India for BIOCON
+2025-06-29 06:36:57,650 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:36:57,651 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 06:36:57,651 - INFO -   Trying nsepy for BIOCON
+2025-06-29 06:36:57,651 - ERROR -   ❌ Error downloading from nsepy: get_history() got an unexpected keyword argument 'threads'
+2025-06-29 06:36:57,651 - ERROR - ❌ All real sources failed for BIOCON. No data collected.
+2025-06-29 06:36:57,651 - ERROR - ❌ Error collecting BIOCON data: No real data available for BIOCON. Check symbols, connectivity, or proxy settings.
+2025-06-29 06:36:57,651 - ERROR - ❌ Stock data collection failed: No real data available for BIOCON. Check symbols, connectivity, or proxy settings.
+2025-06-29 06:41:38,440 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 06:41:38,442 - INFO - ℹ️ Falling back to yfinance as primary source. Consider using a VPN with an Indian server.
+2025-06-29 06:41:38,442 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-06-29 06:41:38,442 - INFO - Configuration validated successfully
+2025-06-29 06:41:38,443 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 06:41:38,443 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 06:41:36.501239
+2025-06-29 06:41:38,443 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 06:41:38,443 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 06:41:38,443 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 06:41:38,443 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 06:41:38,443 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 06:41:38,443 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:41:45,010 - ERROR - $BIOCON.NS: possibly delisted; no price data found  (period=1d)
+2025-06-29 06:41:45,010 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 06:41:45,010 - INFO -   Trying NSE India for BIOCON
+2025-06-29 06:41:45,082 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:41:45,082 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 06:41:45,082 - INFO -   Trying nsepy for BIOCON
+2025-06-29 06:41:45,428 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,429 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,430 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,431 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,433 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,433 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,435 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,435 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,436 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,441 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,447 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,447 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,448 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,448 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,449 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,449 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,450 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,450 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,450 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,454 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,602 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,602 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,602 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,602 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,607 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,607 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,608 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,608 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,608 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,608 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,608 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,608 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,614 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,614 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,614 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,620 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,620 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,620 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,625 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,625 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,733 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,733 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,746 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,746 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,747 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,747 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,747 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,748 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,748 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,752 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,753 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,753 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,753 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,754 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,769 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,771 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,771 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,771 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,771 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,772 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:41:45,783 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 06:41:45,783 - ERROR - ❌ All real sources failed for BIOCON. No data collected.
+2025-06-29 06:41:45,783 - INFO - 💡 Troubleshooting: Verify symbols on https://finance.yahoo.com or https://www.nseindia.com
+2025-06-29 06:41:45,783 - INFO - 💡 If outside India, use a VPN with an Indian server for NSE India access
+2025-06-29 06:41:45,783 - INFO - 💡 Run with --allow-mock-data for testing with mock data
+2025-06-29 06:41:45,783 - WARNING - No real data available for BIOCON. Check symbols, connectivity, or proxy settings., retrying in 10 seconds...
+2025-06-29 06:41:55,788 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:42:04,624 - ERROR - $BIOCON.NS: possibly delisted; no price data found  (period=1d)
+2025-06-29 06:42:04,626 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 06:42:04,626 - INFO -   Trying NSE India for BIOCON
+2025-06-29 06:42:04,700 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:42:04,701 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 06:42:04,701 - INFO -   Trying nsepy for BIOCON
+2025-06-29 06:42:04,799 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,800 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,817 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,818 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,818 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,819 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,820 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,821 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,822 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,823 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,823 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,824 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,824 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,825 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,825 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,827 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,837 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,837 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,845 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,850 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,950 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,950 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,954 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,961 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,962 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,966 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,972 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:04,978 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,213 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,213 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,213 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,213 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,213 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,214 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,216 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,217 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,217 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,217 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,233 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,233 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,233 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,233 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,233 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,233 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,233 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,238 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,238 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,239 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:05,251 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 06:42:05,251 - ERROR - ❌ All real sources failed for BIOCON. No data collected.
+2025-06-29 06:42:05,251 - INFO - 💡 Troubleshooting: Verify symbols on https://finance.yahoo.com or https://www.nseindia.com
+2025-06-29 06:42:05,251 - INFO - 💡 If outside India, use a VPN with an Indian server for NSE India access
+2025-06-29 06:42:05,251 - INFO - 💡 Run with --allow-mock-data for testing with mock data
+2025-06-29 06:42:05,251 - WARNING - No real data available for BIOCON. Check symbols, connectivity, or proxy settings., retrying in 20 seconds...
+2025-06-29 06:42:25,256 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:42:31,365 - ERROR - $BIOCON.NS: possibly delisted; no price data found  (period=1d)
+2025-06-29 06:42:31,365 - WARNING - ⚠️ Invalid symbol BIOCON.NS for Yahoo Finance
+2025-06-29 06:42:31,365 - INFO -   Trying NSE India for BIOCON
+2025-06-29 06:42:31,436 - WARNING - ⚠️ Symbol validation failed for BIOCON on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:42:31,436 - ERROR -   ❌ Error in NSE India API download: Invalid symbol BIOCON for NSE India
+2025-06-29 06:42:31,436 - INFO -   Trying nsepy for BIOCON
+2025-06-29 06:42:31,556 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,557 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,557 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,577 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,577 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,577 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,577 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,578 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,580 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,581 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,581 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,582 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,583 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,584 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,587 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,589 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,590 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,590 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,591 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,592 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,740 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,746 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,751 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,752 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,758 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,758 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,758 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,758 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,771 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,772 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,774 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,775 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,880 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,880 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,885 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,886 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,886 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,886 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,893 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,908 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:42:31,912 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 06:42:31,912 - ERROR - ❌ All real sources failed for BIOCON. No data collected.
+2025-06-29 06:42:31,913 - INFO - 💡 Troubleshooting: Verify symbols on https://finance.yahoo.com or https://www.nseindia.com
+2025-06-29 06:42:31,913 - INFO - 💡 If outside India, use a VPN with an Indian server for NSE India access
+2025-06-29 06:42:31,913 - INFO - 💡 Run with --allow-mock-data for testing with mock data
+2025-06-29 06:42:31,913 - ERROR - ❌ Error collecting BIOCON data: No real data available for BIOCON. Check symbols, connectivity, or proxy settings.
+2025-06-29 06:42:31,913 - ERROR - ❌ Stock data collection failed: No real data available for BIOCON. Check symbols, connectivity, or proxy settings.
+2025-06-29 06:42:31,913 - INFO - 💡 Troubleshooting steps:
+2025-06-29 06:42:31,913 - INFO -   1. Verify symbols on https://finance.yahoo.com/quote/BIOCON.NS
+2025-06-29 06:42:31,913 - INFO -   2. Check NSE India access: curl -I https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:42:31,913 - INFO -   3. Use a VPN with an Indian server for NSE India if outside India
+2025-06-29 06:42:31,913 - INFO -   4. Set proxies: export HTTP_PROXY='http://proxy.example.com:8080'
+2025-06-29 06:42:31,913 - INFO -   5. Run with --allow-mock-data for testing
+2025-06-29 06:46:39,042 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/market-data-pre-open
+2025-06-29 06:46:39,044 - INFO - ℹ️ Falling back to yfinance or nsepython
+2025-06-29 06:46:39,045 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-06-29 06:46:39,045 - INFO - Configuration validated successfully
+2025-06-29 06:46:39,045 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 06:46:39,045 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 06:46:35.757201
+2025-06-29 06:46:39,045 - INFO - 🏢 Target Company: Biocon Limited (BIOCON.NS)
+2025-06-29 06:46:39,045 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 06:46:39,045 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 06:46:39,045 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 06:46:39,045 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 06:46:39,046 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:46:39,046 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:46:39,752 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:46:39,889 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:46:39,889 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:46:39,889 - WARNING - ⚠️ BIOCON.NS potentially delisted, but proceeding as per instructions
+2025-06-29 06:46:39,889 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:46:40,214 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:46:40,343 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:46:40,343 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:46:40,344 - WARNING - ⚠️ Skipping Yahoo Finance for BIOCON.NS due to potential delisting
+2025-06-29 06:46:40,344 - INFO -   Trying NSE India API for BIOCON
+2025-06-29 06:46:40,344 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:46:40,608 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:46:40,739 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:46:40,740 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:46:40,740 - ERROR - ❌ Error in NSE India API download: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:46:40,740 - WARNING - Invalid or delisted symbol BIOCON for NSE India, retrying in 10 seconds...
+2025-06-29 06:46:50,745 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:46:51,032 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:46:51,160 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:46:51,160 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:46:51,161 - ERROR - ❌ Error in NSE India API download: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:46:51,161 - WARNING - Invalid or delisted symbol BIOCON for NSE India, retrying in 20 seconds...
+2025-06-29 06:47:11,166 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:47:11,467 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:47:11,758 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:47:11,758 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:47:11,758 - ERROR - ❌ Error in NSE India API download: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:47:11,758 - ERROR -   ❌ Error downloading from NSE India API: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:47:11,758 - INFO -   Trying nsepython for BIOCON
+2025-06-29 06:47:11,758 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:47:12,034 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:47:12,153 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:47:12,153 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:47:12,153 - ERROR - ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:47:12,153 - WARNING - Invalid or delisted symbol BIOCON for nsepython, retrying in 10 seconds...
+2025-06-29 06:47:22,158 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:47:22,472 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:47:22,592 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:47:22,592 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:47:22,593 - ERROR - ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:47:22,593 - WARNING - Invalid or delisted symbol BIOCON for nsepython, retrying in 20 seconds...
+2025-06-29 06:47:42,594 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:47:42,906 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:47:43,173 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:47:43,173 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:47:43,173 - ERROR - ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:47:43,173 - ERROR -   ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:47:43,173 - ERROR - ❌ All real sources failed for BIOCON. Assuming temporary access issue.
+2025-06-29 06:47:43,173 - INFO - 💡 Troubleshooting: Use a VPN with an Indian IP for NSE India access
+2025-06-29 06:47:43,173 - INFO - 💡 Verify symbols: https://finance.yahoo.com/quote/BIOCON.NS or https://www.nseindia.com/get-quotes/equity?symbol=BIOCON
+2025-06-29 06:47:43,173 - WARNING - No real data available for BIOCON. Check connectivity, symbols, or use --allow-mock-data/--use-cached-data., retrying in 10 seconds...
+2025-06-29 06:47:53,177 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:47:53,179 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:47:53,471 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:47:53,594 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:47:53,594 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:47:53,594 - WARNING - ⚠️ BIOCON.NS potentially delisted, but proceeding as per instructions
+2025-06-29 06:47:53,594 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:47:53,826 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:47:53,936 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:47:53,936 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:47:53,936 - WARNING - ⚠️ Skipping Yahoo Finance for BIOCON.NS due to potential delisting
+2025-06-29 06:47:53,936 - INFO -   Trying NSE India API for BIOCON
+2025-06-29 06:47:53,936 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:47:54,187 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:47:54,662 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:47:54,663 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:47:54,663 - ERROR - ❌ Error in NSE India API download: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:47:54,663 - WARNING - Invalid or delisted symbol BIOCON for NSE India, retrying in 10 seconds...
+2025-06-29 06:48:04,664 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:48:04,944 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:48:05,049 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:48:05,049 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:48:05,049 - ERROR - ❌ Error in NSE India API download: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:48:05,050 - WARNING - Invalid or delisted symbol BIOCON for NSE India, retrying in 20 seconds...
+2025-06-29 06:48:25,057 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:48:25,515 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:48:25,787 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:48:25,787 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:48:25,787 - ERROR - ❌ Error in NSE India API download: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:48:25,787 - ERROR -   ❌ Error downloading from NSE India API: Invalid or delisted symbol BIOCON for NSE India
+2025-06-29 06:48:25,787 - INFO -   Trying nsepython for BIOCON
+2025-06-29 06:48:25,787 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:48:26,052 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:48:26,150 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:48:26,150 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:48:26,150 - ERROR - ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:48:26,150 - WARNING - Invalid or delisted symbol BIOCON for nsepython, retrying in 10 seconds...
+2025-06-29 06:48:36,156 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:48:36,446 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:48:36,581 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:48:36,581 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:48:36,582 - ERROR - ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:48:36,582 - WARNING - Invalid or delisted symbol BIOCON for nsepython, retrying in 20 seconds...
+2025-06-29 06:48:56,587 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:48:57,052 - WARNING - ⚠️ Yahoo Finance verification failed for BIOCON.NS: 500 Server Error: Internal Server Error for url: https://finance.yahoo.com/quote/BIOCON.NS/
+2025-06-29 06:48:57,167 - WARNING - ⚠️ Possible delisting or issue on NSE India for BIOCON.NS
+2025-06-29 06:48:57,168 - ERROR - ❌ BIOCON.NS potentially delisted (both sources indicate issues)
+2025-06-29 06:48:57,168 - ERROR - ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:48:57,168 - ERROR -   ❌ Error downloading from nsepython: Invalid or delisted symbol BIOCON for nsepython
+2025-06-29 06:48:57,168 - ERROR - ❌ All real sources failed for BIOCON. Assuming temporary access issue.
+2025-06-29 06:48:57,168 - INFO - 💡 Troubleshooting: Use a VPN with an Indian IP for NSE India access
+2025-06-29 06:48:57,168 - INFO - 💡 Verify symbols: https://finance.yahoo.com/quote/BIOCON.NS or https://www.nseindia.com/get-quotes/equity?symbol=BIOCON
+2025-06-29 06:48:57,168 - WARNING - No real data available for BIOCON. Check connectivity, symbols, or use --allow-mock-data/--use-cached-data., retrying in 20 seconds...
+2025-06-29 06:49:05,855 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 06:49:05,856 - INFO - ℹ️ Continuing with yfinance or nsepython
+2025-06-29 06:49:05,857 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-06-29 06:49:05,857 - INFO - Configuration validated successfully
+2025-06-29 06:49:05,857 - INFO - 🚀 Stock Data Collector Initialized
+2025-06-29 06:49:05,857 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 06:49:04.103399
+2025-06-29 06:49:05,858 - INFO - 🏢 Target Company: Biocon Limited (BIOCON.NS)
+2025-06-29 06:49:05,858 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 06:49:05,858 - INFO - 🚀 Starting Stock Data Collection Pipeline...
+2025-06-29 06:49:05,858 - INFO - 🎯 Starting data collection...
+2025-06-29 06:49:05,858 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 06:49:05,858 - INFO - 🔍 Verifying ticker BIOCON.NS...
+2025-06-29 06:49:05,969 - WARNING - ⚠️ NSE India quote page for BIOCON.NS is blank
+2025-06-29 06:49:06,378 - INFO - ℹ️ Ignoring Yahoo Finance 500 or delisting message for BIOCON.NS
+2025-06-29 06:49:06,380 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:49:06,380 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-06-29 06:49:12,629 - ERROR - 
+1 Failed download:
+2025-06-29 06:49:12,629 - ERROR - ['BIOCON.NS']: JSONDecodeError('Expecting value: line 1 column 1 (char 0)')
+2025-06-29 06:49:12,630 - WARNING -   ⚠️ Empty data for BIOCON.NS from Yahoo Finance (TEMPORARILY UNAVAILABLE)
+2025-06-29 06:49:12,630 - INFO -   Trying NSE India API for BIOCON
+2025-06-29 06:49:16,385 - INFO - ✅ NSE session initialized
+2025-06-29 06:49:16,479 - ERROR - ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:49:16,479 - WARNING - Invalid NSE response, retrying in 10 seconds...
+2025-06-29 06:49:31,296 - INFO - ✅ NSE session initialized
+2025-06-29 06:49:31,335 - ERROR - ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:49:31,335 - WARNING - Invalid NSE response, retrying in 20 seconds...
+2025-06-29 06:49:55,378 - INFO - ✅ NSE session initialized
+2025-06-29 06:49:55,437 - ERROR - ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:49:55,437 - ERROR -   ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:49:55,437 - INFO -   Trying nsepython for BIOCON
+2025-06-29 06:49:55,438 - ERROR - ❌ nsepython error (TEMPORARILY UNAVAILABLE): nse_eq() got an unexpected keyword argument 'start_date'
+2025-06-29 06:49:55,438 - WARNING - nse_eq() got an unexpected keyword argument 'start_date', retrying in 10 seconds...
+2025-06-29 06:50:05,439 - ERROR - ❌ nsepython error (TEMPORARILY UNAVAILABLE): nse_eq() got an unexpected keyword argument 'start_date'
+2025-06-29 06:50:05,440 - WARNING - nse_eq() got an unexpected keyword argument 'start_date', retrying in 20 seconds...
+2025-06-29 06:50:25,446 - ERROR - ❌ nsepython error (TEMPORARILY UNAVAILABLE): nse_eq() got an unexpected keyword argument 'start_date'
+2025-06-29 06:50:25,446 - ERROR -   ❌ nsepython error (TEMPORARILY UNAVAILABLE): nse_eq() got an unexpected keyword argument 'start_date'
+2025-06-29 06:50:25,446 - INFO -   Trying cached bhavcopy for BIOCON
+2025-06-29 06:50:25,447 - ERROR - ❌ Error loading bhavcopy data for BIOCON: No bhavcopy data found
+2025-06-29 06:50:25,448 - ERROR -   ❌ Cached bhavcopy error: No bhavcopy data found
+2025-06-29 06:50:25,448 - ERROR - ❌ All sources failed for BIOCON (TEMPORARILY UNAVAILABLE)
+2025-06-29 06:50:25,448 - WARNING - TEMPORARILY UNAVAILABLE: No data for BIOCON. Retry later or use --allow-mock-data/--use-cached-data., retrying in 10 seconds...
+2025-06-29 06:50:35,450 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:50:35,451 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-06-29 06:50:41,577 - ERROR - 
+1 Failed download:
+2025-06-29 06:50:41,578 - ERROR - ['BIOCON.NS']: JSONDecodeError('Expecting value: line 1 column 1 (char 0)')
+2025-06-29 06:50:41,578 - WARNING -   ⚠️ Empty data for BIOCON.NS from Yahoo Finance (TEMPORARILY UNAVAILABLE)
+2025-06-29 06:50:41,578 - INFO -   Trying NSE India API for BIOCON
+2025-06-29 06:50:45,562 - INFO - ✅ NSE session initialized
+2025-06-29 06:50:45,614 - ERROR - ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:50:45,614 - WARNING - Invalid NSE response, retrying in 10 seconds...
+2025-06-29 06:50:59,646 - INFO - ✅ NSE session initialized
+2025-06-29 06:50:59,681 - ERROR - ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:50:59,682 - WARNING - Invalid NSE response, retrying in 20 seconds...
+2025-06-29 06:51:23,449 - INFO - ✅ NSE session initialized
+2025-06-29 06:51:23,500 - ERROR - ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:51:23,500 - ERROR -   ❌ NSE India API error (TEMPORARILY UNAVAILABLE): Invalid NSE response
+2025-06-29 06:51:23,501 - INFO -   Trying nsepython for BIOCON
+2025-06-29 06:51:23,501 - ERROR - ❌ nsepython error (TEMPORARILY UNAVAILABLE): nse_eq() got an unexpected keyword argument 'start_date'
+2025-06-29 06:51:23,501 - WARNING - nse_eq() got an unexpected keyword argument 'start_date', retrying in 10 seconds...
+2025-06-29 06:51:33,507 - ERROR - ❌ nsepython error (TEMPORARILY UNAVAILABLE): nse_eq() got an unexpected keyword argument 'start_date'
+2025-06-29 06:51:33,508 - WARNING - nse_eq() got an unexpected keyword argument 'start_date', retrying in 20 seconds...
+2025-06-29 06:55:09,173 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 06:55:09,179 - INFO - ℹ️ Falling back to yfinance as primary source. Consider using a VPN with an Indian server.
+2025-06-29 06:55:09,180 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-06-29 06:55:09,180 - INFO - Configuration validated successfully
+2025-06-29 06:55:09,180 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 06:55:09,180 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 06:55:07.214750
+2025-06-29 06:55:09,180 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 06:55:09,180 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 06:55:09,180 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 06:55:09,180 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 06:55:09,180 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 06:55:09,180 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 06:55:14,874 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-06-29 06:55:20,188 - INFO -   ✅ Success: 2589 records for BIOCON.NS from Yahoo Finance
+2025-06-29 06:55:20,188 - INFO - ✅ BIOCON: 2589 records collected
+2025-06-29 06:55:20,188 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 06:55:20,188 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 06:55:25,310 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-06-29 06:55:30,784 - INFO -   ✅ Success: 2580 records for ^NSEI from Yahoo Finance
+2025-06-29 06:55:30,784 - INFO - ✅ NIFTY50: 2580 records collected
+2025-06-29 06:55:30,785 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 06:55:30,785 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 06:55:35,980 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-06-29 06:55:41,369 - INFO -   ✅ Success: 2586 records for ^CNXPHARMA from Yahoo Finance
+2025-06-29 06:55:41,369 - INFO - ✅ NIFTY_PHARMA: 2586 records collected
+2025-06-29 06:55:41,369 - INFO - 📈 Collecting INDIA_VIX data...
+2025-06-29 06:55:41,369 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 06:55:46,609 - INFO -   Trying Yahoo Finance symbol: ^INDIAVIX
+2025-06-29 06:55:51,746 - WARNING -   ⚠️ Insufficient data for ^INDIAVIX from Yahoo Finance
+2025-06-29 06:55:57,470 - ERROR - HTTP Error 404: 
+2025-06-29 06:55:58,537 - ERROR - $INDIA VIX: possibly delisted; no price data found  (period=1d) (Yahoo error = "No data found, symbol may be delisted")
+2025-06-29 06:55:58,538 - WARNING - ⚠️ Invalid symbol INDIA VIX for Yahoo Finance
+2025-06-29 06:55:58,538 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 06:55:58,629 - WARNING - ⚠️ Symbol validation failed for INDIA_VIX on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=INDIA_VIX
+2025-06-29 06:55:58,629 - ERROR -   ❌ Error in NSE India API download: Invalid symbol INDIA_VIX for NSE India
+2025-06-29 06:55:58,629 - INFO -   Trying nsepy for INDIA_VIX
+2025-06-29 06:55:58,959 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,960 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,962 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,962 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,963 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,968 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,968 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,968 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,969 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,969 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,970 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,976 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,976 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,982 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,983 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,984 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,985 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,986 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,986 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:58,991 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,127 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,127 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,127 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,127 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,127 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,128 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,154 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,154 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,155 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,155 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,155 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,160 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,160 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,161 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,165 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,166 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,166 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,171 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,171 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,265 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,266 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,266 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,283 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,284 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,284 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,284 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,285 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,285 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,285 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,291 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,292 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,293 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,319 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,319 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,319 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,319 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,319 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,319 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:55:59,335 - ERROR -   ❌ Error downloading from nsepy: 'ThreadReturns' object has no attribute 'result'
+2025-06-29 06:55:59,335 - ERROR - ❌ All real sources failed for INDIA_VIX. No data collected.
+2025-06-29 06:55:59,335 - INFO - 💡 Troubleshooting: Verify symbols on https://finance.yahoo.com or https://www.nseindia.com
+2025-06-29 06:55:59,335 - INFO - 💡 If outside India, use a VPN with an Indian server for NSE India access
+2025-06-29 06:55:59,335 - INFO - 💡 Run with --allow-mock-data for testing with mock data
+2025-06-29 06:55:59,335 - WARNING - No real data available for INDIA_VIX. Check symbols, connectivity, or proxy settings., retrying in 10 seconds...
+2025-06-29 06:56:09,340 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 06:56:14,441 - INFO -   Trying Yahoo Finance symbol: ^INDIAVIX
+2025-06-29 06:56:19,554 - WARNING -   ⚠️ Insufficient data for ^INDIAVIX from Yahoo Finance
+2025-06-29 06:56:24,872 - ERROR - HTTP Error 404: 
+2025-06-29 06:56:25,357 - ERROR - $INDIA VIX: possibly delisted; no price data found  (period=1d) (Yahoo error = "No data found, symbol may be delisted")
+2025-06-29 06:56:25,358 - WARNING - ⚠️ Invalid symbol INDIA VIX for Yahoo Finance
+2025-06-29 06:56:25,358 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 06:56:25,496 - WARNING - ⚠️ Symbol validation failed for INDIA_VIX on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=INDIA_VIX
+2025-06-29 06:56:25,496 - ERROR -   ❌ Error in NSE India API download: Invalid symbol INDIA_VIX for NSE India
+2025-06-29 06:56:25,497 - INFO -   Trying nsepy for INDIA_VIX
+2025-06-29 06:56:25,606 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,612 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,613 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,614 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,619 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,620 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,621 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,622 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,623 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,624 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,624 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,626 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,628 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,628 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,631 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,635 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,636 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,636 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,637 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,638 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,758 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,775 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,776 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,782 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,782 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,782 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,782 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,782 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,787 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,788 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,796 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,908 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,908 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,908 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,908 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,914 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,914 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,914 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,914 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,920 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:56:25,924 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 06:56:25,924 - ERROR - ❌ All real sources failed for INDIA_VIX. No data collected.
+2025-06-29 06:56:25,924 - INFO - 💡 Troubleshooting: Verify symbols on https://finance.yahoo.com or https://www.nseindia.com
+2025-06-29 06:56:25,924 - INFO - 💡 If outside India, use a VPN with an Indian server for NSE India access
+2025-06-29 06:56:25,924 - INFO - 💡 Run with --allow-mock-data for testing with mock data
+2025-06-29 06:56:25,924 - WARNING - No real data available for INDIA_VIX. Check symbols, connectivity, or proxy settings., retrying in 20 seconds...
+2025-06-29 06:56:45,929 - INFO - 📈 Downloading INDIA_VIX data...
+2025-06-29 06:56:51,047 - INFO -   Trying Yahoo Finance symbol: ^INDIAVIX
+2025-06-29 06:56:56,147 - WARNING -   ⚠️ Insufficient data for ^INDIAVIX from Yahoo Finance
+2025-06-29 06:57:01,448 - ERROR - $INDIA VIX: possibly delisted; no price data found  (period=1d) (Yahoo error = "No data found, symbol may be delisted")
+2025-06-29 06:57:01,448 - WARNING - ⚠️ Invalid symbol INDIA VIX for Yahoo Finance
+2025-06-29 06:57:01,449 - INFO -   Trying NSE India for INDIA_VIX
+2025-06-29 06:57:01,581 - WARNING - ⚠️ Symbol validation failed for INDIA_VIX on NSE India: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/quote-equity?symbol=INDIA_VIX
+2025-06-29 06:57:01,581 - ERROR -   ❌ Error in NSE India API download: Invalid symbol INDIA_VIX for NSE India
+2025-06-29 06:57:01,581 - INFO -   Trying nsepy for INDIA_VIX
+2025-06-29 06:57:01,729 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,730 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,730 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,730 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,730 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,731 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,731 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,732 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,739 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,742 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,742 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,743 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,744 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,744 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,745 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,746 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,746 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,747 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,748 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,749 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,850 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,855 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,855 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,872 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,880 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,880 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,886 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,886 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,886 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,903 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:01,914 - WARNING - Connection pool is full, discarding connection: www1.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,071 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,072 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,072 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,072 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,073 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,074 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,074 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,074 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,074 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,074 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,074 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,087 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,094 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,094 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,099 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,101 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,101 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,101 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,101 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,101 - WARNING - Connection pool is full, discarding connection: www.nseindia.com. Connection pool size: 10
+2025-06-29 06:57:02,112 - ERROR -   ❌ Error downloading from nsepy: Empty nsepy data
+2025-06-29 06:57:02,113 - ERROR - ❌ All real sources failed for INDIA_VIX. No data collected.
+2025-06-29 06:57:02,113 - INFO - 💡 Troubleshooting: Verify symbols on https://finance.yahoo.com or https://www.nseindia.com
+2025-06-29 06:57:02,113 - INFO - 💡 If outside India, use a VPN with an Indian server for NSE India access
+2025-06-29 06:57:02,113 - INFO - 💡 Run with --allow-mock-data for testing with mock data
+2025-06-29 06:57:02,113 - ERROR - ❌ Error collecting INDIA_VIX data: No real data available for INDIA_VIX. Check symbols, connectivity, or proxy settings.
+2025-06-29 06:57:02,113 - ERROR - ❌ Stock data collection failed: No real data available for INDIA_VIX. Check symbols, connectivity, or proxy settings.
+2025-06-29 06:57:02,113 - INFO - 💡 Troubleshooting steps:
+2025-06-29 06:57:02,113 - INFO -   1. Verify symbols on https://finance.yahoo.com/quote/BIOCON.NS
+2025-06-29 06:57:02,113 - INFO -   2. Check NSE India access: curl -I https://www.nseindia.com/api/quote-equity?symbol=BIOCON
+2025-06-29 06:57:02,113 - INFO -   3. Use a VPN with an Indian server for NSE India if outside India
+2025-06-29 06:57:02,113 - INFO -   4. Set proxies: export HTTP_PROXY='http://proxy.example.com:8080'
+2025-06-29 06:57:02,113 - INFO -   5. Run with --allow-mock-data for testing
+2025-06-29 07:03:17,000 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 07:03:17,005 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-06-29 07:03:17,005 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-06-29 07:03:17,005 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-06-29 07:03:17,005 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-06-29 07:03:17,005 - INFO - Configuration validated successfully
+2025-06-29 07:03:17,005 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 07:03:17,005 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 07:03:14.908264
+2025-06-29 07:03:17,005 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 07:03:17,005 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 07:03:17,005 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 07:03:17,005 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 07:03:17,005 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 07:03:17,005 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 07:03:22,646 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-06-29 07:03:28,008 - INFO -   ✅ Success: 2589 records for BIOCON.NS from Yahoo Finance
+2025-06-29 07:03:28,008 - INFO - ✅ BIOCON: 2589 records collected
+2025-06-29 07:03:28,008 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 07:03:28,008 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 07:03:33,134 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-06-29 07:03:38,352 - INFO -   ✅ Success: 2580 records for ^NSEI from Yahoo Finance
+2025-06-29 07:03:38,352 - INFO - ✅ NIFTY50: 2580 records collected
+2025-06-29 07:03:38,352 - INFO - 📈 Collecting SENSEX data...
+2025-06-29 07:03:38,352 - INFO - 📈 Downloading SENSEX data...
+2025-06-29 07:03:43,570 - INFO -   Trying Yahoo Finance symbol: ^BSESN
+2025-06-29 07:03:48,788 - INFO -   ✅ Success: 2580 records for ^BSESN from Yahoo Finance
+2025-06-29 07:03:48,788 - INFO - ✅ SENSEX: 2580 records collected
+2025-06-29 07:03:48,788 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 07:03:48,788 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 07:03:53,882 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-06-29 07:03:59,131 - INFO -   ✅ Success: 2586 records for ^CNXPHARMA from Yahoo Finance
+2025-06-29 07:03:59,131 - INFO - ✅ NIFTY_PHARMA: 2586 records collected
+2025-06-29 07:03:59,131 - INFO - 📊 Total datasets collected: 4
+2025-06-29 07:03:59,131 - INFO - 🏗️ Creating master dataset...
+2025-06-29 07:03:59,132 - INFO - 📊 Base dataset: 2589 Biocon records
+2025-06-29 07:03:59,132 - INFO - 🔧 Adding technical indicators...
+2025-06-29 07:03:59,146 - INFO - ✅ Technical indicators added successfully
+2025-06-29 07:03:59,146 - INFO - 📢 Adding BSE announcements to dataset...
+2025-06-29 07:03:59,146 - INFO - 📢 Fetching BSE announcements...
+2025-06-29 07:03:59,846 - ERROR - ❌ Error fetching BSE announcements: Expecting value: line 3 column 1 (char 4)
+2025-06-29 07:03:59,847 - WARNING - ⚠️ No announcements to add
+2025-06-29 07:03:59,848 - INFO - 📊 Calculating market relative metrics...
+2025-06-29 07:03:59,862 - INFO - ✅ Market relative metrics calculated successfully
+2025-06-29 07:03:59,862 - INFO - 🧠 Adding advanced features...
+2025-06-29 07:03:59,876 - INFO - ✅ Advanced features added successfully
+2025-06-29 07:03:59,884 - INFO - ✅ Master dataset created: 2589 records, 140 features
+2025-06-29 07:03:59,884 - INFO - 💾 Saving stock data...
+2025-06-29 07:04:00,075 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/stock_data.csv
+2025-06-29 07:04:00,075 - INFO - 📁 File size: 5253.7 KB
+2025-06-29 07:04:00,150 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/bse_announcements.csv
+2025-06-29 07:04:00,150 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/technical_indicators.csv
+2025-06-29 07:04:00,152 - INFO - 🎉 Stock data collection completed successfully!
+2025-06-29 07:17:27,953 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 07:17:27,959 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-06-29 07:17:27,960 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-06-29 07:17:27,960 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-06-29 07:17:27,960 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-06-29 07:17:27,960 - INFO - Configuration validated successfully
+2025-06-29 07:17:27,960 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 07:17:27,960 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 07:17:25.876344
+2025-06-29 07:17:27,960 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 07:17:27,960 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 07:17:27,960 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 07:17:27,961 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 07:17:27,961 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 07:17:27,961 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 07:17:33,624 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-06-29 07:17:39,028 - INFO -   ✅ Success: 2589 records for BIOCON.NS from Yahoo Finance
+2025-06-29 07:17:39,028 - INFO - ✅ BIOCON: 2589 records collected
+2025-06-29 07:17:39,028 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 07:17:39,028 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 07:17:44,201 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-06-29 07:17:49,578 - INFO -   ✅ Success: 2580 records for ^NSEI from Yahoo Finance
+2025-06-29 07:17:49,578 - INFO - ✅ NIFTY50: 2580 records collected
+2025-06-29 07:17:49,578 - INFO - 📈 Collecting SENSEX data...
+2025-06-29 07:17:49,578 - INFO - 📈 Downloading SENSEX data...
+2025-06-29 07:17:54,749 - INFO -   Trying Yahoo Finance symbol: ^BSESN
+2025-06-29 07:18:00,121 - INFO -   ✅ Success: 2580 records for ^BSESN from Yahoo Finance
+2025-06-29 07:18:00,121 - INFO - ✅ SENSEX: 2580 records collected
+2025-06-29 07:18:00,121 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 07:18:00,122 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 07:18:05,287 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-06-29 07:18:10,656 - INFO -   ✅ Success: 2586 records for ^CNXPHARMA from Yahoo Finance
+2025-06-29 07:18:10,656 - INFO - ✅ NIFTY_PHARMA: 2586 records collected
+2025-06-29 07:18:10,656 - INFO - 📊 Total datasets collected: 4
+2025-06-29 07:18:10,657 - INFO - 🏗️ Creating master dataset...
+2025-06-29 07:18:10,657 - INFO - 📊 Base dataset: 2589 Biocon records
+2025-06-29 07:18:10,657 - INFO - 🔧 Adding technical indicators...
+2025-06-29 07:18:10,673 - INFO - ✅ Technical indicators added successfully
+2025-06-29 07:18:10,673 - INFO - 📢 Adding BSE announcements to dataset...
+2025-06-29 07:18:10,673 - INFO - 📢 Fetching BSE announcements...
+2025-06-29 07:18:11,336 - ERROR - ❌ Error fetching BSE announcements: Expecting value: line 3 column 1 (char 4)
+2025-06-29 07:18:11,336 - WARNING - ⚠️ No announcements to add
+2025-06-29 07:18:11,337 - INFO - 📊 Calculating market relative metrics...
+2025-06-29 07:18:11,388 - INFO - ✅ Market relative metrics calculated successfully
+2025-06-29 07:18:11,388 - INFO - 🧠 Adding advanced features...
+2025-06-29 07:18:11,399 - INFO - ✅ Advanced features added successfully
+2025-06-29 07:18:11,407 - INFO - ✅ Master dataset created: 2589 records, 140 features
+2025-06-29 07:18:11,407 - INFO - 💾 Saving stock data...
+2025-06-29 07:18:11,593 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/stock_data.csv
+2025-06-29 07:18:11,593 - INFO - 📁 File size: 5253.3 KB
+2025-06-29 07:18:11,665 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/bse_announcements.csv
+2025-06-29 07:18:11,666 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/technical_indicators.csv
+2025-06-29 07:18:11,668 - INFO - 🎉 Stock data collection completed successfully!
+2025-06-29 07:20:25,498 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-06-29 07:20:25,499 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-06-29 07:20:25,499 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-06-29 07:20:25,499 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-06-29 07:20:25,499 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-06-29 07:20:25,499 - INFO - Configuration validated successfully
+2025-06-29 07:20:25,499 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-06-29 07:20:25,499 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-06-29 07:20:23.689962
+2025-06-29 07:20:25,500 - INFO - 🏢 Target Company: Biocon Limited
+2025-06-29 07:20:25,500 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-06-29 07:20:25,500 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-06-29 07:20:25,500 - INFO - 🎯 Starting comprehensive data collection...
+2025-06-29 07:20:25,500 - INFO - 📈 Collecting BIOCON data...
+2025-06-29 07:20:25,500 - INFO - 📈 Downloading BIOCON data...
+2025-06-29 07:20:31,163 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-06-29 07:20:36,409 - INFO -   ✅ Success: 2589 records for BIOCON.NS from Yahoo Finance
+2025-06-29 07:20:36,409 - INFO - ✅ BIOCON: 2589 records collected
+2025-06-29 07:20:36,409 - INFO - 📈 Collecting NIFTY50 data...
+2025-06-29 07:20:36,409 - INFO - 📈 Downloading NIFTY50 data...
+2025-06-29 07:20:41,533 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-06-29 07:20:46,856 - INFO -   ✅ Success: 2580 records for ^NSEI from Yahoo Finance
+2025-06-29 07:20:46,856 - INFO - ✅ NIFTY50: 2580 records collected
+2025-06-29 07:20:46,856 - INFO - 📈 Collecting SENSEX data...
+2025-06-29 07:20:46,856 - INFO - 📈 Downloading SENSEX data...
+2025-06-29 07:20:51,971 - INFO -   Trying Yahoo Finance symbol: ^BSESN
+2025-06-29 07:20:57,211 - INFO -   ✅ Success: 2580 records for ^BSESN from Yahoo Finance
+2025-06-29 07:20:57,211 - INFO - ✅ SENSEX: 2580 records collected
+2025-06-29 07:20:57,211 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-06-29 07:20:57,211 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-06-29 07:21:02,390 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-06-29 07:21:07,607 - INFO -   ✅ Success: 2586 records for ^CNXPHARMA from Yahoo Finance
+2025-06-29 07:21:07,607 - INFO - ✅ NIFTY_PHARMA: 2586 records collected
+2025-06-29 07:21:07,607 - INFO - 📊 Total datasets collected: 4
+2025-06-29 07:21:07,607 - INFO - 🏗️ Creating master dataset...
+2025-06-29 07:21:07,608 - INFO - 📊 Base dataset: 2589 Biocon records
+2025-06-29 07:21:07,608 - INFO - 🔧 Adding technical indicators...
+2025-06-29 07:21:07,618 - INFO - ✅ Technical indicators added successfully
+2025-06-29 07:21:07,618 - INFO - 📢 Adding BSE announcements to dataset...
+2025-06-29 07:21:07,618 - INFO - 📢 Fetching BSE announcements...
+2025-06-29 07:21:08,095 - ERROR - ❌ Error fetching BSE announcements: Expecting value: line 3 column 1 (char 4)
+2025-06-29 07:21:08,095 - WARNING - ⚠️ No announcements to add
+2025-06-29 07:21:08,096 - INFO - 📊 Calculating market relative metrics...
+2025-06-29 07:21:08,103 - INFO - ✅ Market relative metrics calculated successfully
+2025-06-29 07:21:08,104 - INFO - 🧠 Adding advanced features...
+2025-06-29 07:21:08,113 - INFO - ✅ Advanced features added successfully
+2025-06-29 07:21:08,119 - INFO - ✅ Master dataset created: 2589 records, 140 features
+2025-06-29 07:21:08,120 - INFO - 💾 Saving stock data...
+2025-06-29 07:21:08,315 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/stock_data.csv
+2025-06-29 07:21:08,315 - INFO - 📁 File size: 5253.3 KB
+2025-06-29 07:21:08,388 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/bse_announcements.csv
+2025-06-29 07:21:08,388 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/technical_indicators.csv
+2025-06-29 07:21:08,390 - INFO - 🎉 Stock data collection completed successfully!
+2025-07-01 01:25:47,239 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-07-01 01:25:47,243 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-07-01 01:25:47,243 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-07-01 01:25:47,243 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-07-01 01:25:47,244 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-07-01 01:25:47,244 - INFO - Configuration validated successfully
+2025-07-01 01:25:47,244 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-07-01 01:25:47,244 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-07-01 01:25:44.804357
+2025-07-01 01:25:47,244 - INFO - 🏢 Target Company: Biocon Limited
+2025-07-01 01:25:47,244 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-07-01 01:25:47,244 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-07-01 01:25:47,244 - INFO - 🎯 Starting comprehensive data collection...
+2025-07-01 01:25:47,244 - INFO - 📈 Collecting BIOCON data...
+2025-07-01 01:25:47,244 - INFO - 📈 Downloading BIOCON data...
+2025-07-01 01:25:53,095 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-07-01 01:25:58,519 - INFO -   ✅ Success: 2590 records for BIOCON.NS from Yahoo Finance
+2025-07-01 01:25:58,519 - INFO - ✅ BIOCON: 2590 records collected
+2025-07-01 01:25:58,519 - INFO - 📈 Collecting NIFTY50 data...
+2025-07-01 01:25:58,519 - INFO - 📈 Downloading NIFTY50 data...
+2025-07-01 01:26:03,947 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-07-01 01:26:09,347 - INFO -   ✅ Success: 2581 records for ^NSEI from Yahoo Finance
+2025-07-01 01:26:09,347 - INFO - ✅ NIFTY50: 2581 records collected
+2025-07-01 01:26:09,347 - INFO - 📈 Collecting SENSEX data...
+2025-07-01 01:26:09,347 - INFO - 📈 Downloading SENSEX data...
+2025-07-01 01:26:14,516 - INFO -   Trying Yahoo Finance symbol: ^BSESN
+2025-07-01 01:26:19,876 - INFO -   ✅ Success: 2581 records for ^BSESN from Yahoo Finance
+2025-07-01 01:26:19,876 - INFO - ✅ SENSEX: 2581 records collected
+2025-07-01 01:26:19,876 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-07-01 01:26:19,876 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-07-01 01:26:25,056 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-07-01 01:26:30,609 - INFO -   ✅ Success: 2587 records for ^CNXPHARMA from Yahoo Finance
+2025-07-01 01:26:30,610 - INFO - ✅ NIFTY_PHARMA: 2587 records collected
+2025-07-01 01:26:30,610 - INFO - 📊 Total datasets collected: 4
+2025-07-01 01:26:30,610 - INFO - 🏗️ Creating master dataset...
+2025-07-01 01:26:30,610 - INFO - 📊 Base dataset: 2590 Biocon records
+2025-07-01 01:26:30,610 - INFO - 🔧 Adding technical indicators...
+2025-07-01 01:26:30,620 - INFO - ✅ Technical indicators added successfully
+2025-07-01 01:26:30,620 - INFO - 📢 Adding BSE announcements to dataset...
+2025-07-01 01:26:30,621 - INFO - 📢 Fetching BSE announcements...
+2025-07-01 01:26:30,971 - ERROR - ❌ Error fetching BSE announcements: Expecting value: line 3 column 1 (char 4)
+2025-07-01 01:26:30,972 - WARNING - ⚠️ No announcements to add
+2025-07-01 01:26:30,973 - INFO - 📊 Calculating market relative metrics...
+2025-07-01 01:26:30,992 - INFO - ✅ Market relative metrics calculated successfully
+2025-07-01 01:26:30,992 - INFO - 🧠 Adding advanced features...
+2025-07-01 01:26:31,012 - INFO - ✅ Advanced features added successfully
+2025-07-01 01:26:31,021 - INFO - ✅ Master dataset created: 2590 records, 140 features
+2025-07-01 01:26:31,021 - INFO - 💾 Saving stock data...
+2025-07-01 01:26:31,022 - ERROR - ❌ Error saving data: Cannot save file into a non-existent directory: '/Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data'
+2025-07-01 01:26:31,022 - ERROR - ❌ Failed to save data
+2025-07-01 01:27:04,959 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-07-01 01:27:04,961 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-07-01 01:27:04,961 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-07-01 01:27:04,961 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-07-01 01:27:04,962 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-07-01 01:27:04,962 - INFO - Configuration validated successfully
+2025-07-01 01:27:04,962 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-07-01 01:27:04,962 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-07-01 01:27:03.088021
+2025-07-01 01:27:04,962 - INFO - 🏢 Target Company: Biocon Limited
+2025-07-01 01:27:04,962 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-07-01 01:27:04,962 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-07-01 01:27:04,962 - INFO - 🎯 Starting comprehensive data collection...
+2025-07-01 01:27:04,962 - INFO - 📈 Collecting BIOCON data...
+2025-07-01 01:27:04,962 - INFO - 📈 Downloading BIOCON data...
+2025-07-01 01:27:10,660 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-07-01 01:27:16,087 - INFO -   ✅ Success: 2590 records for BIOCON.NS from Yahoo Finance
+2025-07-01 01:27:16,087 - INFO - ✅ BIOCON: 2590 records collected
+2025-07-01 01:27:16,087 - INFO - 📈 Collecting NIFTY50 data...
+2025-07-01 01:27:16,087 - INFO - 📈 Downloading NIFTY50 data...
+2025-07-01 01:27:21,251 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-07-01 01:27:26,610 - INFO -   ✅ Success: 2581 records for ^NSEI from Yahoo Finance
+2025-07-01 01:27:26,611 - INFO - ✅ NIFTY50: 2581 records collected
+2025-07-01 01:27:26,611 - INFO - 📈 Collecting SENSEX data...
+2025-07-01 01:27:26,611 - INFO - 📈 Downloading SENSEX data...
+2025-07-01 01:27:31,799 - INFO -   Trying Yahoo Finance symbol: ^BSESN
+2025-07-01 01:27:37,168 - INFO -   ✅ Success: 2581 records for ^BSESN from Yahoo Finance
+2025-07-01 01:27:37,168 - INFO - ✅ SENSEX: 2581 records collected
+2025-07-01 01:27:37,168 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-07-01 01:27:37,168 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-07-01 01:27:42,375 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-07-01 01:27:47,732 - INFO -   ✅ Success: 2587 records for ^CNXPHARMA from Yahoo Finance
+2025-07-01 01:27:47,732 - INFO - ✅ NIFTY_PHARMA: 2587 records collected
+2025-07-01 01:27:47,733 - INFO - 📊 Total datasets collected: 4
+2025-07-01 01:27:47,733 - INFO - 🏗️ Creating master dataset...
+2025-07-01 01:27:47,733 - INFO - 📊 Base dataset: 2590 Biocon records
+2025-07-01 01:27:47,733 - INFO - 🔧 Adding technical indicators...
+2025-07-01 01:27:47,745 - INFO - ✅ Technical indicators added successfully
+2025-07-01 01:27:47,745 - INFO - 📢 Adding BSE announcements to dataset...
+2025-07-01 01:27:47,745 - INFO - 📢 Fetching BSE announcements...
+2025-07-01 01:27:48,314 - ERROR - ❌ Error fetching BSE announcements: Expecting value: line 3 column 1 (char 4)
+2025-07-01 01:27:48,315 - WARNING - ⚠️ No announcements to add
+2025-07-01 01:27:48,316 - INFO - 📊 Calculating market relative metrics...
+2025-07-01 01:27:48,325 - INFO - ✅ Market relative metrics calculated successfully
+2025-07-01 01:27:48,325 - INFO - 🧠 Adding advanced features...
+2025-07-01 01:27:48,335 - INFO - ✅ Advanced features added successfully
+2025-07-01 01:27:48,344 - INFO - ✅ Master dataset created: 2590 records, 140 features
+2025-07-01 01:27:48,344 - INFO - 💾 Saving stock data...
+2025-07-01 01:27:48,546 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/stock_data.csv
+2025-07-01 01:27:48,546 - INFO - 📁 File size: 5255.0 KB
+2025-07-01 01:27:48,619 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/bse_announcements.csv
+2025-07-01 01:27:48,620 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/technical_indicators.csv
+2025-07-01 01:27:48,622 - INFO - 🎉 Stock data collection completed successfully!
+2025-07-01 01:29:21,708 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-07-01 01:29:21,711 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-07-01 01:29:21,711 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-07-01 01:29:21,711 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-07-01 01:29:21,712 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-07-01 01:29:21,712 - INFO - Configuration validated successfully
+2025-07-01 01:29:21,712 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-07-01 01:29:21,712 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-07-01 01:29:19.938176
+2025-07-01 01:29:21,712 - INFO - 🏢 Target Company: Biocon Limited
+2025-07-01 01:29:21,713 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-07-01 01:29:21,713 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-07-01 01:29:21,713 - INFO - 🎯 Starting comprehensive data collection...
+2025-07-01 01:29:21,713 - INFO - 📈 Collecting BIOCON data...
+2025-07-01 01:29:21,713 - INFO - 📈 Downloading BIOCON data...
+2025-07-01 01:29:27,266 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-07-01 01:29:34,400 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-07-01 01:29:34,402 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-07-01 01:29:34,402 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-07-01 01:29:34,402 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-07-01 01:29:34,403 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-07-01 01:29:34,403 - INFO - Configuration validated successfully
+2025-07-01 01:29:34,403 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-07-01 01:29:34,403 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-07-01 01:29:32.710191
+2025-07-01 01:29:34,403 - INFO - 🏢 Target Company: Biocon Limited
+2025-07-01 01:29:34,403 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-07-01 01:29:34,403 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-07-01 01:29:34,404 - INFO - 🎯 Starting comprehensive data collection...
+2025-07-01 01:29:34,404 - INFO - 📈 Collecting BIOCON data...
+2025-07-01 01:29:34,404 - INFO - 📈 Downloading BIOCON data...
+2025-07-01 01:29:40,163 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-07-01 01:29:45,608 - INFO -   ✅ Success: 2590 records for BIOCON.NS from Yahoo Finance
+2025-07-01 01:29:45,608 - INFO - ✅ BIOCON: 2590 records collected
+2025-07-01 01:29:45,608 - INFO - 📈 Collecting NIFTY50 data...
+2025-07-01 01:29:45,609 - INFO - 📈 Downloading NIFTY50 data...
+2025-07-01 01:29:50,797 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-07-01 01:29:56,171 - INFO -   ✅ Success: 2581 records for ^NSEI from Yahoo Finance
+2025-07-01 01:29:56,171 - INFO - ✅ NIFTY50: 2581 records collected
+2025-07-01 01:29:56,171 - INFO - 📈 Collecting SENSEX data...
+2025-07-01 01:29:56,171 - INFO - 📈 Downloading SENSEX data...
+2025-07-01 01:30:01,344 - INFO -   Trying Yahoo Finance symbol: ^BSESN
+2025-07-01 01:30:06,733 - INFO -   ✅ Success: 2581 records for ^BSESN from Yahoo Finance
+2025-07-01 01:30:06,735 - INFO - ✅ SENSEX: 2581 records collected
+2025-07-01 01:30:06,735 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-07-01 01:30:06,735 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-07-01 01:30:11,938 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-07-01 01:30:17,330 - INFO -   ✅ Success: 2587 records for ^CNXPHARMA from Yahoo Finance
+2025-07-01 01:30:17,330 - INFO - ✅ NIFTY_PHARMA: 2587 records collected
+2025-07-01 01:30:17,330 - INFO - 📊 Total datasets collected: 4
+2025-07-01 01:30:17,330 - INFO - 🏗️ Creating master dataset...
+2025-07-01 01:30:17,331 - INFO - 📊 Base dataset: 2590 Biocon records
+2025-07-01 01:30:17,331 - INFO - 🔧 Adding technical indicators...
+2025-07-01 01:30:17,343 - INFO - ✅ Technical indicators added successfully
+2025-07-01 01:30:17,343 - INFO - 📢 Adding BSE announcements to dataset...
+2025-07-01 01:30:17,343 - INFO - 📢 Fetching BSE announcements...
+2025-07-01 01:30:17,651 - ERROR - ❌ Error fetching BSE announcements: Expecting value: line 3 column 1 (char 4)
+2025-07-01 01:30:17,651 - WARNING - ⚠️ No announcements to add
+2025-07-01 01:30:17,653 - INFO - 📊 Calculating market relative metrics...
+2025-07-01 01:30:17,669 - INFO - ✅ Market relative metrics calculated successfully
+2025-07-01 01:30:17,669 - INFO - 🧠 Adding advanced features...
+2025-07-01 01:30:17,685 - INFO - ✅ Advanced features added successfully
+2025-07-01 01:30:17,694 - INFO - ✅ Master dataset created: 2590 records, 140 features
+2025-07-01 01:30:17,695 - INFO - 💾 Saving stock data...
+2025-07-01 01:30:17,895 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/stock_data.csv
+2025-07-01 01:30:17,895 - INFO - 📁 File size: 5255.0 KB
+2025-07-01 01:30:17,967 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/bse_announcements.csv
+2025-07-01 01:30:17,967 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/data/technical_indicators.csv
+2025-07-01 01:30:17,970 - INFO - 🎉 Stock data collection completed successfully!
+2025-07-01 01:32:07,710 - WARNING - ⚠️ Failed to initialize NSE session: 401 Client Error: Unauthorized for url: https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY
+2025-07-01 01:32:07,711 - INFO - ℹ️ Falling back to yfinance as primary source.
+2025-07-01 01:32:07,711 - INFO - 💡 If outside India, use a VPN (e.g., NordVPN, ExpressVPN) with an Indian server.
+2025-07-01 01:32:07,712 - INFO - 💡 Alternatively, set DNS to 8.8.8.8: sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 1.1.1.1
+2025-07-01 01:32:07,712 - INFO - ℹ️ No proxy configured, proceeding without proxy
+2025-07-01 01:32:07,712 - INFO - Configuration validated successfully
+2025-07-01 01:32:07,712 - INFO - 🚀 Advanced Stock Data Collector Initialized
+2025-07-01 01:32:07,712 - INFO - 📅 Date Range: 2015-01-01 00:00:00 to 2025-07-01 01:32:05.602769
+2025-07-01 01:32:07,712 - INFO - 🏢 Target Company: Biocon Limited
+2025-07-01 01:32:07,712 - INFO - 🛡️ Using proxies: {'http': None, 'https': None}
+2025-07-01 01:32:07,712 - INFO - 🚀 Starting Advanced Stock Data Collection Pipeline...
+2025-07-01 01:32:07,712 - INFO - 🎯 Starting comprehensive data collection...
+2025-07-01 01:32:07,712 - INFO - 📈 Collecting BIOCON data...
+2025-07-01 01:32:07,712 - INFO - 📈 Downloading BIOCON data...
+2025-07-01 01:32:13,680 - INFO -   Trying Yahoo Finance symbol: BIOCON.NS
+2025-07-01 01:32:19,113 - INFO -   ✅ Success: 2590 records for BIOCON.NS from Yahoo Finance
+2025-07-01 01:32:19,113 - INFO - ✅ BIOCON: 2590 records collected
+2025-07-01 01:32:19,113 - INFO - 📈 Collecting NIFTY50 data...
+2025-07-01 01:32:19,113 - INFO - 📈 Downloading NIFTY50 data...
+2025-07-01 01:32:24,291 - INFO -   Trying Yahoo Finance symbol: ^NSEI
+2025-07-01 01:32:29,669 - INFO -   ✅ Success: 2581 records for ^NSEI from Yahoo Finance
+2025-07-01 01:32:29,669 - INFO - ✅ NIFTY50: 2581 records collected
+2025-07-01 01:32:29,669 - INFO - 📈 Collecting SENSEX data...
+2025-07-01 01:32:29,669 - INFO - 📈 Downloading SENSEX data...
+2025-07-01 01:32:34,872 - INFO -   Trying Yahoo Finance symbol: ^BSESN
+2025-07-01 01:32:40,287 - INFO -   ✅ Success: 2581 records for ^BSESN from Yahoo Finance
+2025-07-01 01:32:40,287 - INFO - ✅ SENSEX: 2581 records collected
+2025-07-01 01:32:40,287 - INFO - 📈 Collecting NIFTY_PHARMA data...
+2025-07-01 01:32:40,287 - INFO - 📈 Downloading NIFTY_PHARMA data...
+2025-07-01 01:32:45,491 - INFO -   Trying Yahoo Finance symbol: ^CNXPHARMA
+2025-07-01 01:32:50,883 - INFO -   ✅ Success: 2587 records for ^CNXPHARMA from Yahoo Finance
+2025-07-01 01:32:50,883 - INFO - ✅ NIFTY_PHARMA: 2587 records collected
+2025-07-01 01:32:50,883 - INFO - 📊 Total datasets collected: 4
+2025-07-01 01:32:50,883 - INFO - 🏗️ Creating master dataset...
+2025-07-01 01:32:50,884 - INFO - 📊 Base dataset: 2590 Biocon records
+2025-07-01 01:32:50,884 - INFO - 🔧 Adding technical indicators...
+2025-07-01 01:32:50,901 - INFO - ✅ Technical indicators added successfully
+2025-07-01 01:32:50,901 - INFO - 📢 Adding BSE announcements to dataset...
+2025-07-01 01:32:50,901 - INFO - 📢 Fetching BSE announcements...
+2025-07-01 01:32:51,381 - ERROR - ❌ Error fetching BSE announcements: Expecting value: line 3 column 1 (char 4)
+2025-07-01 01:32:51,382 - WARNING - ⚠️ No announcements to add
+2025-07-01 01:32:51,384 - INFO - 📊 Calculating market relative metrics...
+2025-07-01 01:32:51,399 - INFO - ✅ Market relative metrics calculated successfully
+2025-07-01 01:32:51,400 - INFO - 🧠 Adding advanced features...
+2025-07-01 01:32:51,417 - INFO - ✅ Advanced features added successfully
+2025-07-01 01:32:51,425 - INFO - ✅ Master dataset created: 2590 records, 140 features
+2025-07-01 01:32:51,426 - INFO - 💾 Saving stock data...
+2025-07-01 01:32:51,623 - INFO - ✅ Data saved successfully: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/stock_data.csv
+2025-07-01 01:32:51,623 - INFO - 📁 File size: 5255.4 KB
+2025-07-01 01:32:51,696 - INFO - ✅ Announcements saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/bse_announcements.csv
+2025-07-01 01:32:51,696 - INFO - ✅ Technical indicators saved: /Users/ashutoshrajesh/Desktop/STOCK_MARKET_PREDICTION/biocon_fda_project/data/technical_indicators.csv
+2025-07-01 01:32:51,698 - INFO - 🎉 Stock data collection completed successfully!

@@ -1,0 +1,59 @@
+============================================================
+📊 BIOCON FDA PROJECT - MODEL TRAINING REPORT
+Generated: 2025-07-01 01:40:30
+============================================================
+
+📊 Data Overview:
+   Training Samples: 2,072
+   Test Samples: 518
+   Features Used: ['Close', 'Volume']
+   Date Range: 2015-01-01 to 2025-06-30
+   Target: 5-Day Forward Return
+
+🧠 Model Performance:
+   RandomForest:
+     Train R²: 0.4581
+     Test R²: -0.1098
+     Train Adjusted R²: 0.4576
+     Test Adjusted R²: -0.1141
+     Train MSE: 0.001094
+     Test MSE: 0.002693
+     CV R² Mean: -0.9853 (±0.8480)
+
+   XGBoost:
+     Train R²: 0.4017
+     Test R²: -0.1129
+     Train Adjusted R²: 0.4011
+     Test Adjusted R²: -0.1172
+     Train MSE: 0.001208
+     Test MSE: 0.002701
+     CV R² Mean: -0.7547 (±0.6253)
+
+   LinearRegression:
+     Train R²: 0.0151
+     Test R²: 0.0103
+     Train Adjusted R²: 0.0142
+     Test Adjusted R²: 0.0065
+     Train MSE: 0.001989
+     Test MSE: 0.002402
+     CV R² Mean: -0.3325 (±0.6413)
+
+📈 Analysis:
+   Best Model: LinearRegression (Test Adjusted R²: 0.0065)
+   Adjusted R² accounts for the number of features, providing a robust measure of model fit.
+   Lower MSE indicates better prediction accuracy.
+   Models use available stock and sentiment data.
+
+🎯 Top Features (Random Forest):
+     Close: 0.6089
+     Volume: 0.3911
+
+📁 Outputs:
+   ✅ predictions.csv
+   ✅ feature_importance.csv
+   ✅ performance_report.txt
+   ✅ charts/model_performance.png
+   ✅ charts/predictions_vs_actual.png
+   ✅ charts/feature_importance.png
+   ✅ charts/stock_price.png
+============================================================
