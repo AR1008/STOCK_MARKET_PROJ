@@ -39,7 +39,7 @@ COMPANY = {
 # Data collection configuration
 DATA_CONFIG = {
     'start_date': '2015-01-01',  # Overall data collection start
-    'end_date': '2025-06-26',    # Current date
+    'end_date': '2025-01-07',    # Current date
     'drug_focus_start': '2017-01-01',  # When to focus on drug-specific news
     'min_articles_threshold': 10
 }
